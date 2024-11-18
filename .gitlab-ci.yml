@@ -1,0 +1,19 @@
+stages:
+  - build
+
+variables:
+  IMAGE_NAME: ${CI_REGISTRY_IMAGE}:grand-tetras-jura-${CI_COMMIT_REF_NAME}
+
+build_app:
+  stage: build
+  script:
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
+    - docker build --pull --target production -t $IMAGE_NAME -t ${CI_REGISTRY_IMAGE}:latest ./
+    - docker push $IMAGE_NAME
+    - docker push ${CI_REGISTRY_IMAGE}:latest
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_BRANCH != "main"'
+      when: manual
+  tags:
+    - NSCICDDOCKER
