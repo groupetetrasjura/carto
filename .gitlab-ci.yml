@@ -1,5 +1,6 @@
 stages:
   - build
+  - deploy
 
 variables:
   IMAGE_NAME: ${CI_REGISTRY_IMAGE}:grand-tetras-jura-${CI_COMMIT_REF_NAME}
@@ -17,3 +18,23 @@ build_app:
       when: manual
   tags:
     - NSCICDDOCKER
+
+deploy:
+  stage: deploy
+  image: registry.gitlab.com/natural-solutions/ns-ansible-infrastructure
+  id_tokens:
+    NATURALIENS_ID_TOKEN:
+      aud: https://vault.naturaliens.cloud
+  script:
+  - cd /home/ansible
+  - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=gitlab-runner-grand-tetras-jura jwt=$NATURALIENS_ID_TOKEN)"
+  - ansible-playbook -i inventory.py playbooks/grand-tetras-jura.yml
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_BRANCH != "main"'
+      when: manual
+  variables:
+    GIT_STRATEGY: none
+    INVENTORY_PATH: inventories/ns/projects/grand-tetras-jura
+  tags:
+  - pve03-gitlab-runner01
