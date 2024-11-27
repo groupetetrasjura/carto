@@ -1,11 +1,21 @@
 import Image from "next/image";
 import styles from "./page.module.css";
+import { Button } from "@mui/material";
 
 export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        platform team is the best :P!
+        <Button variant="greenMain">Bouton vert</Button>
+        <Button variant="brownMain">Bouton marron</Button>
+        <Image
+          className={styles.logo}
+          src="/next.svg"
+          alt="Next.js logo"
+          width={180}
+          height={38}
+          priority
+        />
         <ol>
           <li>
             Get started by editing <code>src/app/page.tsx</code>.
