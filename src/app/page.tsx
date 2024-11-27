@@ -1,10 +1,13 @@
 import Image from "next/image";
 import styles from "./page.module.css";
+import { Button } from "@mui/material";
 
 export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
+        <Button variant="greenMain">Bouton vert</Button>
+        <Button variant="brownMain">Bouton marron</Button>
         <Image
           className={styles.logo}
           src="/next.svg"
