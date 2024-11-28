@@ -183,16 +183,25 @@ const MultiStepFormPopup: React.FC = () => {
         );
       case 2:
         return (
-          <Stack direction="row" justifyContent="center" mt={2}>
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="fr">
-              <DatePicker
-                label="Date de visite"
-                value={selectedDate ? selectedDate : null}
-                format="DD/MM/YYYY"
-                onChange={(newValue: Dayjs | null) => setSelectedDate(newValue)}
-              />
-            </LocalizationProvider>
-          </Stack>
+          <>
+            <Typography color="textSecondary" gutterBottom fontSize="16px">
+              Quand souhaitez-vous visiter le massif ?
+            </Typography>
+            <Stack direction="row" justifyContent="center" mt={2}>
+              <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale="fr"
+              >
+                <DatePicker
+                  value={selectedDate ? selectedDate : null}
+                  format="DD/MM/YYYY"
+                  onChange={(newValue: Dayjs | null) =>
+                    setSelectedDate(newValue)
+                  }
+                />
+              </LocalizationProvider>
+            </Stack>
+          </>
         );
       default:
         return "Étape inconnue";
