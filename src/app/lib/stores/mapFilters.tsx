@@ -1,7 +1,6 @@
 import { StateCreator, create } from "zustand";
 import { Dayjs } from "dayjs";
 import { MapFiltersState, TransportType, Zone } from "../types/mapFilters";
-import { persist } from "zustand/middleware";
 
 export const initialMapFiltersState = {
   selectedZones: [],

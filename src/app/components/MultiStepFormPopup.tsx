@@ -81,7 +81,7 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const selectedDate = useMapFiltersSelectedDate();
   const theme = useTheme();
 
-  const [open, setOpen] = useState<boolean>(true);
+  const [open] = useState<boolean>(true);
   const [activeStep, setActiveStep] = useState<number>(0);
 
   const handleClose = (): void => onClose();
