@@ -1,7 +1,47 @@
 [
-{ "fid": 1, "zone": "Massacre", "area": 7691065.33, "perimeter": 16093, "zoom": 10, "longitude": 6.037611627380875, "latitude": 46.420697175732023 },
-{ "fid": 2, "zone": "Bois de Bans-Arobiers", "area": 3640794.12, "perimeter": 9522, "zoom": 15, "longitude": 6.014628941814657, "latitude": 46.439444022821576 },
-{ "fid": 3, "zone": "Risoux", "area": 19515591.96, "perimeter": 24077, "zoom": 11, "longitude": 6.090285964425442, "latitude": 46.538028341036785 },
-{ "fid": 4, "zone": "Haute Joux", "area": 3751676.93, "perimeter": 16163, "zoom": 9, "longitude": 6.115481265958993, "latitude": 46.714629007202078 },
-{ "fid": 5, "zone": "Combe Noire", "area": 8746373.28, "perimeter": 17158, "zoom": 15, "longitude": 6.18169636192957, "latitude": 46.766341057674381 }
+  {
+    "fid": 1,
+    "zone": "Massacre",
+    "area": 7691065.33,
+    "perimeter": 16093,
+    "zoom": 10,
+    "longitude": 6.037611627380875,
+    "latitude": 46.420697175732023
+  },
+  {
+    "fid": 2,
+    "zone": "Bois de Bans-Arobiers",
+    "area": 3640794.12,
+    "perimeter": 9522,
+    "zoom": 15,
+    "longitude": 6.014628941814657,
+    "latitude": 46.439444022821576
+  },
+  {
+    "fid": 3,
+    "zone": "Risoux",
+    "area": 19515591.96,
+    "perimeter": 24077,
+    "zoom": 11,
+    "longitude": 6.090285964425442,
+    "latitude": 46.538028341036785
+  },
+  {
+    "fid": 4,
+    "zone": "Haute Joux",
+    "area": 3751676.93,
+    "perimeter": 16163,
+    "zoom": 9,
+    "longitude": 6.115481265958993,
+    "latitude": 46.714629007202078
+  },
+  {
+    "fid": 5,
+    "zone": "Combe Noire",
+    "area": 8746373.28,
+    "perimeter": 17158,
+    "zoom": 15,
+    "longitude": 6.18169636192957,
+    "latitude": 46.766341057674381
+  }
 ]
