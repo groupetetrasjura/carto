@@ -27,15 +27,7 @@ export const stateCreator: StateCreator<MapFiltersState> = (set) => ({
   },
 });
 
-export const useMapFilters = create<MapFiltersState>()(
-  persist(stateCreator, {
-    name: "map-filters-storage",
-    partialize: (state) =>
-      Object.fromEntries(
-        Object.entries(state).filter(([key]) => !["actions"].includes(key))
-      ),
-  })
-);
+export const useMapFilters = create<MapFiltersState>()(stateCreator);
 
 // GETTERS
 export const useMapFiltersSelectedZones = () =>
