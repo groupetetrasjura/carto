@@ -9,11 +9,11 @@ import {
   Typography,
 } from "@mui/material";
 
-const InfoPopup = () => {
+const InfoPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [open, setOpen] = useState(true);
 
   const handleClose = () => {
-    setOpen(false);
+    onClose();
   };
 
   return (

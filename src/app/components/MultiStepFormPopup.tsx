@@ -73,7 +73,7 @@ const CustomBulletStepper = styled(Stepper)(({ theme }) => ({
   },
 }));
 
-const MultiStepFormPopup: React.FC = () => {
+const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { setSelectedZones, setSelectedTransport, setSelectedDate } =
     useMapFiltersActions();
   const selectedZones = useMapFiltersSelectedZones();
@@ -84,7 +84,7 @@ const MultiStepFormPopup: React.FC = () => {
   const [open, setOpen] = useState<boolean>(true);
   const [activeStep, setActiveStep] = useState<number>(0);
 
-  const handleClose = (): void => setOpen(false);
+  const handleClose = (): void => onClose();
 
   const handleNext = (): void =>
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
