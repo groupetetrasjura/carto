@@ -1,6 +1,9 @@
 import { Dayjs } from "dayjs";
 
-export type TransportType = "car" | "other" | null;
+export enum TransportType {
+  CAR = "car",
+  OTHER = "other",
+}
 
 export type Zone =
   | "Massacre"
@@ -16,7 +19,7 @@ export interface MapFiltersActions {
 }
 export interface MapFiltersState {
   selectedZones: Zone[];
-  selectedTransport: TransportType;
+  selectedTransport: TransportType | null;
   selectedDate: Dayjs | null;
   actions: MapFiltersActions;
 }

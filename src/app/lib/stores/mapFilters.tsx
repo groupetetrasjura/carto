@@ -35,6 +35,21 @@ export const useMapFiltersSelectedZones = () =>
 export const useMapFiltersSelectedTransport = () =>
   useMapFilters((state) => state.selectedTransport);
 
+export const useMaptilerMapId = () =>
+  useMapFilters((state) => {
+    switch (state.selectedTransport) {
+      case TransportType.CAR:
+        return "streets-v2";
+        break;
+      case TransportType.OTHER:
+        return "c61094ab-586d-4d6c-85c2-48fe13732afb";
+        break;
+      default:
+        return "landscape";
+        break;
+    }
+  });
+
 export const useMapFiltersSelectedDate = () =>
   useMapFilters((state) => state.selectedDate);
 
