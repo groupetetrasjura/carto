@@ -40,6 +40,22 @@ const theme = createTheme({
         },
       ],
     },
+    MuiTypography: {
+      variants: [
+        {
+          props: { color: "greenMain" },
+          style: {
+            color: "#5A7037",
+          },
+        },
+        {
+          props: { color: "brownMain" },
+          style: {
+            color: "#725E51",
+          },
+        },
+      ],
+    },
   },
 });
 
