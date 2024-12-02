@@ -18,7 +18,6 @@ import Map, {
 import { useViewState, useMapStoreActions } from "@/app/lib/stores/mapStore";
 import {
   useMapFiltersActions,
-  useMapFiltersCurrentStep,
   useMapFiltersShowMultiStepForm,
   useMaptilerMapId,
 } from "@/app/lib/stores/mapFilters";
@@ -77,12 +76,14 @@ export default function MapPage() {
     return APPB_DATA.features
       .map((feature) => {
         if (feature.geometry && feature.geometry.type === "MultiPolygon") {
-          return center(feature.geometry as any);
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          return center(feature.geometry);
         }
         return null;
       })
       .filter(Boolean);
-  }, [APPB_DATA.features]);
+  }, []);
 
   const onSelectZone = useCallback(
     ({
