@@ -42,7 +42,8 @@ export const useMaptilerMapId = () =>
         return "streets-v2";
         break;
       case TransportType.OTHER:
-        return "c61094ab-586d-4d6c-85c2-48fe13732afb";
+        // TODO: add this custom maptilter map id to env var
+        return process.env.NEXT_PUBLIC_MAPTILER_MAP_ID;
         break;
       default:
         return "landscape";

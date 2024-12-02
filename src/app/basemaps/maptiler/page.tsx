@@ -13,15 +13,20 @@ import Map, {
   ViewStateChangeEvent,
   LayerProps,
 } from "react-map-gl/maplibre";
+
 import { useViewState, useMapStoreActions } from "@/app/lib/stores/mapStore";
-import ControlPanel from "@/app/components/control-panel";
 import { useMaptilerMapId } from "@/app/lib/stores/mapFilters";
+
+import ControlPanel from "@/app/components/control-panel";
 import { InfoPopup } from "@/app/components/InfoPopup";
 import { MultiStepFormPopup } from "@/app/components/MultiStepFormPopup";
-import APPB_DATA from "@/lib/data/geojson/appb_zones.json";
+
 import { appbZonesLayer } from "@/app/lib/styles/mapStyles";
 
+import APPB_DATA from "@/lib/data/geojson/appb_zones.json";
+
 export default function MapPage() {
+  const [cursor, setCursor] = useState<string>("auto");
   const [showInfoPopup, setShowInfoPopup] = useState(true);
   const [showMultiStepFormPopup, setShowMultiStepFormPopup] = useState(false);
 
@@ -49,6 +54,9 @@ export default function MapPage() {
     },
     []
   );
+
+  const onMouseEnter = useCallback(() => setCursor("pointer"), []);
+  const onMouseLeave = useCallback(() => setCursor("auto"), []);
 
   const handleInfoPopupClose = () => {
     setShowInfoPopup(false);
@@ -81,6 +89,9 @@ export default function MapPage() {
         {...viewState}
         onMove={(evt: ViewStateChangeEvent) => setViewState(evt.viewState)}
         onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        cursor={cursor}
         style={{ width: "100%", height: "100%" }}
         mapStyle={`https://api.maptiler.com/maps/${maptilerMapId}/style.json?key=${maptilerKey}`}
         interactiveLayerIds={["appb-zones-layer"]}
