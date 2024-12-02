@@ -33,8 +33,8 @@ import {
   useMapFiltersSelectedDate,
   useMapFiltersSelectedTransport,
   useMapFiltersSelectedZones,
-} from "../lib/stores/mapFilters";
-import { Zone } from "../lib/types/mapFilters";
+} from "@/app/lib/stores/mapFilters";
+import { TransportType, Zone } from "@/app/lib/types/mapFilters";
 
 const CustomBulletStepper = styled(Stepper)(({ theme }) => ({
   display: "flex",
@@ -153,10 +153,10 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 sx={[
                   {
                     ...styles.paper,
-                    opacity: selectedTransport === "car" ? 1 : 0.5,
+                    opacity: selectedTransport === TransportType.CAR ? 1 : 0.5,
                   },
                 ]}
-                onClick={() => setSelectedTransport("car")}
+                onClick={() => setSelectedTransport(TransportType.CAR)}
               >
                 <DirectionsCarIcon
                   style={{ color: theme.palette.green.main, fontSize: "40px" }}
@@ -168,10 +168,11 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 sx={[
                   {
                     ...styles.paper,
-                    opacity: selectedTransport === "other" ? 1 : 0.5,
+                    opacity:
+                      selectedTransport === TransportType.OTHER ? 1 : 0.5,
                   },
                 ]}
-                onClick={() => setSelectedTransport("other")}
+                onClick={() => setSelectedTransport(TransportType.OTHER)}
               >
                 <MoreHorizIcon
                   style={{ color: theme.palette.green.main, fontSize: "40px" }}
