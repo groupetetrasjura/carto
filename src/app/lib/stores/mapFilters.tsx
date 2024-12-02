@@ -1,6 +1,10 @@
 import { StateCreator, create } from "zustand";
 import { Dayjs } from "dayjs";
-import { MapFiltersState, TransportType, Zone } from "../types/mapFilters";
+import {
+  MapFiltersState,
+  TransportType,
+  Zone,
+} from "@/app/lib/types/mapFilters";
 
 export const initialMapFiltersState = {
   selectedZones: [],
@@ -34,6 +38,22 @@ export const useMapFiltersSelectedZones = () =>
 
 export const useMapFiltersSelectedTransport = () =>
   useMapFilters((state) => state.selectedTransport);
+
+export const useMaptilerMapId = () =>
+  useMapFilters((state) => {
+    switch (state.selectedTransport) {
+      case TransportType.CAR:
+        return "streets-v2";
+        break;
+      case TransportType.OTHER:
+        // TODO: add this custom maptilter map id to env var
+        return process.env.NEXT_PUBLIC_MAPTILER_MAP_ID;
+        break;
+      default:
+        return "landscape";
+        break;
+    }
+  });
 
 export const useMapFiltersSelectedDate = () =>
   useMapFilters((state) => state.selectedDate);
