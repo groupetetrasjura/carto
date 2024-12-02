@@ -24,17 +24,40 @@ import { MultiStepFormPopup } from "@/app/components/MultiStepFormPopup";
 import { appbZonesLayer } from "@/app/lib/styles/mapStyles";
 
 import APPB_DATA from "@/lib/data/geojson/appb_zones.json";
+import { MaptilerCredentials } from "@/app/lib/types/api/Credentials";
 
 export default function MapPage() {
   const [cursor, setCursor] = useState<string>("auto");
   const [showInfoPopup, setShowInfoPopup] = useState(true);
   const [showMultiStepFormPopup, setShowMultiStepFormPopup] = useState(false);
+  const [maptilerCredentials, setMaptilerCredentials] = useState<
+    MaptilerCredentials | undefined
+  >(undefined);
 
   const mapRef = useRef<MapRef | null>(null);
   const viewState = useViewState();
   const { setViewState } = useMapStoreActions();
   const maptilerMapId = useMaptilerMapId();
+
   const maptilerKey = process.env.NEXT_PUBLIC_MAPTILER_API_KEY;
+
+  useEffect(() => {
+    const fetchCredentials = async () => {
+      try {
+        const response = await fetch("/api/credentials");
+        const data = await response.json();
+        setMaptilerCredentials(data);
+      } catch (error) {
+        console.error("Failed to fetch credentials:", error);
+      }
+    };
+
+    fetchCredentials();
+  }, []);
+
+  useEffect(() => {
+    console.log("credentials", maptilerCredentials);
+  }, [maptilerCredentials]);
 
   const onSelectZone = useCallback(
     ({
