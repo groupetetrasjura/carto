@@ -7,8 +7,6 @@ export async function GET() {
       maptilerMapId: process.env.NEXT_PUBLIC_MAPTILER_MAP_ID,
     };
 
-    console.log("credentials", credentials);
-
     return NextResponse.json(credentials);
   } catch (error) {
     return NextResponse.json(

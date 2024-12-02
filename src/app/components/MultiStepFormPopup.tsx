@@ -30,6 +30,7 @@ import { Dayjs } from "dayjs";
 import "dayjs/locale/fr";
 import {
   useMapFiltersActions,
+  useMapFiltersCurrentStep,
   useMapFiltersSelectedDate,
   useMapFiltersSelectedTransport,
   useMapFiltersSelectedZones,
@@ -74,23 +75,32 @@ const CustomBulletStepper = styled(Stepper)(({ theme }) => ({
 }));
 
 const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { setSelectedZones, setSelectedTransport, setSelectedDate } =
-    useMapFiltersActions();
+  const {
+    setSelectedZones,
+    setSelectedTransport,
+    setSelectedDate,
+    setCurrentStep,
+  } = useMapFiltersActions();
   const selectedZones = useMapFiltersSelectedZones();
   const selectedTransport = useMapFiltersSelectedTransport();
   const selectedDate = useMapFiltersSelectedDate();
+  const currentStep = useMapFiltersCurrentStep();
   const theme = useTheme();
 
   const [open] = useState<boolean>(true);
-  const [activeStep, setActiveStep] = useState<number>(0);
 
-  const handleClose = (): void => onClose();
+  const handleClose = (): void => {
+    setCurrentStep(1);
+    onClose();
+  };
 
-  const handleNext = (): void =>
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  const handleNext = (): void => {
+    setCurrentStep(currentStep + 1);
+  };
 
-  const handleBack = (): void =>
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  const handleBack = (): void => {
+    setCurrentStep(currentStep - 1);
+  };
 
   const handleSubmit = (): void => {
     console.log("Form submitted:", {
@@ -213,7 +223,7 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle>Planifiez votre visite dès maintenant</DialogTitle>
       <DialogContent>
-        <CustomBulletStepper activeStep={activeStep}>
+        <CustomBulletStepper activeStep={currentStep}>
           {steps.map((_, index) => (
             <Step key={index}>
               <StepLabel />
@@ -221,10 +231,10 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           ))}
         </CustomBulletStepper>
 
-        {getStepContent(activeStep)}
+        {getStepContent(currentStep)}
       </DialogContent>
       <DialogActions sx={{ justifyContent: "space-between", width: "100%" }}>
-        {activeStep === 0 ? (
+        {currentStep === 0 ? (
           <>
             <Button variant="brownMain" onClick={handleClose}>
               Plus tard
@@ -238,7 +248,7 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             <Button variant="brownMain" onClick={handleBack}>
               Retour
             </Button>
-            {activeStep === steps.length - 1 ? (
+            {currentStep === steps.length - 1 ? (
               <Button variant="greenMain" onClick={handleSubmit}>
                 Valider
               </Button>
