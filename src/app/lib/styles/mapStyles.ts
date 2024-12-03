@@ -7,7 +7,7 @@ export const appbZonesLayer: FillLayer = {
   type: "fill",
   paint: {
     "fill-color": "#c0dac8",
-    "fill-opacity": 0.8,
+    "fill-opacity": 0.5,
   },
 };
 

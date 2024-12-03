@@ -38,6 +38,15 @@ const theme = createTheme({
             },
           },
         },
+        {
+          props: { variant: "outlined" },
+          style: {
+            backgroundColor: "#FFFFFF",
+            border: "solid 1px",
+            borderColor: "#725E51",
+            color: "#725E51",
+          },
+        },
       ],
     },
     MuiTypography: {

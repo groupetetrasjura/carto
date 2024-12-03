@@ -37,10 +37,13 @@ import Image from "next/image";
 import MapFiltersButtons from "./components/MapFiltersButtons";
 import center from "@turf/center";
 import { Box } from "@mui/material";
+import ZoneCardPopup from "./components/ZoneCardPopup";
 
 export default function MapPage() {
   const [cursor, setCursor] = useState<string>("auto");
   const [showInfoPopup, setShowInfoPopup] = useState(true);
+  const [showZoneCardPopup, setShowZoneCardPopup] = useState(false);
+  const [zoneCardTitle, setZoneCardTitle] = useState("");
   const { setCurrentStep, setShowMultiStepForm } = useMapFiltersActions();
   const showMultiStepFormPopup = useMapFiltersShowMultiStepForm();
   const [maptilerCredentials, setMaptilerCredentials] = useState<
@@ -118,13 +121,10 @@ export default function MapPage() {
   };
 
   const onClick = useCallback((event: MapLayerMouseEvent) => {
-    console.log(event);
     const feature = event.features && event.features[0];
-    if (feature) {
-      console.log("feature", feature);
-      window.alert(
-        `Clicked layer ${feature.layer.id} / Feature ${feature.properties.name}`
-      ); // eslint-disable-line no-alert
+    if (feature && feature.properties.name) {
+      setZoneCardTitle(feature.properties.name);
+      setShowZoneCardPopup(true);
     }
   }, []);
 
@@ -164,6 +164,14 @@ export default function MapPage() {
           <GeolocateControl position="top-right" />
 
           <MapFiltersButtons openMultiStepForm={openMultiStepForm} />
+          <ZoneCardPopup
+            open={showZoneCardPopup}
+            onClose={() => {
+              setShowZoneCardPopup(false);
+            }}
+            title={zoneCardTitle}
+            onDownload={() => console.log("download....")}
+          />
 
           {showInfoPopup && <InfoPopup onClose={handleInfoPopupClose} />}
 
