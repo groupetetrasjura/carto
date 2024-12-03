@@ -2,7 +2,7 @@ import { Dayjs } from "dayjs";
 
 export enum TransportType {
   CAR = "car",
-  OTHER = "other",
+  OUTDOOR = "outdoor",
 }
 
 export type Zone =

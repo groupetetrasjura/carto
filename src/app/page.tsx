@@ -18,6 +18,7 @@ import Map, {
 import { useViewState, useMapStoreActions } from "@/app/lib/stores/mapStore";
 import {
   useMapFiltersActions,
+  useMapFiltersSelectedTransport,
   useMapFiltersShowMultiStepForm,
   useMaptilerMapId,
 } from "@/app/lib/stores/mapFilters";
@@ -41,6 +42,8 @@ import MapFiltersButtons from "./components/MapFiltersButtons";
 import center from "@turf/center";
 import { Box } from "@mui/material";
 import ZoneCardPopup from "./components/ZoneCardPopup";
+import { AuthorizedPathsCollection } from "./lib/types/GeoJSON";
+import { filterAuthorizedPathsData } from "./lib/utils";
 
 export default function MapPage() {
   const [cursor, setCursor] = useState<string>("auto");
@@ -52,11 +55,14 @@ export default function MapPage() {
   const [maptilerCredentials, setMaptilerCredentials] = useState<
     MaptilerCredentials | undefined
   >(undefined);
+  const [filteredData, setFilteredData] =
+    useState<AuthorizedPathsCollection | null>(null);
 
   const mapRef = useRef<MapRef | null>(null);
   const viewState = useViewState();
   const { setViewState } = useMapStoreActions();
   const maptilerMapId = useMaptilerMapId();
+  const selectedTransport = useMapFiltersSelectedTransport();
 
   const openMultiStepForm = (step: number) => {
     setShowMultiStepForm(true);
@@ -131,6 +137,18 @@ export default function MapPage() {
     }
   }, []);
 
+  // au clic sur l'itinéraire
+
+  useEffect(() => {
+    if (allPathsData && selectedTransport) {
+      const filtered = filterAuthorizedPathsData(
+        allPathsData,
+        selectedTransport
+      );
+      setFilteredData(filtered as AuthorizedPathsCollection);
+    }
+  }, [selectedTransport, allPathsData]);
+
   return (
     <Box style={{ position: "fixed", top: 0, bottom: 0, left: 0, right: 0 }}>
       {maptilerCredentials?.maptilerApiKey && (
@@ -150,13 +168,15 @@ export default function MapPage() {
             <Layer {...(appbZonesLayer as LayerProps)} />
             <Layer {...(appbZonesBorderLayer as LayerProps)} />
           </Source>
-          <Source
-            id="authorized-paths-source"
-            type="geojson"
-            data={allPathsData}
-          >
-            <Layer {...(pathsLayer as LayerProps)} />
-          </Source>
+          {filteredData && (
+            <Source
+              id="authorized-paths-source"
+              type="geojson"
+              data={filteredData}
+            >
+              <Layer {...(pathsLayer as LayerProps)} />
+            </Source>
+          )}
           {centroids.length > 0 &&
             centroids.map((centroid, index) => (
               <Marker

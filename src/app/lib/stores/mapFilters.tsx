@@ -48,7 +48,7 @@ export const useMaptilerMapId = () =>
     switch (state.selectedTransport) {
       case TransportType.CAR:
         return "streets-v2";
-      case TransportType.OTHER:
+      case TransportType.OUTDOOR:
         // TODO: add this custom maptilter map id to env var
         return "outdoor-v2";
       default:

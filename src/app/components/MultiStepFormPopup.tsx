@@ -179,10 +179,10 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   {
                     ...styles.paper,
                     opacity:
-                      selectedTransport === TransportType.OTHER ? 1 : 0.5,
+                      selectedTransport === TransportType.OUTDOOR ? 1 : 0.5,
                   },
                 ]}
-                onClick={() => setSelectedTransport(TransportType.OTHER)}
+                onClick={() => setSelectedTransport(TransportType.OUTDOOR)}
               >
                 <MoreHorizIcon
                   style={{ color: theme.palette.green.main, fontSize: "40px" }}
