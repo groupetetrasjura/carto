@@ -7,6 +7,7 @@ export const appbZonesLayer: FillLayer = {
   type: "fill",
   paint: {
     "fill-color": "#c0dac8",
+    "fill-outline-color": "gray",
     "fill-opacity": 0.5,
   },
 };
@@ -30,5 +31,17 @@ export const logoLayer: LayerProps = {
     "icon-allow-overlap": true,
     "icon-anchor": "bottom", // Adjust anchor if necessary
     "icon-offset": [0, -15], // Adjust offset if necessary
+  },
+};
+
+export const pathsLayer: LayerProps = {
+  id: "paths-layer",
+  type: "line",
+  source: "authorized-paths-source",
+  paint: {
+    "line-color": "#FF0000",
+    "line-width": 3,
+    "line-opacity": 0.8,
+    "line-dasharray": [2, 1],
   },
 };

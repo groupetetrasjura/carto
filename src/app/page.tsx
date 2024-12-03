@@ -29,9 +29,12 @@ import { MultiStepFormPopup } from "@/app/components/MultiStepFormPopup";
 import {
   appbZonesBorderLayer,
   appbZonesLayer,
+  pathsLayer,
 } from "@/app/lib/styles/mapStyles";
 
 import APPB_DATA from "@/lib/data/geojson/appb_zones.json";
+import allPathsData from "@/lib/data/geojson/authorized_paths_with_dates_zones_and_transport_modes.json";
+
 import { MaptilerCredentials } from "@/app/lib/types/api/Credentials";
 import Image from "next/image";
 import MapFiltersButtons from "./components/MapFiltersButtons";
@@ -146,6 +149,13 @@ export default function MapPage() {
           <Source id="appb-zones-source" type="geojson" data={APPB_DATA}>
             <Layer {...(appbZonesLayer as LayerProps)} />
             <Layer {...(appbZonesBorderLayer as LayerProps)} />
+          </Source>
+          <Source
+            id="authorized-paths-source"
+            type="geojson"
+            data={allPathsData}
+          >
+            <Layer {...(pathsLayer as LayerProps)} />
           </Source>
           {centroids.length > 0 &&
             centroids.map((centroid, index) => (
