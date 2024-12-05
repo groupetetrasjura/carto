@@ -2,7 +2,7 @@
 // Define a generic GeoJSON Feature interface
 export interface GeoJSONFeature<
   Properties = Record<string, unknown>,
-  Geometry = { type: string; coordinates: any }
+  Geometry = { type: string; coordinates: [number, number][] }
 > {
   type: "Feature";
   geometry: Geometry;
@@ -10,7 +10,10 @@ export interface GeoJSONFeature<
 }
 
 // Define a GeoJSON FeatureCollection interface
-export interface GeoJSONFeatureCollection<Properties = any, Geometry = any> {
+export interface GeoJSONFeatureCollection<
+  Properties = Record<string, unknown>,
+  Geometry = { type: string; coordinates: [number, number][] }
+> {
   type: "FeatureCollection";
   features: GeoJSONFeature<Properties, Geometry>[];
 }
