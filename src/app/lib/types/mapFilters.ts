@@ -7,7 +7,7 @@ export enum TransportType {
 
 export type Zone =
   | "Massacre"
-  | "Bois de Ban-Arobiers"
+  | "Bois de Bans-Arobiers"
   | "Risoux"
   | "Haute Joux"
   | "Combe Noire";
@@ -18,6 +18,7 @@ export interface MapFiltersActions {
   setSelectedDate: (date: Dayjs | null) => void;
   setCurrentStep: (step: number) => void;
   setShowMultiStepForm: (value: boolean) => void;
+  setMaptilerMapId: (mapId: string) => void;
 }
 export interface MapFiltersState {
   selectedZones: Zone[];
@@ -26,4 +27,5 @@ export interface MapFiltersState {
   currentStep: number;
   actions: MapFiltersActions;
   showMultiStepForm: boolean;
+  maptilerMapId: string | null;
 }
