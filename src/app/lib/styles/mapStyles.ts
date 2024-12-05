@@ -39,9 +39,8 @@ export const pathsLayer: LayerProps = {
   type: "line",
   source: "authorized-paths-source",
   paint: {
-    "line-color": "#FF0000",
+    "line-color": ["get", "color"],
     "line-width": 3,
     "line-opacity": 0.8,
-    "line-dasharray": [2, 1],
   },
 };
