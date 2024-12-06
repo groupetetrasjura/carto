@@ -15,7 +15,6 @@
     "@mui/material": "^6.1.9",
     "@mui/x-date-pickers": "^7.22.3",
     "@mui/x-date-pickers-pro": "^7.22.3",
-    "@turf/center": "^7.1.0",
     "dayjs": "^1.11.13",
     "maplibre-gl": "^4.7.1",
     "next": "15.0.3",
