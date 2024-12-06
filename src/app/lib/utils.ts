@@ -54,24 +54,8 @@ export function filterAuthorizedPathsData(
           return false;
 
         if (isDateActive) {
-          const {
-            start_day,
-            start_month,
-            end_day,
-            end_month,
-            Période_autorisation,
-          } = feature.properties;
-
-          if (start_day && start_month && end_day && end_month) {
-            if (
-              selectedMonth < start_month ||
-              (selectedMonth === start_month && selectedDay < start_day) ||
-              selectedMonth > end_month ||
-              (selectedMonth === end_month && selectedDay > end_day)
-            ) {
-              return false;
-            }
-          } else if (Période_autorisation) {
+          const { Période_autorisation } = feature.properties;
+          if (Période_autorisation) {
             return isDateInPeriod(
               selectedDay,
               selectedMonth,
