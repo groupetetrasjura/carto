@@ -19,14 +19,17 @@ import {
   useTheme,
   Stack,
   Paper,
+  Box,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import LandscapeIcon from "@mui/icons-material/Landscape";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import DirectionsWalkIcon from "@mui/icons-material/DirectionsWalk";
+import DirectionsBikeIcon from "@mui/icons-material/DirectionsBike";
+import DownhillSkiingIcon from "@mui/icons-material/DownhillSkiing";
 import { Dayjs } from "dayjs";
 import "dayjs/locale/fr";
 import {
@@ -198,9 +201,26 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 ]}
                 onClick={() => setSelectedTransport(TransportType.OUTDOOR)}
               >
-                <MoreHorizIcon
-                  style={{ color: theme.palette.green.main, fontSize: "40px" }}
-                />
+                <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
+                  <DirectionsWalkIcon
+                    style={{
+                      color: theme.palette.green.main,
+                      fontSize: "40px",
+                    }}
+                  />
+                  <DirectionsBikeIcon
+                    style={{
+                      color: theme.palette.green.main,
+                      fontSize: "40px",
+                    }}
+                  />
+                  <DownhillSkiingIcon
+                    style={{
+                      color: theme.palette.green.main,
+                      fontSize: "40px",
+                    }}
+                  />
+                </Box>
                 <Typography color="greenMain">Autre</Typography>
               </Paper>
             </Stack>
