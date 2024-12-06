@@ -25,7 +25,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import LandscapeIcon from "@mui/icons-material/Landscape";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 import { Dayjs } from "dayjs";
 import "dayjs/locale/fr";
 import {
@@ -36,6 +37,7 @@ import {
   useMapFiltersSelectedZones,
 } from "@/app/lib/stores/mapFilters";
 import { TransportType, Zone } from "@/app/lib/types/mapFilters";
+import { DateCalendar } from "@mui/x-date-pickers";
 
 const CustomBulletStepper = styled(Stepper)(({ theme }) => ({
   display: "flex",
@@ -119,7 +121,7 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   const zones: { name: Zone; city: string }[] = [
     { name: "Massacre", city: "Lajoux, Les Rousses" },
-    { name: "Bois de Ban-Arobiers", city: "Longchaumois, Les Rousses" },
+    { name: "Bois de Bans-Arobiers", city: "Longchaumois, Les Rousses" },
     { name: "Risoux", city: "Les Rousses, Bois-d'Amont, Bellefontaine" },
     { name: "Haute Joux", city: "Mignovillard, Pontarlier, Champagnole" },
     { name: "Combe Noire", city: "Mignovillard, Pontarlier, Champagnole" },
@@ -130,7 +132,13 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       case 0:
         return (
           <List>
-            <Typography color="textSecondary" gutterBottom fontSize="16px">
+            <Typography
+              gutterBottom
+              fontSize="16px"
+              color="brownMain"
+              fontWeight={600}
+              textAlign={"center"}
+            >
               Quels massifs souhaitez-vous visiter ?
             </Typography>
             {zones.map((zone) => (
@@ -154,7 +162,13 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       case 1:
         return (
           <>
-            <Typography color="textSecondary" gutterBottom fontSize="16px">
+            <Typography
+              gutterBottom
+              fontSize="16px"
+              fontWeight={600}
+              textAlign={"center"}
+              color="brownMain"
+            >
               Comment souhaitez-vous visiter le massif ?
             </Typography>
             <Stack direction="row" justifyContent="center" spacing={3} mt={2}>
@@ -179,10 +193,10 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   {
                     ...styles.paper,
                     opacity:
-                      selectedTransport === TransportType.OTHER ? 1 : 0.5,
+                      selectedTransport === TransportType.OUTDOOR ? 1 : 0.5,
                   },
                 ]}
-                onClick={() => setSelectedTransport(TransportType.OTHER)}
+                onClick={() => setSelectedTransport(TransportType.OUTDOOR)}
               >
                 <MoreHorizIcon
                   style={{ color: theme.palette.green.main, fontSize: "40px" }}
@@ -195,7 +209,13 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       case 2:
         return (
           <>
-            <Typography color="textSecondary" gutterBottom fontSize="16px">
+            <Typography
+              color="brownMain"
+              gutterBottom
+              fontSize="16px"
+              fontWeight={600}
+              textAlign={"center"}
+            >
               Quand souhaitez-vous visiter le massif ?
             </Typography>
             <Stack direction="row" justifyContent="center" mt={2}>
@@ -203,9 +223,8 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 dateAdapter={AdapterDayjs}
                 adapterLocale="fr"
               >
-                <DatePicker
+                <DateCalendar
                   value={selectedDate ? selectedDate : null}
-                  format="DD/MM/YYYY"
                   onChange={(newValue: Dayjs | null) =>
                     setSelectedDate(newValue)
                   }
@@ -221,7 +240,21 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Planifiez votre visite dès maintenant</DialogTitle>
+      <DialogTitle textAlign={"center"}>
+        Planifiez votre visite dès maintenant
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={{
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
         <CustomBulletStepper activeStep={currentStep}>
           {steps.map((_, index) => (

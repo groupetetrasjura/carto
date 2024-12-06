@@ -12,6 +12,7 @@ export const initialMapFiltersState = {
   selectedDate: null,
   currentStep: 0,
   showMultiStepForm: false,
+  maptilerMapId: null,
 };
 
 export const stateCreator: StateCreator<MapFiltersState> = (set) => ({
@@ -31,6 +32,7 @@ export const stateCreator: StateCreator<MapFiltersState> = (set) => ({
     setSelectedDate: (date: Dayjs | null) => set({ selectedDate: date }),
     setCurrentStep: (step: number) => set({ currentStep: step }),
     setShowMultiStepForm: (value: boolean) => set({ showMultiStepForm: value }),
+    setMaptilerMapId: (mapId: string) => set({ maptilerMapId: mapId }),
   },
 });
 
@@ -48,9 +50,8 @@ export const useMaptilerMapId = () =>
     switch (state.selectedTransport) {
       case TransportType.CAR:
         return "streets-v2";
-      case TransportType.OTHER:
-        // TODO: add this custom maptilter map id to env var
-        return "outdoor-v2";
+      case TransportType.OUTDOOR:
+        return state?.maptilerMapId || "outdoor-v2";
       default:
         return "landscape";
     }
