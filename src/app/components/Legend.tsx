@@ -1,26 +1,23 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import LayersIcon from "@mui/icons-material/Layers";
 import IconButton from "@mui/material/IconButton";
 
 export const Legend = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  return (
-    <Box
-      style={{
-        position: "absolute",
-        bottom: 10,
-        left: 20,
-        backgroundColor: "white",
-        padding: "10px",
-        borderRadius: "5px",
-        boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
-        maxHeight: isCollapsed ? "60px" : "300px", // Limite la hauteur quand replié
-        overflow: "hidden",
-        transition: "max-height 0.3s ease",
-      }}
-    >
+  const [isVisible, setIsVisible] = useState(false);
+  const theme = useTheme();
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
+
+  const toggleLegend = () => {
+    setIsVisible(!isVisible);
+    setIsCollapsed(false);
+  };
+
+  const legendContent = (
+    <>
       <Box
         style={{
           display: "flex",
@@ -28,16 +25,21 @@ export const Legend = () => {
           alignItems: "center",
         }}
       >
-        <Typography variant="inherit" fontSize={"14px"}>
-          {`Légende`}
-        </Typography>
-        <IconButton onClick={() => setIsCollapsed(!isCollapsed)} size="small">
-          {isCollapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
-        </IconButton>
+        {!isTablet && (
+          <Typography variant="inherit" fontSize={"14px"}>
+            {`Légende`}
+          </Typography>
+        )}
+        {!isTablet && (
+          <IconButton onClick={() => setIsCollapsed(!isCollapsed)} size="small">
+            {isCollapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+          </IconButton>
+        )}
       </Box>
 
-      {!isCollapsed && (
-        <>
+      {(!isTablet && !isCollapsed) || isTablet ? (
+        <Box>
+          Itinéraires autorisés:
           <Box
             style={{
               display: "flex",
@@ -117,8 +119,65 @@ export const Legend = () => {
             ></Box>
             <span>{`Non réglementé par l'APPB / Si déneigé`}</span>
           </Box>
-        </>
-      )}
+        </Box>
+      ) : null}
+    </>
+  );
+
+  if (isTablet) {
+    return (
+      <>
+        <IconButton
+          onClick={toggleLegend}
+          style={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            backgroundColor: "white",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
+            zIndex: 1000,
+          }}
+        >
+          <LayersIcon />
+        </IconButton>
+        {isVisible && (
+          <Box
+            style={{
+              position: "fixed",
+              bottom: 80,
+              right: 20,
+              maxWidth: "calc(100% - 40px)",
+              backgroundColor: "white",
+              padding: "10px",
+              borderRadius: "5px",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
+              zIndex: 1000,
+            }}
+          >
+            {legendContent}
+          </Box>
+        )}
+      </>
+    );
+  }
+
+  return (
+    <Box
+      style={{
+        position: "absolute",
+        bottom: 10,
+        left: 20,
+        backgroundColor: "white",
+        padding: "10px",
+        borderRadius: "5px",
+        boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
+        maxHeight: isCollapsed ? "60px" : "300px",
+        overflow: "hidden",
+        transition: "max-height 0.3s ease",
+        zIndex: 1000,
+      }}
+    >
+      {legendContent}
     </Box>
   );
 };

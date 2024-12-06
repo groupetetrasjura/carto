@@ -177,6 +177,7 @@ export default function MapPage() {
           style={{ width: "100%", height: "100%" }}
           mapStyle={`https://api.maptiler.com/maps/${maptilerMapId}/style.json?key=${maptilerCredentials?.maptilerApiKey}`}
           interactiveLayerIds={["appb-zones-layer"]}
+          attributionControl={false}
         >
           <Source id="appb-zones-source" type="geojson" data={APPB_DATA}>
             <Layer {...(appbZonesLayer as LayerProps)} />

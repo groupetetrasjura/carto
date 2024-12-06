@@ -27,6 +27,7 @@ const MapFiltersButtons = ({
         variant="brownMain"
         startIcon={<LandscapeIcon />}
         onClick={() => openMultiStepForm(0)} // Open form at step 1
+        sx={{ textTransform: "none" }}
       >
         Massifs
       </Button>
@@ -34,6 +35,7 @@ const MapFiltersButtons = ({
         variant="brownMain"
         startIcon={<DirectionsWalkIcon />}
         onClick={() => openMultiStepForm(1)} // Open form at step 2
+        sx={{ textTransform: "none" }}
       >
         {isMobile ? "Mode de dépl." : "Mode de déplacement"}
       </Button>
@@ -41,6 +43,7 @@ const MapFiltersButtons = ({
         variant="brownMain"
         startIcon={<CalendarTodayIcon />}
         onClick={() => openMultiStepForm(2)} // Open form at step 3
+        sx={{ textTransform: "none" }}
       >
         Date
       </Button>
