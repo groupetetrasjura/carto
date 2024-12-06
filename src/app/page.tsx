@@ -18,6 +18,9 @@ import Map, {
 import { useViewState, useMapStoreActions } from "@/app/lib/stores/mapStore";
 import {
   useMapFiltersActions,
+  useMapFiltersSelectedDate,
+  useMapFiltersSelectedTransport,
+  useMapFiltersSelectedZones,
   useMapFiltersShowMultiStepForm,
   useMaptilerMapId,
 } from "@/app/lib/stores/mapFilters";
@@ -29,28 +32,43 @@ import { MultiStepFormPopup } from "@/app/components/MultiStepFormPopup";
 import {
   appbZonesBorderLayer,
   appbZonesLayer,
+  pathsLayer,
 } from "@/app/lib/styles/mapStyles";
 
 import APPB_DATA from "@/lib/data/geojson/appb_zones.json";
-import { MaptilerCredentials } from "@/app/lib/types/api/Credentials";
+import allPathsData from "@/lib/data/geojson/authorized_paths_with_dates_zones_and_transport_modes.json";
+
 import Image from "next/image";
 import MapFiltersButtons from "./components/MapFiltersButtons";
 import center from "@turf/center";
 import { Box } from "@mui/material";
+import ZoneCardPopup from "./components/ZoneCardPopup";
+import { AuthorizedPathsCollection } from "./lib/types/GeoJSON";
+import { addColorsToFeatures, filterAuthorizedPathsData } from "./lib/utils";
+import { Legend } from "./components/Legend";
+import { MaptilerCredentials } from "./lib/types/api/Credentials";
 
 export default function MapPage() {
   const [cursor, setCursor] = useState<string>("auto");
   const [showInfoPopup, setShowInfoPopup] = useState(true);
-  const { setCurrentStep, setShowMultiStepForm } = useMapFiltersActions();
+  const [showZoneCardPopup, setShowZoneCardPopup] = useState(false);
+  const [zoneCardTitle, setZoneCardTitle] = useState("");
+  const { setCurrentStep, setShowMultiStepForm, setMaptilerMapId } =
+    useMapFiltersActions();
   const showMultiStepFormPopup = useMapFiltersShowMultiStepForm();
   const [maptilerCredentials, setMaptilerCredentials] = useState<
     MaptilerCredentials | undefined
   >(undefined);
+  const [filteredData, setFilteredData] =
+    useState<AuthorizedPathsCollection | null>(null);
 
   const mapRef = useRef<MapRef | null>(null);
   const viewState = useViewState();
   const { setViewState } = useMapStoreActions();
   const maptilerMapId = useMaptilerMapId();
+  const selectedTransport = useMapFiltersSelectedTransport();
+  const selectedZones = useMapFiltersSelectedZones();
+  const selectedDate = useMapFiltersSelectedDate();
 
   const openMultiStepForm = (step: number) => {
     setShowMultiStepForm(true);
@@ -63,13 +81,16 @@ export default function MapPage() {
         const response = await fetch("/api/credentials");
         const data = await response.json();
         setMaptilerCredentials(data);
+        if (data.maptilerMapId) {
+          setMaptilerMapId(data.maptilerMapId);
+        }
       } catch (error) {
         console.error("Failed to fetch credentials:", error);
       }
     };
 
     fetchCredentials();
-  }, []);
+  }, [setMaptilerMapId]);
 
   const centroids = React.useMemo(() => {
     if (!APPB_DATA.features) return [];
@@ -118,15 +139,29 @@ export default function MapPage() {
   };
 
   const onClick = useCallback((event: MapLayerMouseEvent) => {
-    console.log(event);
     const feature = event.features && event.features[0];
-    if (feature) {
-      console.log("feature", feature);
-      window.alert(
-        `Clicked layer ${feature.layer.id} / Feature ${feature.properties.name}`
-      ); // eslint-disable-line no-alert
+    if (feature && feature.properties.name) {
+      setZoneCardTitle(feature.properties.name);
+      setShowZoneCardPopup(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (allPathsData) {
+      const filtered = filterAuthorizedPathsData(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        allPathsData,
+        selectedTransport,
+        selectedZones,
+        selectedDate
+      );
+      const coloredData = addColorsToFeatures(filtered);
+      setFilteredData(coloredData);
+    } else {
+      setFilteredData(null);
+    }
+  }, [selectedTransport, selectedZones, selectedDate]);
 
   return (
     <Box style={{ position: "fixed", top: 0, bottom: 0, left: 0, right: 0 }}>
@@ -147,6 +182,15 @@ export default function MapPage() {
             <Layer {...(appbZonesLayer as LayerProps)} />
             <Layer {...(appbZonesBorderLayer as LayerProps)} />
           </Source>
+          {filteredData && (
+            <Source
+              id="authorized-paths-source"
+              type="geojson"
+              data={filteredData}
+            >
+              <Layer {...(pathsLayer as LayerProps)} />
+            </Source>
+          )}
           {centroids.length > 0 &&
             centroids.map((centroid, index) => (
               <Marker
@@ -164,6 +208,15 @@ export default function MapPage() {
           <GeolocateControl position="top-right" />
 
           <MapFiltersButtons openMultiStepForm={openMultiStepForm} />
+          <Legend />
+          <ZoneCardPopup
+            open={showZoneCardPopup}
+            onClose={() => {
+              setShowZoneCardPopup(false);
+            }}
+            title={zoneCardTitle}
+            onDownload={() => console.log("download....")}
+          />
 
           {showInfoPopup && <InfoPopup onClose={handleInfoPopupClose} />}
 

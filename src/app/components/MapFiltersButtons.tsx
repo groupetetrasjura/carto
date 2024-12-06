@@ -3,12 +3,14 @@ import Button from "@mui/material/Button";
 import LandscapeIcon from "@mui/icons-material/Landscape";
 import DirectionsWalkIcon from "@mui/icons-material/DirectionsWalk";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import { useMediaQuery } from "@mui/material";
 
 const MapFiltersButtons = ({
   openMultiStepForm,
 }: {
   openMultiStepForm: (step: number) => void;
 }) => {
+  const isMobile = useMediaQuery("(max-width:600px)");
   return (
     <div
       style={{
@@ -33,7 +35,7 @@ const MapFiltersButtons = ({
         startIcon={<DirectionsWalkIcon />}
         onClick={() => openMultiStepForm(1)} // Open form at step 2
       >
-        Mode de déplacement
+        {isMobile ? "Mode de dépl." : "Mode de déplacement"}
       </Button>
       <Button
         variant="brownMain"
