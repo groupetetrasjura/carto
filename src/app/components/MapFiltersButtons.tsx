@@ -23,9 +23,7 @@ const MapFiltersButtons = ({
   const selectedZones = useMapFiltersSelectedZones();
   const selectedTransport = useMapFiltersSelectedTransport();
   const selectedDate = useMapFiltersSelectedDate();
-  console.log(selectedZones);
-  console.log(selectedTransport);
-  console.log(selectedDate);
+
   return (
     <div
       style={{

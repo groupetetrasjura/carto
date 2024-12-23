@@ -47,6 +47,7 @@ import { AuthorizedPathsCollection } from "./lib/types/GeoJSON";
 import { addColorsToFeatures, filterAuthorizedPathsData } from "./lib/utils";
 import { Legend } from "./components/Legend";
 import { MaptilerCredentials } from "./lib/types/api/Credentials";
+import DownloadFormPopup from "./components/DownloadFormPopup";
 
 export default function MapPage() {
   const [cursor, setCursor] = useState<string>("auto");
@@ -92,24 +93,24 @@ export default function MapPage() {
     fetchCredentials();
   }, [setMaptilerMapId]);
 
-  const onSelectZone = useCallback(
-    ({
-      longitude,
-      latitude,
-      zoom,
-    }: {
-      longitude: number;
-      latitude: number;
-      zoom: number;
-    }) => {
-      mapRef.current?.flyTo({
-        center: [longitude, latitude],
-        duration: 2000,
-        zoom: zoom,
-      });
-    },
-    []
-  );
+  // const onSelectZone = useCallback(
+  //   ({
+  //     longitude,
+  //     latitude,
+  //     zoom,
+  //   }: {
+  //     longitude: number;
+  //     latitude: number;
+  //     zoom: number;
+  //   }) => {
+  //     mapRef.current?.flyTo({
+  //       center: [longitude, latitude],
+  //       duration: 2000,
+  //       zoom: zoom,
+  //     });
+  //   },
+  //   []
+  // );
 
   const onMouseEnter = useCallback(() => setCursor("pointer"), []);
   const onMouseLeave = useCallback(() => setCursor("grab"), []);
@@ -190,7 +191,8 @@ export default function MapPage() {
               </Marker>
             ))}
 
-          <ControlPanel onSelectZone={onSelectZone} />
+          {/* <ControlPanel onSelectZone={onSelectZone} /> */}
+          <ControlPanel />
           <NavigationControl position="top-right" />
           <GeolocateControl position="top-right" />
 
@@ -210,6 +212,7 @@ export default function MapPage() {
           {showMultiStepFormPopup && (
             <MultiStepFormPopup onClose={handleMultiStepFormPopupClose} />
           )}
+          <DownloadFormPopup />
         </Map>
       )}
     </Box>
