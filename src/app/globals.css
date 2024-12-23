@@ -41,13 +41,19 @@ a {
   }
 }
 
+.custom-control-container {
+  position: absolute;
+  top: 148px;
+  right: 8px;
+}
+
 .control-panel {
   position: absolute;
   top: 136px;
   right: 0;
   max-width: 320px;
   background: #fff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   padding: 12px 24px;
   margin: 8px;
   font-size: 13px;

@@ -33,6 +33,7 @@ export const stateCreator: StateCreator<MapFiltersState> = (set) => ({
     setCurrentStep: (step: number) => set({ currentStep: step }),
     setShowMultiStepForm: (value: boolean) => set({ showMultiStepForm: value }),
     setMaptilerMapId: (mapId: string) => set({ maptilerMapId: mapId }),
+    clearMapFilters: () => set(initialMapFiltersState),
   },
 });
 
