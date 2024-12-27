@@ -40,7 +40,10 @@ const DownloadFormPopup = () => {
   };
 
   const handleDownload = () => {
-    // TODO: Implement download logic
+    if (selectedZoneName && selectedPeriod) {
+      const fileName = `${selectedZoneName}_${selectedPeriod}.jpeg`;
+      window.open(`/cartes/${fileName}`, "_blank");
+    }
     handleClose();
   };
 
@@ -85,13 +88,11 @@ const DownloadFormPopup = () => {
               onChange={(e) => setSelectedZoneName(e.target.value)}
               label="Zone"
             >
-              <MenuItem value="massacre">Massacre</MenuItem>
-              <MenuItem value="bois_de_bans_arobiers">
-                Bois de Bans-Arobiers
-              </MenuItem>
-              <MenuItem value="risoux">Risoux</MenuItem>
-              <MenuItem value="haute_joux">Haute Joux</MenuItem>
-              <MenuItem value="combe_noire">Combe Noire</MenuItem>
+              <MenuItem value="MASSACRE">Massacre</MenuItem>
+              <MenuItem value="BOIS-DE-BANS">Bois de Bans-Arobiers</MenuItem>
+              <MenuItem value="RISOUX">Risoux</MenuItem>
+              <MenuItem value="HAUTE-JOUX">Haute Joux</MenuItem>
+              <MenuItem value="COMBE-NOIRE">Combe Noire</MenuItem>
             </Select>
           </FormControl>
           <FormControl fullWidth sx={{ mt: 2 }}>
@@ -101,9 +102,9 @@ const DownloadFormPopup = () => {
               onChange={(e) => setSelectedPeriod(e.target.value)}
               label="Période"
             >
-              <MenuItem value="1512-1405">du 15/12 au 14/05</MenuItem>
-              <MenuItem value="1515-3006">du 15/15 au 30/06</MenuItem>
-              <MenuItem value="0107-1412">du 01/07 au 14/12</MenuItem>
+              <MenuItem value="15_12-14_05">du 15/12 au 14/05</MenuItem>
+              <MenuItem value="15_05-30_06">du 15/05 au 30/06</MenuItem>
+              <MenuItem value="01_07-14_12">du 01/07 au 14/12</MenuItem>
             </Select>
           </FormControl>
         </CardContent>
