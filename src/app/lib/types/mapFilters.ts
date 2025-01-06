@@ -19,6 +19,7 @@ export interface MapFiltersActions {
   setCurrentStep: (step: number) => void;
   setShowMultiStepForm: (value: boolean) => void;
   setMaptilerMapId: (mapId: string) => void;
+  clearMapFilters: () => void;
 }
 export interface MapFiltersState {
   selectedZones: Zone[];

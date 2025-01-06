@@ -131,8 +131,8 @@ export const Legend = () => {
           onClick={toggleLegend}
           style={{
             position: "fixed",
-            bottom: 20,
-            right: 20,
+            bottom: "0.5rem",
+            right: "0.5rem",
             backgroundColor: "white",
             boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
             zIndex: 1000,
@@ -144,8 +144,8 @@ export const Legend = () => {
           <Box
             style={{
               position: "fixed",
-              bottom: 80,
-              right: 20,
+              bottom: "4rem",
+              right: "0.5rem",
               maxWidth: "calc(100% - 40px)",
               backgroundColor: "white",
               padding: "10px",

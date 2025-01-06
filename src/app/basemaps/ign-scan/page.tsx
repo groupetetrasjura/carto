@@ -2,7 +2,7 @@
 
 import "maplibre-gl/dist/maplibre-gl.css";
 import * as React from "react";
-import { useRef, useCallback } from "react";
+import { useRef } from "react";
 import Map, {
   NavigationControl,
   GeolocateControl,
@@ -26,25 +26,6 @@ export default function MapPage() {
     tileSize: 256,
   };
 
-  const onSelectZone = useCallback(
-    ({
-      longitude,
-      latitude,
-      zoom,
-    }: {
-      longitude: number;
-      latitude: number;
-      zoom: number;
-    }) => {
-      mapRef.current?.flyTo({
-        center: [longitude, latitude],
-        duration: 2000,
-        zoom: zoom,
-      });
-    },
-    []
-  );
-
   return (
     <div style={{ position: "fixed", top: 0, bottom: 0, left: 0, right: 0 }}>
       <Map
@@ -64,7 +45,9 @@ export default function MapPage() {
           />
         </Source>
 
-        <ControlPanel onSelectZone={onSelectZone} />
+        <ControlPanel
+          handleMapSnapshot={() => console.log("handle map snapshot")}
+        />
         <NavigationControl position="top-right" />
         <GeolocateControl position="top-right" />
       </Map>

@@ -108,11 +108,6 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   };
 
   const handleSubmit = (): void => {
-    console.log("Form submitted:", {
-      selectedZones,
-      selectedTransport,
-      selectedDate,
-    });
     handleClose();
   };
 
@@ -201,7 +196,15 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 ]}
                 onClick={() => setSelectedTransport(TransportType.OUTDOOR)}
               >
-                <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: 1,
+                    flexDirection: { xs: "column", sm: "row" }, // Stack icons vertically on mobile
+                    alignItems: "center", // Center align items
+                  }}
+                >
                   <DirectionsWalkIcon
                     style={{
                       color: theme.palette.green.main,

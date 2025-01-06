@@ -4,7 +4,6 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import * as React from "react";
 import { useRef, useCallback, useState, useEffect } from "react";
 import Map, {
-  NavigationControl,
   GeolocateControl,
   Source,
   Layer,
@@ -47,6 +46,7 @@ import { AuthorizedPathsCollection } from "./lib/types/GeoJSON";
 import { addColorsToFeatures, filterAuthorizedPathsData } from "./lib/utils";
 import { Legend } from "./components/Legend";
 import { MaptilerCredentials } from "./lib/types/api/Credentials";
+import DownloadFormPopup from "./components/DownloadFormPopup";
 
 export default function MapPage() {
   const [cursor, setCursor] = useState<string>("auto");
@@ -92,24 +92,24 @@ export default function MapPage() {
     fetchCredentials();
   }, [setMaptilerMapId]);
 
-  const onSelectZone = useCallback(
-    ({
-      longitude,
-      latitude,
-      zoom,
-    }: {
-      longitude: number;
-      latitude: number;
-      zoom: number;
-    }) => {
-      mapRef.current?.flyTo({
-        center: [longitude, latitude],
-        duration: 2000,
-        zoom: zoom,
-      });
-    },
-    []
-  );
+  // const onSelectZone = useCallback(
+  //   ({
+  //     longitude,
+  //     latitude,
+  //     zoom,
+  //   }: {
+  //     longitude: number;
+  //     latitude: number;
+  //     zoom: number;
+  //   }) => {
+  //     mapRef.current?.flyTo({
+  //       center: [longitude, latitude],
+  //       duration: 2000,
+  //       zoom: zoom,
+  //     });
+  //   },
+  //   []
+  // );
 
   const onMouseEnter = useCallback(() => setCursor("pointer"), []);
   const onMouseLeave = useCallback(() => setCursor("grab"), []);
@@ -122,6 +122,52 @@ export default function MapPage() {
   const handleMultiStepFormPopupClose = () => {
     setShowMultiStepForm(false);
     setCurrentStep(1);
+  };
+
+  const handleMapSnapshot = () => {
+    mapRef.current?.getMap().triggerRepaint();
+    mapRef.current?.getMap().once("render", async () => {
+      const canvas = mapRef.current?.getMap().getCanvas();
+      if (!canvas) return;
+
+      // check webp support
+      const isWebPSupported = () => {
+        const elem = document.createElement("canvas");
+        if (!!(elem.getContext && elem.getContext("2d"))) {
+          return elem.toDataURL("image/webp").indexOf("data:image/webp") === 0;
+        }
+        return false;
+      };
+
+      let imageDataUrl;
+      let fileExtension;
+      // use webp if supported
+      if (isWebPSupported()) {
+        imageDataUrl = await new Promise((resolve) => {
+          canvas.toBlob(
+            (blob) => {
+              const reader = new FileReader();
+              reader.onloadend = () => resolve(reader.result);
+              reader.readAsDataURL(blob as Blob);
+            },
+            "image/webp",
+            0.9
+          );
+        });
+        fileExtension = "webp";
+      } else {
+        // use jpeg format
+        imageDataUrl = canvas.toDataURL("image/jpeg", 0.9); // Qualité JPEG à 90%
+        fileExtension = "jpg";
+      }
+      const link = document.createElement("a");
+      link.href = imageDataUrl as string;
+      link.download = `map_snapshot.${fileExtension}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      console.log(`Snapshot downloaded as ${fileExtension}`);
+    });
   };
 
   const onClick = useCallback((event: MapLayerMouseEvent) => {
@@ -190,10 +236,9 @@ export default function MapPage() {
               </Marker>
             ))}
 
-          <ControlPanel onSelectZone={onSelectZone} />
-          <NavigationControl position="top-right" />
+          {/* <ControlPanel onSelectZone={onSelectZone} /> */}
+          <ControlPanel handleMapSnapshot={handleMapSnapshot} />
           <GeolocateControl position="top-right" />
-
           <MapFiltersButtons openMultiStepForm={openMultiStepForm} />
           <Legend />
           <ZoneCardPopup
@@ -210,6 +255,7 @@ export default function MapPage() {
           {showMultiStepFormPopup && (
             <MultiStepFormPopup onClose={handleMultiStepFormPopupClose} />
           )}
+          <DownloadFormPopup />
         </Map>
       )}
     </Box>
