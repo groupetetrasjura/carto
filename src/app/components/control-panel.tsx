@@ -25,21 +25,30 @@ function ControlPanel({
     <div className="custom-control-container">
       <Stack direction="column" spacing={1}>
         <Tooltip title="Supprimer les filtres" placement="left">
-          <MaplibreStyledButton size="small" onClick={() => clearMapFilters()}>
-            <DoNotDisturbAltIcon fontSize="small" />
+          <MaplibreStyledButton
+            size="small"
+            onClick={() => clearMapFilters()}
+            style={styles.mapButton}
+          >
+            <DoNotDisturbAltIcon fontSize="small" sx={{ color: "#A2BE73" }} />
           </MaplibreStyledButton>
         </Tooltip>
-        <Tooltip title="Télécharger les données" placement="left">
+        <Tooltip title="Télécharger la réglementation" placement="left">
           <MaplibreStyledButton
             size="small"
             onClick={() => setIsDownloadPopupOpen(true)}
+            style={styles.mapButton}
           >
-            <DownloadIcon fontSize="small" />
+            <DownloadIcon fontSize="small" sx={{ color: "#A2BE73" }} />
           </MaplibreStyledButton>
         </Tooltip>
         <Tooltip title="Capture de la carte" placement="left">
-          <MaplibreStyledButton size="small" onClick={handleMapSnapshot}>
-            <ScreenshotIcon fontSize="small" />
+          <MaplibreStyledButton
+            size="small"
+            onClick={handleMapSnapshot}
+            style={styles.mapButton}
+          >
+            <ScreenshotIcon fontSize="small" sx={{ color: "#A2BE73" }} />
           </MaplibreStyledButton>
         </Tooltip>
       </Stack>
@@ -64,3 +73,11 @@ function ControlPanel({
 }
 
 export default React.memo(ControlPanel);
+
+const styles = {
+  mapButton: {
+    borderRadius: "50%",
+    border: "none",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
+  },
+};
