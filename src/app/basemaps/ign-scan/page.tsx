@@ -26,25 +26,6 @@ export default function MapPage() {
     tileSize: 256,
   };
 
-  const onSelectZone = useCallback(
-    ({
-      longitude,
-      latitude,
-      zoom,
-    }: {
-      longitude: number;
-      latitude: number;
-      zoom: number;
-    }) => {
-      mapRef.current?.flyTo({
-        center: [longitude, latitude],
-        duration: 2000,
-        zoom: zoom,
-      });
-    },
-    []
-  );
-
   return (
     <div style={{ position: "fixed", top: 0, bottom: 0, left: 0, right: 0 }}>
       <Map
