@@ -15,6 +15,17 @@ const theme = createTheme({
     },
   },
   components: {
+    MuiBadge: {
+      styleOverrides: {
+        badge: {
+          backgroundColor: "#A2BE73",
+          color: "#fff",
+          width: "20px",
+          height: "20px",
+          borderRadius: "50%",
+        },
+      },
+    },
     MuiButton: {
       variants: [
         {

@@ -64,7 +64,9 @@ export default function MapPage() {
           />
         </Source>
 
-        <ControlPanel onSelectZone={onSelectZone} />
+        <ControlPanel
+          handleMapSnapshot={() => console.log("handle map snapshot")}
+        />
         <NavigationControl position="top-right" />
         <GeolocateControl position="top-right" />
       </Map>

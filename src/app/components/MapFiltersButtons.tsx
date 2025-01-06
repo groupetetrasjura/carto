@@ -37,9 +37,7 @@ const MapFiltersButtons = ({
       }}
     >
       <Badge
-        color="success"
         badgeContent={<CheckIcon fontSize={"inherit"} />}
-        // variant="dot"
         invisible={!Boolean(selectedZones.length > 0)}
       >
         <Button
@@ -52,9 +50,7 @@ const MapFiltersButtons = ({
         </Button>
       </Badge>
       <Badge
-        color="success"
-        // badgeContent={<CheckIcon fontSize={"inherit"} />}
-        variant="dot"
+        badgeContent={<CheckIcon fontSize={"inherit"} />}
         invisible={!Boolean(selectedTransport)}
       >
         <Button
@@ -67,9 +63,7 @@ const MapFiltersButtons = ({
         </Button>
       </Badge>
       <Badge
-        color="success"
-        // badgeContent={<CheckIcon fontSize={"inherit"} />}
-        variant="dot"
+        badgeContent={<CheckIcon fontSize={"inherit"} />}
         invisible={!Boolean(selectedDate)}
       >
         <Button

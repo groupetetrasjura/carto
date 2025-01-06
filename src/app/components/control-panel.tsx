@@ -7,13 +7,18 @@ import * as React from "react";
 import MaplibreStyledButton from "@/app/components/MaplibreStyledButton";
 import DoNotDisturbAltIcon from "@mui/icons-material/DoNotDisturbAlt";
 import DownloadIcon from "@mui/icons-material/Download";
+import ScreenshotIcon from "@mui/icons-material/Screenshot";
 import { useMapFiltersActions } from "../lib/stores/mapFilters";
 import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 import { useMapDownloadActions } from "@/lib/stores/mapDownload";
 
 // TODO: add types
-function ControlPanel() {
+function ControlPanel({
+  handleMapSnapshot,
+}: {
+  handleMapSnapshot: () => void;
+}) {
   const { clearMapFilters } = useMapFiltersActions();
   const { setIsDownloadPopupOpen } = useMapDownloadActions();
   return (
@@ -30,6 +35,11 @@ function ControlPanel() {
             onClick={() => setIsDownloadPopupOpen(true)}
           >
             <DownloadIcon fontSize="small" />
+          </MaplibreStyledButton>
+        </Tooltip>
+        <Tooltip title="Capture de la carte" placement="left">
+          <MaplibreStyledButton size="small" onClick={handleMapSnapshot}>
+            <ScreenshotIcon fontSize="small" />
           </MaplibreStyledButton>
         </Tooltip>
       </Stack>
