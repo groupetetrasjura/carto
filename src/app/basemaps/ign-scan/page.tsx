@@ -2,7 +2,7 @@
 
 import "maplibre-gl/dist/maplibre-gl.css";
 import * as React from "react";
-import { useRef, useCallback } from "react";
+import { useRef } from "react";
 import Map, {
   NavigationControl,
   GeolocateControl,
