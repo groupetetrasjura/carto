@@ -27,9 +27,6 @@ import LandscapeIcon from "@mui/icons-material/Landscape";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import DirectionsWalkIcon from "@mui/icons-material/DirectionsWalk";
-import DirectionsBikeIcon from "@mui/icons-material/DirectionsBike";
-import DownhillSkiingIcon from "@mui/icons-material/DownhillSkiing";
 import { Dayjs } from "dayjs";
 import "dayjs/locale/fr";
 import {
@@ -41,6 +38,7 @@ import {
 } from "@/app/lib/stores/mapFilters";
 import { TransportType, Zone } from "@/app/lib/types/mapFilters";
 import { DateCalendar } from "@mui/x-date-pickers";
+import OtherIcon from "./icons/OtherIcon";
 
 const CustomBulletStepper = styled(Stepper)(({ theme }) => ({
   display: "flex",
@@ -205,24 +203,7 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     alignItems: "center", // Center align items
                   }}
                 >
-                  <DirectionsWalkIcon
-                    style={{
-                      color: theme.palette.green.main,
-                      fontSize: "40px",
-                    }}
-                  />
-                  <DirectionsBikeIcon
-                    style={{
-                      color: theme.palette.green.main,
-                      fontSize: "40px",
-                    }}
-                  />
-                  <DownhillSkiingIcon
-                    style={{
-                      color: theme.palette.green.main,
-                      fontSize: "40px",
-                    }}
-                  />
+                  <OtherIcon />
                 </Box>
                 <Typography color="greenMain">Autre</Typography>
               </Paper>
