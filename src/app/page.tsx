@@ -47,6 +47,7 @@ import { addColorsToFeatures, filterAuthorizedPathsData } from "./lib/utils";
 import { Legend } from "./components/Legend";
 import { MaptilerCredentials } from "./lib/types/api/Credentials";
 import DownloadFormPopup from "./components/DownloadFormPopup";
+import { TransportType } from "./lib/types/mapFilters";
 
 export default function MapPage() {
   const [cursor, setCursor] = useState<string>("auto");
@@ -91,25 +92,6 @@ export default function MapPage() {
 
     fetchCredentials();
   }, [setMaptilerMapId]);
-
-  // const onSelectZone = useCallback(
-  //   ({
-  //     longitude,
-  //     latitude,
-  //     zoom,
-  //   }: {
-  //     longitude: number;
-  //     latitude: number;
-  //     zoom: number;
-  //   }) => {
-  //     mapRef.current?.flyTo({
-  //       center: [longitude, latitude],
-  //       duration: 2000,
-  //       zoom: zoom,
-  //     });
-  //   },
-  //   []
-  // );
 
   const onMouseEnter = useCallback(() => setCursor("pointer"), []);
   const onMouseLeave = useCallback(() => setCursor("grab"), []);
@@ -178,6 +160,54 @@ export default function MapPage() {
     }
   }, []);
 
+  // Add this new function
+  const addIGNSourceAndLayer = useCallback(() => {
+    const map = mapRef.current?.getMap();
+    if (!map) return;
+    // Add source if it doesn't exist
+    if (!map.getSource("ign-source")) {
+      map.addSource("ign-source", {
+        type: "raster",
+        tiles: [
+          `https://data.geopf.fr/private/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&apikey=ign_scan_ws&FORMAT=image%2Fjpeg&STYLE=normal`,
+        ],
+        tileSize: 256,
+      });
+    }
+
+    if (!map.getLayer("ign-layer")) {
+      map.addLayer(
+        {
+          id: "ign-layer",
+          type: "raster",
+          source: "ign-source",
+          paint: {
+            "raster-opacity": 1.0,
+          },
+        },
+        "appb-zones-layer"
+      ); // TODO: check if this layer is present in the map style
+    }
+  }, []);
+
+  // You can call this function in useEffect or any other event handler
+  useEffect(() => {
+    const map = mapRef.current?.getMap();
+    if (!map) return;
+
+    if (viewState.zoom > 12 && selectedTransport === TransportType.OUTDOOR) {
+      addIGNSourceAndLayer();
+    } else {
+      // Remove IGN layer and source if they exist
+      if (map.getLayer("ign-layer")) {
+        map.removeLayer("ign-layer");
+      }
+      if (map.getSource("ign-source")) {
+        map.removeSource("ign-source");
+      }
+    }
+  }, [addIGNSourceAndLayer, viewState.zoom, selectedTransport]);
+
   useEffect(() => {
     if (allPathsData) {
       const filtered = filterAuthorizedPathsData(
@@ -236,7 +266,6 @@ export default function MapPage() {
               </Marker>
             ))}
 
-          {/* <ControlPanel onSelectZone={onSelectZone} /> */}
           <ControlPanel handleMapSnapshot={handleMapSnapshot} />
           <GeolocateControl position="top-right" />
           <MapFiltersButtons openMultiStepForm={openMultiStepForm} />
