@@ -1,10 +1,8 @@
 "use client";
 
-import "maplibre-gl/dist/maplibre-gl.css";
 import * as React from "react";
 import { useRef, useCallback, useState, useEffect } from "react";
 import Map, {
-  GeolocateControl,
   Source,
   Layer,
   MapRef,
@@ -24,7 +22,6 @@ import {
   useMaptilerMapId,
 } from "@/app/lib/stores/mapFilters";
 
-import ControlPanel from "@/app/components/control-panel";
 import { InfoPopup } from "@/app/components/InfoPopup";
 import { MultiStepFormPopup } from "@/app/components/MultiStepFormPopup";
 
@@ -44,10 +41,11 @@ import { Box } from "@mui/material";
 import ZoneCardPopup from "./components/ZoneCardPopup";
 import { AuthorizedPathsCollection } from "./lib/types/GeoJSON";
 import { addColorsToFeatures, filterAuthorizedPathsData } from "./lib/utils";
-import { Legend } from "./components/Legend";
+import { Legend } from "./components/Legend2";
 import { MaptilerCredentials } from "./lib/types/api/Credentials";
 import DownloadFormPopup from "./components/DownloadFormPopup";
 import { TransportType } from "./lib/types/mapFilters";
+import MoreActions from "./components/MoreActions";
 
 export default function MapPage() {
   const [cursor, setCursor] = useState<string>("auto");
@@ -266,9 +264,11 @@ export default function MapPage() {
               </Marker>
             ))}
 
-          <ControlPanel handleMapSnapshot={handleMapSnapshot} />
-          <GeolocateControl position="top-right" />
-          <MapFiltersButtons openMultiStepForm={openMultiStepForm} />
+          {/* <GeolocateControl position="bottom-right" /> */}
+          <MapFiltersButtons
+            openMultiStepForm={openMultiStepForm}
+            mapRef={mapRef}
+          />
           <Legend />
           <ZoneCardPopup
             open={showZoneCardPopup}
@@ -278,6 +278,7 @@ export default function MapPage() {
             title={zoneCardTitle}
             onDownload={() => console.log("download....")}
           />
+          <MoreActions handleMapSnapshot={handleMapSnapshot} />
 
           {showInfoPopup && <InfoPopup onClose={handleInfoPopupClose} />}
 

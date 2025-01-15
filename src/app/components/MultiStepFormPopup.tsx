@@ -20,6 +20,7 @@ import {
   Stack,
   Paper,
   Box,
+  Alert,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -77,6 +78,38 @@ const CustomBulletStepper = styled(Stepper)(({ theme }) => ({
   },
 }));
 
+const DateWarningAlert = () => {
+  return (
+    <Alert severity="warning">
+      <Box>
+        <Typography fontWeight={600}>
+          Du 15/12 au 30/06 : ATTENTION, cette période est très sensible pour
+          les espèces.
+        </Typography>
+        En dehors des itinéraires autorisés, l&apos;accès est interdit. Merci de
+        suivre ces itinéraires et de respecter la réglementation. Suivant la
+        durée de votre séjour, il se peut que plusieurs périodes réglementaires
+        soient concernées. Merci de vérifier les itinéraires autorisés pour
+        chaque période.
+      </Box>
+    </Alert>
+  );
+};
+
+const DateInfoAlert = () => {
+  return (
+    <Alert severity="success">
+      <Box>
+        Du 01/07 au 14/12 : Accès autorisé sur l&apos;ensemble des itinéraires
+        balisés. Merci de respecter la réglementation, et de garder votre chien
+        en laisse. Suivant la durée de votre séjour, il se peut que plusieurs
+        périodes réglementaires soient concernées. Merci de vérifier les
+        itinéraires autorisés pour chaque période.
+      </Box>
+    </Alert>
+  );
+};
+
 const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const {
     setSelectedZones,
@@ -107,6 +140,28 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   const handleSubmit = (): void => {
     handleClose();
+  };
+
+  const checkAuthorizedDate = (selectedDate: Dayjs): boolean => {
+    const month = selectedDate?.month() ?? -1;
+    const day = selectedDate?.date() ?? -1;
+
+    return (
+      (month === 6 && day >= 1) || // July
+      (month > 6 && month < 11) || // August through November
+      (month === 11 && day <= 14)
+    ); // December 1-14
+    // return selectedDate?.isBetween("2024-06-15", "2024-07-01") ?? false;
+  };
+
+  const renderDateAlert = (selectedDate: Dayjs | null) => {
+    if (!selectedDate) return null;
+
+    return checkAuthorizedDate(selectedDate) ? (
+      <DateInfoAlert />
+    ) : (
+      <DateWarningAlert />
+    );
   };
 
   const steps: string[] = [
@@ -181,7 +236,9 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <DirectionsCarIcon
                   style={{ color: theme.palette.green.main, fontSize: "40px" }}
                 />
-                <Typography color="greenMain">En voiture</Typography>
+                <Typography color="greenMain">
+                  Avec véhicule motorisé
+                </Typography>
               </Paper>
               <Paper
                 elevation={3}
@@ -205,7 +262,9 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 >
                   <OtherIcon />
                 </Box>
-                <Typography color="greenMain">Autre</Typography>
+                <Typography color="greenMain">
+                  Sans véhicule motorisé
+                </Typography>
               </Paper>
             </Stack>
           </>
@@ -235,6 +294,7 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 />
               </LocalizationProvider>
             </Stack>
+            {renderDateAlert(selectedDate)}
           </>
         );
       default:
