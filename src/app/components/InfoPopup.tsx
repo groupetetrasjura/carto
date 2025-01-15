@@ -7,7 +7,9 @@ import {
   DialogActions,
   Button,
   Typography,
+  Box,
 } from "@mui/material";
+import Image from "next/image";
 
 const InfoPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [open] = useState(true);
@@ -18,6 +20,14 @@ const InfoPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   return (
     <Dialog open={open} onClose={handleClose}>
+      <Box sx={{ display: "flex", justifyContent: "center", mb: 1, mt: 4 }}>
+        <Image
+          src="/logo.png"
+          alt="Groupe Tétra Jura"
+          width={200}
+          height={200}
+        />
+      </Box>
       <DialogTitle fontSize={20}>Bienvenue sur la plateforme</DialogTitle>
       <DialogContent>
         <Typography gutterBottom sx={{ mb: 2 }} fontSize={14} component="p">
