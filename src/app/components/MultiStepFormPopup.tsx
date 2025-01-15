@@ -40,6 +40,7 @@ import {
 import { TransportType, Zone } from "@/app/lib/types/mapFilters";
 import { DateCalendar } from "@mui/x-date-pickers";
 import OtherIcon from "./icons/OtherIcon";
+import { checkAuthorizedDate } from "@/app/lib/utils";
 
 const CustomBulletStepper = styled(Stepper)(({ theme }) => ({
   display: "flex",
@@ -140,18 +141,6 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   const handleSubmit = (): void => {
     handleClose();
-  };
-
-  const checkAuthorizedDate = (selectedDate: Dayjs): boolean => {
-    const month = selectedDate?.month() ?? -1;
-    const day = selectedDate?.date() ?? -1;
-
-    return (
-      (month === 6 && day >= 1) || // July
-      (month > 6 && month < 11) || // August through November
-      (month === 11 && day <= 14)
-    ); // December 1-14
-    // return selectedDate?.isBetween("2024-06-15", "2024-07-01") ?? false;
   };
 
   const renderDateAlert = (selectedDate: Dayjs | null) => {

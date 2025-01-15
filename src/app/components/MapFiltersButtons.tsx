@@ -3,8 +3,10 @@ import Button from "@mui/material/Button";
 import Badge from "@mui/material/Badge";
 import LandscapeIcon from "@mui/icons-material/Landscape";
 import DirectionsWalkIcon from "@mui/icons-material/DirectionsWalk";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import CheckIcon from "@mui/icons-material/Check";
+import WarningIcon from "@mui/icons-material/Warning";
 import CancelIcon from "@mui/icons-material/DoNotDisturb";
 import FindMyLocationIcon from "@mui/icons-material/MyLocation";
 import { Tooltip, useMediaQuery } from "@mui/material";
@@ -16,6 +18,9 @@ import {
   useMapFiltersSelectedZones,
 } from "@/app/lib/stores/mapFilters";
 import { MapRef } from "react-map-gl/maplibre";
+import { checkAuthorizedDate } from "../lib/utils";
+import dayjs from "dayjs";
+import { TransportType } from "../lib/types/mapFilters";
 
 const MapFiltersButtons = ({
   openMultiStepForm,
@@ -103,6 +108,27 @@ const MapFiltersButtons = ({
     }
   };
 
+  const renderTransportButtonLabel = () => {
+    switch (selectedTransport) {
+      case TransportType.CAR:
+        return "Avec moteur";
+      case TransportType.OUTDOOR:
+        return "Sans moteur";
+      default:
+        return "Mode de déplacement";
+    }
+  };
+
+  const renderTransportButtonIcon = () => {
+    switch (selectedTransport) {
+      case TransportType.CAR:
+        return <DirectionsCarIcon />;
+      case TransportType.OUTDOOR:
+        return <DirectionsWalkIcon />;
+      default:
+        return <DirectionsWalkIcon />;
+    }
+  };
   return (
     <div
       style={{
@@ -129,7 +155,8 @@ const MapFiltersButtons = ({
         ></Button>
       </Tooltip>
       <Badge
-        badgeContent={<CheckIcon fontSize={"inherit"} />}
+        badgeContent={selectedZones.length}
+        color="success"
         invisible={!Boolean(selectedZones.length > 0)}
       >
         <Button
@@ -143,19 +170,31 @@ const MapFiltersButtons = ({
       </Badge>
       <Badge
         badgeContent={<CheckIcon fontSize={"inherit"} />}
+        color="success"
         invisible={!Boolean(selectedTransport)}
       >
         <Button
           variant="brownMain"
-          startIcon={<DirectionsWalkIcon />}
+          startIcon={renderTransportButtonIcon()}
           onClick={() => openMultiStepForm(1)} // Open form at step 2
           sx={{ textTransform: "none" }}
         >
-          {isMobile ? "Dépl." : "Mode de déplacement"}
+          {isMobile ? "Dépl." : renderTransportButtonLabel()}
         </Button>
       </Badge>
       <Badge
-        badgeContent={<CheckIcon fontSize={"inherit"} />}
+        badgeContent={
+          checkAuthorizedDate(selectedDate as dayjs.Dayjs) ? (
+            <CheckIcon fontSize={"inherit"} />
+          ) : (
+            <WarningIcon fontSize={"inherit"} />
+          )
+        }
+        color={
+          checkAuthorizedDate(selectedDate as dayjs.Dayjs)
+            ? "success"
+            : "warning"
+        }
         invisible={!Boolean(selectedDate)}
       >
         <Button
@@ -164,7 +203,7 @@ const MapFiltersButtons = ({
           onClick={() => openMultiStepForm(2)} // Open form at step 3
           sx={{ textTransform: "none" }}
         >
-          Date
+          {selectedDate ? selectedDate?.format("DD/MM/YY") : "Date"}
         </Button>
       </Badge>
       <Tooltip title="Supprimer les filtres" placement="top">
