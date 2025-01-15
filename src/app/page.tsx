@@ -10,6 +10,7 @@ import Map, {
   ViewStateChangeEvent,
   LayerProps,
   Marker,
+  AttributionControl,
 } from "react-map-gl/maplibre";
 
 import { useViewState, useMapStoreActions } from "@/app/lib/stores/mapStore";
@@ -265,6 +266,10 @@ export default function MapPage() {
             ))}
 
           {/* <GeolocateControl position="bottom-right" /> */}
+          <AttributionControl
+            position="bottom-right"
+            customAttribution={`<a href="#">© Groupe Tétras Jura, IGN</a>`}
+          />
           <MapFiltersButtons
             openMultiStepForm={openMultiStepForm}
             mapRef={mapRef}
