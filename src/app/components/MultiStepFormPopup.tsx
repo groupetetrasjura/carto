@@ -20,6 +20,7 @@ import {
   Stack,
   Paper,
   Box,
+  Alert,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -27,9 +28,6 @@ import LandscapeIcon from "@mui/icons-material/Landscape";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import DirectionsWalkIcon from "@mui/icons-material/DirectionsWalk";
-import DirectionsBikeIcon from "@mui/icons-material/DirectionsBike";
-import DownhillSkiingIcon from "@mui/icons-material/DownhillSkiing";
 import { Dayjs } from "dayjs";
 import "dayjs/locale/fr";
 import {
@@ -41,6 +39,8 @@ import {
 } from "@/app/lib/stores/mapFilters";
 import { TransportType, Zone } from "@/app/lib/types/mapFilters";
 import { DateCalendar } from "@mui/x-date-pickers";
+import OtherIcon from "./icons/OtherIcon";
+import { checkAuthorizedDate } from "@/app/lib/utils";
 
 const CustomBulletStepper = styled(Stepper)(({ theme }) => ({
   display: "flex",
@@ -79,6 +79,38 @@ const CustomBulletStepper = styled(Stepper)(({ theme }) => ({
   },
 }));
 
+const DateWarningAlert = () => {
+  return (
+    <Alert severity="warning">
+      <Box>
+        <Typography fontWeight={600}>
+          Du 15/12 au 30/06 : ATTENTION, cette période est très sensible pour
+          les espèces.
+        </Typography>
+        En dehors des itinéraires autorisés, l&apos;accès est interdit. Merci de
+        suivre ces itinéraires et de respecter la réglementation. Suivant la
+        durée de votre séjour, il se peut que plusieurs périodes réglementaires
+        soient concernées. Merci de vérifier les itinéraires autorisés pour
+        chaque période.
+      </Box>
+    </Alert>
+  );
+};
+
+const DateInfoAlert = () => {
+  return (
+    <Alert severity="success">
+      <Box>
+        Du 01/07 au 14/12 : Accès autorisé sur l&apos;ensemble des itinéraires
+        balisés. Merci de respecter la réglementation, et de garder votre chien
+        en laisse. Suivant la durée de votre séjour, il se peut que plusieurs
+        périodes réglementaires soient concernées. Merci de vérifier les
+        itinéraires autorisés pour chaque période.
+      </Box>
+    </Alert>
+  );
+};
+
 const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const {
     setSelectedZones,
@@ -109,6 +141,16 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   const handleSubmit = (): void => {
     handleClose();
+  };
+
+  const renderDateAlert = (selectedDate: Dayjs | null) => {
+    if (!selectedDate) return null;
+
+    return checkAuthorizedDate(selectedDate) ? (
+      <DateInfoAlert />
+    ) : (
+      <DateWarningAlert />
+    );
   };
 
   const steps: string[] = [
@@ -183,7 +225,9 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <DirectionsCarIcon
                   style={{ color: theme.palette.green.main, fontSize: "40px" }}
                 />
-                <Typography color="greenMain">En voiture</Typography>
+                <Typography color="greenMain">
+                  Avec véhicule motorisé
+                </Typography>
               </Paper>
               <Paper
                 elevation={3}
@@ -205,26 +249,11 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     alignItems: "center", // Center align items
                   }}
                 >
-                  <DirectionsWalkIcon
-                    style={{
-                      color: theme.palette.green.main,
-                      fontSize: "40px",
-                    }}
-                  />
-                  <DirectionsBikeIcon
-                    style={{
-                      color: theme.palette.green.main,
-                      fontSize: "40px",
-                    }}
-                  />
-                  <DownhillSkiingIcon
-                    style={{
-                      color: theme.palette.green.main,
-                      fontSize: "40px",
-                    }}
-                  />
+                  <OtherIcon />
                 </Box>
-                <Typography color="greenMain">Autre</Typography>
+                <Typography color="greenMain">
+                  Sans véhicule motorisé
+                </Typography>
               </Paper>
             </Stack>
           </>
@@ -254,6 +283,7 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 />
               </LocalizationProvider>
             </Stack>
+            {renderDateAlert(selectedDate)}
           </>
         );
       default:

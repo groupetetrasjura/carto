@@ -4,7 +4,7 @@ import {
   GeoJSONFeature,
 } from "@/app/lib/types/GeoJSON";
 import { Zone } from "./types/mapFilters";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 /**
  * Filters GeoJSON features based on transport mode, zones, and date
@@ -155,4 +155,22 @@ export function addColorsToFeatures(
       };
     }),
   };
+}
+
+/**
+ * Checks if a given date falls within the authorized period (July 1st to December 14th)
+ * During this period, access is allowed on all marked trails and will disturb the least Grand Tétras
+ * @param selectedDate The date to check, as a Dayjs object
+ * @returns true if the date is within the authorized period, false otherwise
+ */
+export function checkAuthorizedDate(selectedDate: Dayjs): boolean {
+  const month = selectedDate?.month() ?? -1;
+  const day = selectedDate?.date() ?? -1;
+
+  return (
+    (month === 6 && day >= 1) || // July
+    (month > 6 && month < 11) || // August through November
+    (month === 11 && day <= 14)
+  ); // December 1-14
+  // return selectedDate?.isBetween("2024-06-15", "2024-07-01") ?? false;
 }
