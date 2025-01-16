@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 import { CSSProperties } from "react";
 import Accordion from "@mui/material/Accordion";
@@ -37,7 +38,9 @@ export const Legend = () => {
   const legendContent = (
     <>
       <Box>
-        Itinéraires autorisés:
+        <span>
+          <strong>Itinéraires autorisés</strong>
+        </span>
         <Box
           style={{
             display: "flex",
@@ -116,6 +119,51 @@ export const Legend = () => {
             }}
           ></Box>
           <span>{`Non réglementé par l'APPB / Si déneigé`}</span>
+        </Box>
+        <Box>
+          <span>
+            <strong>Autres informations</strong>
+          </span>
+        </Box>
+        <Box>
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "5px",
+            }}
+          >
+            <Image
+              src="/icons/parking_marker.png"
+              alt="Parking Icon"
+              width={20}
+              height={20}
+              style={{ marginRight: 10 }}
+            />
+            <span>Parking à proximité</span>
+          </Box>
+        </Box>
+        <Box>
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "5px",
+            }}
+          >
+            <svg width="21" height="21">
+              <rect
+                width="21"
+                height="21"
+                fill="#E6E6FA"
+                stroke="#4B0082"
+                strokeWidth="1"
+              />
+            </svg>
+            <span style={{ marginLeft: 10 }}>
+              Autres Arrêtés Préfectoraux de Protection de Biotopes
+            </span>
+          </Box>
         </Box>
       </Box>
     </>

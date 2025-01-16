@@ -21,6 +21,24 @@ export const appbZonesBorderLayer: LineLayer = {
   },
 };
 
+export const otherAppbZonesLayer: FillLayer = {
+  id: "other-appb-zones-layer",
+  source: "other-appb-source",
+  type: "fill",
+  paint: {
+    "fill-color": "#E6E6FA",
+    "fill-opacity": 0.66,
+  },
+};
+export const otherAppbZonesBorderLayer: LineLayer = {
+  id: "other-appb-zones-border-layer",
+  type: "line",
+  paint: {
+    "line-color": "#4B0082",
+    "line-width": 1,
+  },
+};
+
 export const logoLayer: LayerProps = {
   id: "logo-layer",
   type: "symbol",
