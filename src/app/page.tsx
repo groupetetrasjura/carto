@@ -29,12 +29,16 @@ import { MultiStepFormPopup } from "@/app/components/MultiStepFormPopup";
 import {
   appbZonesBorderLayer,
   appbZonesLayer,
+  otherAppbZonesBorderLayer,
+  otherAppbZonesLayer,
   pathsLayer,
 } from "@/app/lib/styles/mapStyles";
 
 import APPB_DATA from "@/lib/data/geojson/appb_zones.json";
 import APPB_LOGO_DATA from "@/lib/data/geojson/appb_logo.json";
 import allPathsData from "@/lib/data/geojson/authorized_paths_with_dates_zones_and_transport_modes.json";
+import parkingsData from "@/lib/data/geojson/carparks.json";
+import OTHER_APPB_DATA from "@/lib/data/geojson/other_protected_biotopes_250116.json";
 
 import Image from "next/image";
 import MapFiltersButtons from "./components/MapFiltersButtons";
@@ -152,10 +156,22 @@ export default function MapPage() {
   };
 
   const onClick = useCallback((event: MapLayerMouseEvent) => {
+    console.log("event", event.features);
     const feature = event.features && event.features[0];
-    if (feature && feature.properties.name) {
+    if (
+      feature &&
+      feature.properties.name &&
+      feature.source === "appb-zones-source"
+    ) {
       setZoneCardTitle(feature.properties.name);
       setShowZoneCardPopup(true);
+    }
+    if (
+      feature &&
+      feature.properties.URL_FICHE &&
+      feature.source === "other-appb-source"
+    ) {
+      window.open(feature.properties.URL_FICHE, "_blank");
     }
   }, []);
 
@@ -237,12 +253,16 @@ export default function MapPage() {
           cursor={cursor}
           style={{ width: "100%", height: "100%" }}
           mapStyle={`https://api.maptiler.com/maps/${maptilerMapId}/style.json?key=${maptilerCredentials?.maptilerApiKey}`}
-          interactiveLayerIds={["appb-zones-layer"]}
+          interactiveLayerIds={["appb-zones-layer", "other-appb-zones-layer"]}
           attributionControl={false}
         >
           <Source id="appb-zones-source" type="geojson" data={APPB_DATA}>
             <Layer {...(appbZonesLayer as LayerProps)} />
             <Layer {...(appbZonesBorderLayer as LayerProps)} />
+          </Source>
+          <Source id="other-appb-source" type="geojson" data={OTHER_APPB_DATA}>
+            <Layer {...(otherAppbZonesLayer as LayerProps)} />
+            <Layer {...(otherAppbZonesBorderLayer as LayerProps)} />
           </Source>
           {filteredData && (
             <Source
@@ -253,6 +273,21 @@ export default function MapPage() {
               <Layer {...(pathsLayer as LayerProps)} />
             </Source>
           )}
+          {parkingsData.features.length > 0 &&
+            parkingsData.features.map((feature, index) => (
+              <Marker
+                key={`parkings-marker-${index}`}
+                longitude={feature.geometry.coordinates[0]}
+                latitude={feature.geometry.coordinates[1]}
+              >
+                <Image
+                  src="/icons/parking_marker.png"
+                  alt="Parking Marker"
+                  width={24}
+                  height={24}
+                />
+              </Marker>
+            ))}
           {APPB_LOGO_DATA.features.length > 0 &&
             APPB_LOGO_DATA.features.map((feature, index) => (
               <Marker
