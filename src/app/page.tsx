@@ -31,7 +31,8 @@ import {
   appbZonesLayer,
   otherAppbZonesBorderLayer,
   otherAppbZonesLayer,
-  pathsLayer,
+  solidPathsLayer,
+  dashedPathsLayer,
 } from "@/app/lib/styles/mapStyles";
 
 import APPB_DATA from "@/lib/data/geojson/appb_zones.json";
@@ -270,7 +271,8 @@ export default function MapPage() {
               type="geojson"
               data={filteredData}
             >
-              <Layer {...(pathsLayer as LayerProps)} />
+              <Layer {...(solidPathsLayer as LayerProps)} />
+              <Layer {...(dashedPathsLayer as LayerProps)} />
             </Source>
           )}
           {parkingsData.features.length > 0 &&

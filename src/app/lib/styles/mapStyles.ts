@@ -6,9 +6,9 @@ export const appbZonesLayer: FillLayer = {
   source: "appb-zones-source",
   type: "fill",
   paint: {
-    "fill-color": "#c0dac8",
+    "fill-color": "#009366",
     "fill-outline-color": "gray",
-    "fill-opacity": 0.5,
+    "fill-opacity": 0.23,
   },
 };
 
@@ -52,8 +52,8 @@ export const logoLayer: LayerProps = {
   },
 };
 
-export const pathsLayer: LayerProps = {
-  id: "paths-layer",
+export const solidPathsLayer: LayerProps = {
+  id: "solid-paths-layer",
   type: "line",
   source: "authorized-paths-source",
   paint: {
@@ -61,4 +61,18 @@ export const pathsLayer: LayerProps = {
     "line-width": 3,
     "line-opacity": 0.8,
   },
+  filter: ["==", ["get", "dashed"], false],
+};
+
+export const dashedPathsLayer: LayerProps = {
+  id: "dashed-paths-layer",
+  type: "line",
+  source: "authorized-paths-source",
+  paint: {
+    "line-color": ["get", "color"],
+    "line-width": 3,
+    "line-opacity": 0.8,
+    "line-dasharray": ["literal", [2, 4]], // Pointillés fixes
+  },
+  filter: ["==", ["get", "dashed"], true],
 };
