@@ -9,7 +9,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import WarningIcon from "@mui/icons-material/Warning";
 import CancelIcon from "@mui/icons-material/DoNotDisturb";
 import FindMyLocationIcon from "@mui/icons-material/MyLocation";
-import { Tooltip, useMediaQuery } from "@mui/material";
+import { IconButton, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 
 import {
   useMapFiltersActions,
@@ -33,6 +33,8 @@ const MapFiltersButtons = ({
   const selectedZones = useMapFiltersSelectedZones();
   const selectedTransport = useMapFiltersSelectedTransport();
   const selectedDate = useMapFiltersSelectedDate();
+  const theme = useTheme();
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
   const { clearMapFilters } = useMapFiltersActions();
 
   const findMyLocation = () => {
@@ -130,95 +132,105 @@ const MapFiltersButtons = ({
     }
   };
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: "0.5rem",
-        position: "absolute",
-        bottom: "10px",
-        left: "50%",
-        transform: "translateX(-50%)",
-        margin: "0 0.5rem",
-        zIndex: 1000,
-      }}
-    >
-      <Tooltip title="Trouver ma position" placement="top">
-        <Button
-          variant="brownMain"
-          startIcon={<FindMyLocationIcon />}
-          onClick={() => findMyLocation()} // Clear all filters
+    <>
+      <div
+        style={{
+          display: "flex",
+          gap: "0.5rem",
+          position: "absolute",
+          bottom: "10px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          margin: "0 0.5rem",
+          zIndex: 1000,
+        }}
+      >
+        <Tooltip title="Supprimer les filtres" placement="top">
+          <Button
+            variant="brownMain"
+            startIcon={<CancelIcon />}
+            onClick={() => clearMapFilters()} // Clear all filters
+            sx={{
+              "& .MuiButton-startIcon": {
+                marginRight: "0px",
+                marginLeft: "0px",
+              },
+              textTransform: "none",
+              minWidth: "36px",
+            }}
+          ></Button>
+        </Tooltip>
+        <Badge
+          badgeContent={selectedZones.length}
+          color="success"
+          invisible={!Boolean(selectedZones.length > 0)}
+        >
+          <Button
+            variant="brownMain"
+            startIcon={<LandscapeIcon />}
+            onClick={() => openMultiStepForm(0)} // Open form at step 1
+            sx={{ textTransform: "none" }}
+          >
+            Massifs
+          </Button>
+        </Badge>
+        <Badge
+          badgeContent={<CheckIcon fontSize={"inherit"} />}
+          color="success"
+          invisible={!Boolean(selectedTransport)}
+        >
+          <Button
+            variant="brownMain"
+            startIcon={renderTransportButtonIcon()}
+            onClick={() => openMultiStepForm(1)} // Open form at step 2
+            sx={{ textTransform: "none" }}
+          >
+            {isMobile ? "Dépl." : renderTransportButtonLabel()}
+          </Button>
+        </Badge>
+        <Badge
+          badgeContent={
+            checkAuthorizedDate(selectedDate as dayjs.Dayjs) ? (
+              <CheckIcon fontSize={"inherit"} />
+            ) : (
+              <WarningIcon fontSize={"inherit"} />
+            )
+          }
+          color={
+            checkAuthorizedDate(selectedDate as dayjs.Dayjs)
+              ? "success"
+              : "warning"
+          }
+          invisible={!Boolean(selectedDate)}
+        >
+          <Button
+            variant="brownMain"
+            startIcon={<CalendarTodayIcon />}
+            onClick={() => openMultiStepForm(2)} // Open form at step 3
+            sx={{ textTransform: "none" }}
+          >
+            {selectedDate ? selectedDate?.format("DD/MM/YY") : "Date"}
+          </Button>
+        </Badge>
+      </div>
+      <div
+        style={{ position: "absolute", bottom: isTablet ? 60 : 12, right: 12 }}
+      >
+        <IconButton
+          onClick={() => findMyLocation()}
           sx={{
-            "& .MuiButton-startIcon": { marginRight: "0px", marginLeft: "0px" },
-            textTransform: "none",
-            minWidth: "36px",
+            color: "#725E51",
+            backgroundColor: "white",
+            padding: 2,
+            "&:hover": {
+              backgroundColor: "white", // No effect on hover
+            },
           }}
-        ></Button>
-      </Tooltip>
-      <Badge
-        badgeContent={selectedZones.length}
-        color="success"
-        invisible={!Boolean(selectedZones.length > 0)}
-      >
-        <Button
-          variant="brownMain"
-          startIcon={<LandscapeIcon />}
-          onClick={() => openMultiStepForm(0)} // Open form at step 1
-          sx={{ textTransform: "none" }}
         >
-          Massifs
-        </Button>
-      </Badge>
-      <Badge
-        badgeContent={<CheckIcon fontSize={"inherit"} />}
-        color="success"
-        invisible={!Boolean(selectedTransport)}
-      >
-        <Button
-          variant="brownMain"
-          startIcon={renderTransportButtonIcon()}
-          onClick={() => openMultiStepForm(1)} // Open form at step 2
-          sx={{ textTransform: "none" }}
-        >
-          {isMobile ? "Dépl." : renderTransportButtonLabel()}
-        </Button>
-      </Badge>
-      <Badge
-        badgeContent={
-          checkAuthorizedDate(selectedDate as dayjs.Dayjs) ? (
-            <CheckIcon fontSize={"inherit"} />
-          ) : (
-            <WarningIcon fontSize={"inherit"} />
-          )
-        }
-        color={
-          checkAuthorizedDate(selectedDate as dayjs.Dayjs)
-            ? "success"
-            : "warning"
-        }
-        invisible={!Boolean(selectedDate)}
-      >
-        <Button
-          variant="brownMain"
-          startIcon={<CalendarTodayIcon />}
-          onClick={() => openMultiStepForm(2)} // Open form at step 3
-          sx={{ textTransform: "none" }}
-        >
-          {selectedDate ? selectedDate?.format("DD/MM/YY") : "Date"}
-        </Button>
-      </Badge>
-      <Tooltip title="Supprimer les filtres" placement="top">
-        <Button
-          variant="brownMain"
-          startIcon={<CancelIcon />}
-          onClick={() => clearMapFilters()} // Clear all filters
-          sx={{
-            "& .MuiButton-startIcon": { marginRight: "0px", marginLeft: "0px" },
-            textTransform: "none",
-            minWidth: "36px",
-          }}
-        ></Button>
-      </Tooltip>
-    </div>
+          <FindMyLocationIcon />
+        </IconButton>
+      </div>
+    </>
   );
 };
 
