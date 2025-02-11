@@ -125,21 +125,31 @@ export function addColorsToFeatures(
       const period =
         feature.properties["Période_autorisation"]?.toLowerCase() || "";
 
-      let color = "#000000"; // Default color (black) if no period matches
+      let color = "#000"; // Default color (black) if no period matches
+      let dashed = false;
       if (period.includes("du 15/12 au 14/05")) {
-        color = "#0288d1";
+        color = "#084aff";
+        dashed = true;
       } else if (period.includes("du 15/12 au 30/06")) {
-        color = "#0F9D58";
+        color = "#084aff";
+        dashed = false;
       } else if (period.includes("du 15/05 au 30/06")) {
-        color = "#F57C00";
+        color = "#ed9e00";
+        dashed = false;
       } else if (period.includes("du 15/12 au 1er dimanche de mars")) {
-        color = "#673AB7";
+        color = "#ff0000";
+        dashed = false;
+      } else if (period.includes("non reglemente par l'appb")) {
+        color = "#ff0000";
+        dashed = true;
       } else if (
-        period.includes("non reglemente par l'appb") ||
+        period.includes("si deneigé") ||
         period.includes("si déneigé")
       ) {
-        color = "#9E9E9E"; // Magenta pour les itinéraires autorisés sur les 3 périodes
+        color = "#9E9E9E";
+        dashed = false; // Magenta pour les itinéraires autorisés sur les 3 périodes
       } else {
+        dashed = false;
         console.log(
           "Période non reconnue :",
           feature.properties["Période_autorisation"]
@@ -151,6 +161,7 @@ export function addColorsToFeatures(
         properties: {
           ...feature.properties,
           color, // Add the color property
+          dashed,
         },
       };
     }),
