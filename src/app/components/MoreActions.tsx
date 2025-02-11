@@ -2,7 +2,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Backdrop from "@mui/material/Backdrop";
 import SpeedDial from "@mui/material/SpeedDial";
-import SpeedDialIcon from "@mui/material/SpeedDialIcon";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
 import DownloadIcon from "@mui/icons-material/Download";
 import ScreenshotIcon from "@mui/icons-material/ScreenLockPortrait";
@@ -36,8 +36,8 @@ export default function MoreActions({
 
   const speedDialTabletStyle = {
     position: "absolute",
-    bottom: 72,
-    left: 24,
+    bottom: 60,
+    left: 12,
   };
 
   const speedDialDesktopStyle = {
@@ -57,9 +57,9 @@ export default function MoreActions({
     >
       <Backdrop open={open} />
       <SpeedDial
-        ariaLabel="SpeedDial tooltip example"
+        ariaLabel="SpeedDial tooltip"
         sx={isTablet ? speedDialTabletStyle : speedDialDesktopStyle}
-        icon={<SpeedDialIcon color="secondary" />}
+        icon={<MoreVertIcon sx={{ color: "#A2BE73" }} />}
         onClose={handleClose}
         onOpen={handleOpen}
         open={open}

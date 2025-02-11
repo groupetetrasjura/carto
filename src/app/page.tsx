@@ -302,8 +302,9 @@ export default function MapPage() {
 
           {/* <GeolocateControl position="bottom-right" /> */}
           <AttributionControl
-            position="bottom-right"
-            customAttribution={`<a href="#">© Groupe Tétras Jura, IGN</a>`}
+            position="top-right"
+            customAttribution={`<a href="https://groupe-tetras-jura.org/">© Groupe Tétras Jura</a>, IGN`}
+            compact={true}
           />
           <MapFiltersButtons
             openMultiStepForm={openMultiStepForm}
