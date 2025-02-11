@@ -52,8 +52,11 @@ export const Legend = () => {
             style={{
               width: 20,
               height: 3,
-              backgroundColor: "#0288d1",
-              marginRight: 10,
+              borderStyle: "dashed",
+              borderWidth: 2,
+              borderColor: "#084aff",
+              backgroundColor: "transparent",
+              marginRight: 5,
             }}
           ></Box>
           <span>{`Du 15/12 au 14/05`}</span>
@@ -69,7 +72,7 @@ export const Legend = () => {
             style={{
               width: 20,
               height: 3,
-              backgroundColor: "#0F9D58",
+              backgroundColor: "#084aff",
               marginRight: 10,
             }}
           ></Box>
@@ -86,7 +89,7 @@ export const Legend = () => {
             style={{
               width: 20,
               height: 3,
-              backgroundColor: "#F57C00",
+              backgroundColor: "#ed9e00",
               marginRight: 10,
             }}
           ></Box>
@@ -103,12 +106,29 @@ export const Legend = () => {
             style={{
               width: 20,
               height: 3,
-              backgroundColor: "#673AB7",
+              backgroundColor: "#ff0000",
               marginRight: 10,
             }}
           ></Box>
           <span>{`Du 15/12 au 1er dimanche de mars`}</span>
         </Box>
+        <Box
+          style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}
+        >
+          <Box
+            style={{
+              width: 20,
+              height: 3,
+              borderStyle: "dashed",
+              borderWidth: 2,
+              borderColor: "#ff0000",
+              backgroundColor: "transparent",
+              marginRight: 5,
+            }}
+          ></Box>
+          <span>{`Non réglementé par l'APPB`}</span>
+        </Box>
+
         <Box style={{ display: "flex", alignItems: "center" }}>
           <Box
             style={{
@@ -118,7 +138,7 @@ export const Legend = () => {
               marginRight: 10,
             }}
           ></Box>
-          <span>{`Non réglementé par l'APPB / Si déneigé`}</span>
+          <span>{`Si déneigé`}</span>
         </Box>
         <Box>
           <span>
