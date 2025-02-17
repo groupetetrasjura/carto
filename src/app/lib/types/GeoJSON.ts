@@ -39,7 +39,7 @@ export interface AuthorizedPathProperties {
   end_day: number | null;
   end_month: number | null;
   zone_names: string;
-  mode_transport: "outdoor" | "car";
+  mode_transport: "outdoor" | "car" | "all";
 }
 
 // Type for authorized paths feature
