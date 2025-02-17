@@ -45,11 +45,15 @@ export function filterAuthorizedPathsData(
           { type: "LineString"; coordinates: [number, number][] }
         >
       ) => {
-        if (
-          isTransportActive &&
-          feature.properties.mode_transport !== modeTransport
-        )
-          return false;
+        if (isTransportActive) {
+          const featureTransport = feature.properties.mode_transport;
+          if (
+            featureTransport !== modeTransport &&
+            featureTransport !== "all"
+          ) {
+            return false;
+          }
+        }
         if (isZoneActive && !zoneSet.has(feature.properties.zone_names as Zone))
           return false;
 
