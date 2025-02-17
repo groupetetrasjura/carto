@@ -33,10 +33,19 @@ import {
   otherAppbZonesLayer,
   solidPathsLayer,
   dashedPathsLayer,
+  protectedAreasLayer,
+  protectedAreasBorderLayer,
+  swissProtectedAreasBorderLayer,
+  swissProtectedAreasLayer,
+  gelZonesLayer,
+  gelZonesBorderLayer,
 } from "@/app/lib/styles/mapStyles";
 
 import APPB_DATA from "@/lib/data/geojson/appb_zones.json";
 import APPB_LOGO_DATA from "@/lib/data/geojson/appb_logo.json";
+import PROTECTED_AREAS_DATA from "@/lib/data/geojson/aires_protegees_fusion.json";
+import SWISS_PROTECTED_AREAS_DATA from "@/lib/data/geojson/dff_noirmont.json";
+import ZONAGES_GEL_DATA from "@/lib/data/geojson/zonages_gel.json";
 import allPathsData from "@/lib/data/geojson/authorized_paths_with_dates_zones_and_transport_modes.json";
 import parkingsData from "@/lib/data/geojson/carparks.json";
 import OTHER_APPB_DATA from "@/lib/data/geojson/other_protected_biotopes_250116.json";
@@ -257,6 +266,69 @@ export default function MapPage() {
           interactiveLayerIds={["appb-zones-layer", "other-appb-zones-layer"]}
           attributionControl={false}
         >
+          <Source
+            id="zonages-gel-source"
+            type="geojson"
+            data={ZONAGES_GEL_DATA}
+          >
+            <Layer {...(gelZonesLayer as LayerProps)} />
+            <Layer {...(gelZonesBorderLayer as LayerProps)} />
+          </Source>
+          <Source
+            id="protected-areas-source"
+            type="geojson"
+            data={PROTECTED_AREAS_DATA}
+          >
+            <Layer {...(protectedAreasLayer as LayerProps)} />
+            <Layer {...(protectedAreasBorderLayer as LayerProps)} />
+            <Layer
+              id="protected-areas-labels"
+              type="symbol"
+              paint={{
+                "text-color": "#000000",
+                "text-halo-color": "#ffffff",
+                "text-halo-width": 1,
+              }}
+              layout={{
+                "text-field": [
+                  "concat",
+                  ["get", "type_code"],
+                  "\n",
+                  ["get", "nom_site"],
+                ],
+                "text-font": ["Open Sans Regular"],
+                "text-size": 12,
+                "text-anchor": "center",
+                "text-allow-overlap": false,
+                "text-max-width": 8,
+              }}
+            />
+          </Source>
+          <Source
+            id="swiss-protected-areas-source"
+            type="geojson"
+            data={SWISS_PROTECTED_AREAS_DATA}
+          >
+            <Layer {...(swissProtectedAreasLayer as LayerProps)} />
+            <Layer {...(swissProtectedAreasBorderLayer as LayerProps)} />
+            <Layer
+              id="swiss-protected-areas-labels"
+              type="symbol"
+              paint={{
+                "text-color": "#000000",
+                "text-halo-color": "#ffffff",
+                "text-halo-width": 1,
+              }}
+              layout={{
+                "text-field": "Site fédéral de protection de faune Le Noirmont",
+                "text-font": ["Open Sans Regular"],
+                "text-size": 12,
+                "text-anchor": "center",
+                "text-allow-overlap": false,
+                "text-max-width": 8,
+              }}
+            />
+          </Source>
           <Source id="appb-zones-source" type="geojson" data={APPB_DATA}>
             <Layer {...(appbZonesLayer as LayerProps)} />
             <Layer {...(appbZonesBorderLayer as LayerProps)} />
