@@ -140,6 +140,160 @@ export const Legend = () => {
           ></Box>
           <span>{`Si déneigé`}</span>
         </Box>
+
+        <Box>
+          <span>
+            <strong>Aires protégées</strong>
+          </span>
+          <Box>
+            <Box
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "5px",
+              }}
+            >
+              <svg width="21" height="21">
+                <rect
+                  width="21"
+                  height="21"
+                  fill="#E6E6FA"
+                  stroke="#4B0082"
+                  strokeWidth="1"
+                />
+              </svg>
+              <span style={{ marginLeft: 10 }}>
+                Autres Arrêtés Préfectoraux de Protection de Biotopes
+              </span>
+            </Box>
+          </Box>
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "5px",
+            }}
+          >
+            <svg width="21" height="21">
+              <rect
+                width="21"
+                height="21"
+                fill="#98FB98"
+                stroke="#228B22"
+                strokeWidth="1"
+              />
+            </svg>
+            <span style={{ marginLeft: 10 }}>Espaces Naturels Sensibles</span>
+          </Box>
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "5px",
+            }}
+          >
+            <svg width="21" height="21">
+              <rect
+                width="21"
+                height="21"
+                fill="#FFD700"
+                stroke="#DAA520"
+                strokeWidth="1"
+              />
+            </svg>
+            <span style={{ marginLeft: 10 }}>
+              Réserves Naturelles Régionales
+            </span>
+          </Box>
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "5px",
+            }}
+          >
+            <svg width="21" height="21">
+              <rect
+                width="21"
+                height="21"
+                fill="#00885B"
+                stroke="#006400"
+                strokeWidth="1"
+              />
+            </svg>
+            <span style={{ marginLeft: 10 }}>
+              Réserves Naturelles Nationales
+            </span>
+          </Box>
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "5px",
+            }}
+          >
+            <svg width="21" height="21">
+              <rect
+                width="21"
+                height="21"
+                fill="#008080"
+                stroke="#004C4C"
+                strokeWidth="1"
+                opacity="0.53"
+              />
+            </svg>
+            <span style={{ marginLeft: 10 }}>
+              Site fédéral de protection de faune Le Noirmont
+            </span>
+          </Box>
+        </Box>
+      </Box>
+
+      <Box>
+        <span>
+          <strong>Zones de quiétude</strong>
+        </span>
+      </Box>
+      <Box>
+        <Box
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginBottom: "5px",
+          }}
+        >
+          <svg width="21" height="21">
+            <rect
+              width="21"
+              height="21"
+              fill="#8B4513"
+              stroke="#DEB887"
+              strokeWidth="1"
+              opacity="0.3"
+            />
+          </svg>
+          <span style={{ marginLeft: 10 }}>Aire de type I</span>
+        </Box>
+        <Box
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginBottom: "5px",
+          }}
+        >
+          <svg width="21" height="21">
+            <rect
+              width="21"
+              height="21"
+              fill="#D2B48C"
+              stroke="#DEB887"
+              strokeWidth="1"
+              opacity="0.3"
+            />
+          </svg>
+          <span style={{ marginLeft: 10 }}>Aire de type II</span>
+        </Box>
+
         <Box>
           <span>
             <strong>Autres informations</strong>
@@ -161,28 +315,6 @@ export const Legend = () => {
               style={{ marginRight: 10 }}
             />
             <span>Parking à proximité</span>
-          </Box>
-        </Box>
-        <Box>
-          <Box
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "5px",
-            }}
-          >
-            <svg width="21" height="21">
-              <rect
-                width="21"
-                height="21"
-                fill="#E6E6FA"
-                stroke="#4B0082"
-                strokeWidth="1"
-              />
-            </svg>
-            <span style={{ marginLeft: 10 }}>
-              Autres Arrêtés Préfectoraux de Protection de Biotopes
-            </span>
           </Box>
         </Box>
       </Box>

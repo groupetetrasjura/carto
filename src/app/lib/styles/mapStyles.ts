@@ -76,3 +76,96 @@ export const dashedPathsLayer: LayerProps = {
   },
   filter: ["==", ["get", "dashed"], true],
 };
+
+export const protectedAreasLayer: FillLayer = {
+  id: "protected-areas-layer",
+  source: "protected-areas-source",
+  type: "fill",
+  paint: {
+    "fill-color": [
+      "match",
+      ["get", "type_code"],
+      "ENS",
+      "#98FB98", // Pale green
+      "RNR",
+      "#FFD700", // Warm yellow
+      "RNN",
+      "#00885B", // Forest green
+      "#F4A460", // Default sand color
+    ],
+    "fill-opacity": 0.66,
+  },
+};
+
+export const protectedAreasBorderLayer: LineLayer = {
+  id: "protected-areas-border-layer",
+  type: "line",
+  paint: {
+    "line-color": [
+      "match",
+      ["get", "type_code"],
+      "ENS",
+      "#228B22", // Darker green
+      "RNR",
+      "#DAA520", // Darker yellow
+      "RNN",
+      "#006400", // Darker forest green
+      "#CD853F", // Darker sand color
+    ],
+    "line-width": 1,
+  },
+};
+
+export const swissProtectedAreasLayer: FillLayer = {
+  id: "swiss-protected-areas-layer",
+  source: "swiss-protected-areas-source",
+  type: "fill",
+  paint: {
+    "fill-color": "#008080", // Teal color
+    "fill-opacity": 0.23,
+  },
+};
+
+export const swissProtectedAreasBorderLayer: LineLayer = {
+  id: "swiss-protected-areas-border-layer",
+  type: "line",
+  paint: {
+    "line-color": "#004C4C", // Darker teal
+    "line-width": 2,
+  },
+};
+
+export const gelZonesLayer: FillLayer = {
+  id: "gel-zones-layer",
+  source: "gel-zones-source",
+  type: "fill",
+  paint: {
+    "fill-color": [
+      "match",
+      ["get", "statut"],
+      "Aire de type II",
+      "#D2B48C", // Tan brown
+      "Aire de type I",
+      "#8B4513", // Saddle brown
+      "#DEB887", // Burlywood brown
+    ],
+    "fill-opacity": 0.4,
+  },
+};
+
+export const gelZonesBorderLayer: LineLayer = {
+  id: "gel-zones-border-layer",
+  type: "line",
+  paint: {
+    "line-color": [
+      "match",
+      ["get", "statut"],
+      "Aire de type II",
+      "#DEB887", // Darker blue
+      "Aire de type I",
+      "#DEB887", // Even darker blue
+      "#DEB887", // Default darker blue
+    ],
+    "line-width": 1,
+  },
+};
