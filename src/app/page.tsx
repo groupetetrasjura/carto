@@ -53,14 +53,19 @@ import OTHER_APPB_DATA from "@/lib/data/geojson/other_protected_biotopes_250116.
 import Image from "next/image";
 import MapFiltersButtons from "./components/MapFiltersButtons";
 import { Box } from "@mui/material";
-import ZoneCardPopup from "./components/ZoneCardPopup";
-import { AuthorizedPathsCollection } from "./lib/types/GeoJSON";
-import { addColorsToFeatures, filterAuthorizedPathsData } from "./lib/utils";
-import { Legend } from "./components/Legend2";
-import { MaptilerCredentials } from "./lib/types/api/Credentials";
-import DownloadFormPopup from "./components/DownloadFormPopup";
-import { TransportType } from "./lib/types/mapFilters";
-import MoreActions from "./components/MoreActions";
+import ZoneCardPopup from "@/app/components/ZoneCardPopup";
+import { AuthorizedPathsCollection, IAPPBZone } from "@/app/lib/types/GeoJSON";
+import {
+  addColorsToFeatures,
+  filterAuthorizedPathsData,
+  getZonesBoundingBox,
+} from "@/lib/utils";
+import { Legend } from "@/app/components/Legend2";
+import { MaptilerCredentials } from "@/app/lib/types/api/Credentials";
+import DownloadFormPopup from "@/app/components/DownloadFormPopup";
+import { TransportType } from "@/app/lib/types/mapFilters";
+import { FeatureCollection, Geometry } from "geojson";
+import { GeoJSONFeatureProperties } from "./lib/types/generics";
 
 export default function MapPage() {
   const [cursor, setCursor] = useState<string>("auto");
@@ -100,6 +105,9 @@ export default function MapPage() {
         }
       } catch (error) {
         console.error("Failed to fetch credentials:", error);
+        alert(
+          "Erreur lors de la récupération des identifiants de connexion pour les fonds de cartes. Veuillez contacter l'administrateur du site."
+        );
       }
     };
 
@@ -119,54 +127,7 @@ export default function MapPage() {
     setCurrentStep(1);
   };
 
-  const handleMapSnapshot = () => {
-    mapRef.current?.getMap().triggerRepaint();
-    mapRef.current?.getMap().once("render", async () => {
-      const canvas = mapRef.current?.getMap().getCanvas();
-      if (!canvas) return;
-
-      // check webp support
-      const isWebPSupported = () => {
-        const elem = document.createElement("canvas");
-        if (!!(elem.getContext && elem.getContext("2d"))) {
-          return elem.toDataURL("image/webp").indexOf("data:image/webp") === 0;
-        }
-        return false;
-      };
-
-      let imageDataUrl;
-      let fileExtension;
-      // use webp if supported
-      if (isWebPSupported()) {
-        imageDataUrl = await new Promise((resolve) => {
-          canvas.toBlob(
-            (blob) => {
-              const reader = new FileReader();
-              reader.onloadend = () => resolve(reader.result);
-              reader.readAsDataURL(blob as Blob);
-            },
-            "image/webp",
-            0.9
-          );
-        });
-        fileExtension = "webp";
-      } else {
-        // use jpeg format
-        imageDataUrl = canvas.toDataURL("image/jpeg", 0.9); // Qualité JPEG à 90%
-        fileExtension = "jpg";
-      }
-      const link = document.createElement("a");
-      link.href = imageDataUrl as string;
-      link.download = `map_snapshot.${fileExtension}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      console.log(`Snapshot downloaded as ${fileExtension}`);
-    });
-  };
-
   const onClick = useCallback((event: MapLayerMouseEvent) => {
-    console.log("event", event.features);
     const feature = event.features && event.features[0];
     if (
       feature &&
@@ -249,6 +210,27 @@ export default function MapPage() {
       setFilteredData(null);
     }
   }, [selectedTransport, selectedZones, selectedDate]);
+
+  useEffect(() => {
+    const zones = [...selectedZones];
+    const bboxZones = getZonesBoundingBox(
+      APPB_DATA as FeatureCollection<
+        Geometry,
+        GeoJSONFeatureProperties & IAPPBZone
+      >,
+      zones
+    );
+    mapRef.current?.getMap().fitBounds(
+      [
+        [bboxZones[0], bboxZones[1]], // Southwest coordinates
+        [bboxZones[2], bboxZones[3]], // Northeast coordinates
+      ],
+      {
+        padding: 50,
+        duration: 1000,
+      }
+    );
+  }, [selectedZones]);
 
   return (
     <Box style={{ position: "fixed", top: 0, bottom: 0, left: 0, right: 0 }}>
@@ -374,7 +356,6 @@ export default function MapPage() {
               </Marker>
             ))}
 
-          {/* <GeolocateControl position="bottom-right" /> */}
           <AttributionControl
             position="top-right"
             customAttribution={`<a href="https://groupe-tetras-jura.org/">© Groupe Tétras Jura</a>, IGN`}
@@ -391,9 +372,8 @@ export default function MapPage() {
               setShowZoneCardPopup(false);
             }}
             title={zoneCardTitle}
-            onDownload={() => console.log("download....")}
+            onDownload={() => console.log("downloading....")}
           />
-          <MoreActions handleMapSnapshot={handleMapSnapshot} />
 
           {showInfoPopup && <InfoPopup onClose={handleInfoPopupClose} />}
 

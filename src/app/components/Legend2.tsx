@@ -20,7 +20,7 @@ export const Legend = () => {
 
   const tabletStyle: CSSProperties = {
     position: "absolute",
-    top: 12,
+    top: 48,
     left: 24,
     borderRadius: "5px",
     overflow: "hidden",
