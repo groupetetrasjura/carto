@@ -60,7 +60,6 @@ import { Legend } from "./components/Legend2";
 import { MaptilerCredentials } from "./lib/types/api/Credentials";
 import DownloadFormPopup from "./components/DownloadFormPopup";
 import { TransportType } from "./lib/types/mapFilters";
-import MoreActions from "./components/MoreActions";
 
 export default function MapPage() {
   const [cursor, setCursor] = useState<string>("auto");
@@ -117,52 +116,6 @@ export default function MapPage() {
   const handleMultiStepFormPopupClose = () => {
     setShowMultiStepForm(false);
     setCurrentStep(1);
-  };
-
-  const handleMapSnapshot = () => {
-    mapRef.current?.getMap().triggerRepaint();
-    mapRef.current?.getMap().once("render", async () => {
-      const canvas = mapRef.current?.getMap().getCanvas();
-      if (!canvas) return;
-
-      // check webp support
-      const isWebPSupported = () => {
-        const elem = document.createElement("canvas");
-        if (!!(elem.getContext && elem.getContext("2d"))) {
-          return elem.toDataURL("image/webp").indexOf("data:image/webp") === 0;
-        }
-        return false;
-      };
-
-      let imageDataUrl;
-      let fileExtension;
-      // use webp if supported
-      if (isWebPSupported()) {
-        imageDataUrl = await new Promise((resolve) => {
-          canvas.toBlob(
-            (blob) => {
-              const reader = new FileReader();
-              reader.onloadend = () => resolve(reader.result);
-              reader.readAsDataURL(blob as Blob);
-            },
-            "image/webp",
-            0.9
-          );
-        });
-        fileExtension = "webp";
-      } else {
-        // use jpeg format
-        imageDataUrl = canvas.toDataURL("image/jpeg", 0.9); // Qualité JPEG à 90%
-        fileExtension = "jpg";
-      }
-      const link = document.createElement("a");
-      link.href = imageDataUrl as string;
-      link.download = `map_snapshot.${fileExtension}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      console.log(`Snapshot downloaded as ${fileExtension}`);
-    });
   };
 
   const onClick = useCallback((event: MapLayerMouseEvent) => {
@@ -249,6 +202,11 @@ export default function MapPage() {
       setFilteredData(null);
     }
   }, [selectedTransport, selectedZones, selectedDate]);
+
+  useEffect(() => {
+    // console.log("selectedZones", selectedZones);
+    // TODO: get a bounding box for the selected zones, zoom to fit map
+  }, [selectedZones]);
 
   return (
     <Box style={{ position: "fixed", top: 0, bottom: 0, left: 0, right: 0 }}>
@@ -374,7 +332,6 @@ export default function MapPage() {
               </Marker>
             ))}
 
-          {/* <GeolocateControl position="bottom-right" /> */}
           <AttributionControl
             position="top-right"
             customAttribution={`<a href="https://groupe-tetras-jura.org/">© Groupe Tétras Jura</a>, IGN`}
@@ -393,7 +350,6 @@ export default function MapPage() {
             title={zoneCardTitle}
             onDownload={() => console.log("download....")}
           />
-          <MoreActions handleMapSnapshot={handleMapSnapshot} />
 
           {showInfoPopup && <InfoPopup onClose={handleInfoPopupClose} />}
 
