@@ -42,6 +42,14 @@ export interface AuthorizedPathProperties {
   mode_transport: "outdoor" | "car" | "all";
 }
 
+//Properties type for APPB zones
+export interface IAPPBZone {
+  fid: number;
+  name: string;
+  area: number;
+  perimeter: number;
+}
+
 // Type for authorized paths feature
 export type AuthorizedPathFeature = GeoJSONFeature<
   AuthorizedPathProperties,

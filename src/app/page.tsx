@@ -53,13 +53,19 @@ import OTHER_APPB_DATA from "@/lib/data/geojson/other_protected_biotopes_250116.
 import Image from "next/image";
 import MapFiltersButtons from "./components/MapFiltersButtons";
 import { Box } from "@mui/material";
-import ZoneCardPopup from "./components/ZoneCardPopup";
-import { AuthorizedPathsCollection } from "./lib/types/GeoJSON";
-import { addColorsToFeatures, filterAuthorizedPathsData } from "./lib/utils";
-import { Legend } from "./components/Legend2";
-import { MaptilerCredentials } from "./lib/types/api/Credentials";
-import DownloadFormPopup from "./components/DownloadFormPopup";
-import { TransportType } from "./lib/types/mapFilters";
+import ZoneCardPopup from "@/app/components/ZoneCardPopup";
+import { AuthorizedPathsCollection, IAPPBZone } from "@/app/lib/types/GeoJSON";
+import {
+  addColorsToFeatures,
+  filterAuthorizedPathsData,
+  getZonesBoundingBox,
+} from "@/lib/utils";
+import { Legend } from "@/app/components/Legend2";
+import { MaptilerCredentials } from "@/app/lib/types/api/Credentials";
+import DownloadFormPopup from "@/app/components/DownloadFormPopup";
+import { TransportType } from "@/app/lib/types/mapFilters";
+import { FeatureCollection, Geometry } from "geojson";
+import { GeoJSONFeatureProperties } from "./lib/types/generics";
 
 export default function MapPage() {
   const [cursor, setCursor] = useState<string>("auto");
@@ -99,6 +105,9 @@ export default function MapPage() {
         }
       } catch (error) {
         console.error("Failed to fetch credentials:", error);
+        alert(
+          "Erreur lors de la récupération des identifiants de connexion pour les fonds de cartes. Veuillez contacter l'administrateur du site."
+        );
       }
     };
 
@@ -119,7 +128,6 @@ export default function MapPage() {
   };
 
   const onClick = useCallback((event: MapLayerMouseEvent) => {
-    console.log("event", event.features);
     const feature = event.features && event.features[0];
     if (
       feature &&
@@ -204,8 +212,24 @@ export default function MapPage() {
   }, [selectedTransport, selectedZones, selectedDate]);
 
   useEffect(() => {
-    // console.log("selectedZones", selectedZones);
-    // TODO: get a bounding box for the selected zones, zoom to fit map
+    const zones = [...selectedZones];
+    const bboxZones = getZonesBoundingBox(
+      APPB_DATA as FeatureCollection<
+        Geometry,
+        GeoJSONFeatureProperties & IAPPBZone
+      >,
+      zones
+    );
+    mapRef.current?.getMap().fitBounds(
+      [
+        [bboxZones[0], bboxZones[1]], // Southwest coordinates
+        [bboxZones[2], bboxZones[3]], // Northeast coordinates
+      ],
+      {
+        padding: 50,
+        duration: 1000,
+      }
+    );
   }, [selectedZones]);
 
   return (
@@ -348,7 +372,7 @@ export default function MapPage() {
               setShowZoneCardPopup(false);
             }}
             title={zoneCardTitle}
-            onDownload={() => console.log("download....")}
+            onDownload={() => console.log("downloading....")}
           />
 
           {showInfoPopup && <InfoPopup onClose={handleInfoPopupClose} />}
