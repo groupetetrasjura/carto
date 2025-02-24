@@ -26,15 +26,15 @@ export const otherAppbZonesLayer: FillLayer = {
   source: "other-appb-source",
   type: "fill",
   paint: {
-    "fill-color": "#E6E6FA",
-    "fill-opacity": 0.66,
+    "fill-color": "#009366",
+    "fill-opacity": 0.4,
   },
 };
 export const otherAppbZonesBorderLayer: LineLayer = {
   id: "other-appb-zones-border-layer",
   type: "line",
   paint: {
-    "line-color": "#4B0082",
+    "line-color": "#009366",
     "line-width": 1,
   },
 };
@@ -86,23 +86,21 @@ export const protectedAreasLayer: FillLayer = {
       "match",
       ["get", "type_code"],
       "ENS",
-      "#98FB98", // Pale green
+      "#98FB98",
       "RNR",
-      "#FFFF99",
+      "#000000",
       "RNN",
-      "#00885B", // Forest green
-      "#F4A460", // Default sand color
+      "#4b0092",
+      "#CD853F",
     ],
     "fill-opacity": [
       "match",
       ["get", "type_code"],
-      "ENS",
-      0.4,
-      "RNR",
-      0.2,
       "RNN",
-      0,
-      0.4, // Default opacity
+      0.15,
+      "ENS",
+      0.6,
+      0.2,
     ],
   },
 };
@@ -115,9 +113,9 @@ export const protectedAreasBorderLayer: LineLayer = {
       "match",
       ["get", "type_code"],
       "ENS",
-      "#228B22", // Darker green
+      "#98FB98", // Darker green
       "RNR",
-      "#DAA520", // Darker yellow
+      "#000000", // Darker yellow
       "RNN",
       "#4b0092", // Darker forest green
       "#CD853F", // Darker sand color
@@ -131,8 +129,8 @@ export const swissProtectedAreasLayer: FillLayer = {
   source: "swiss-protected-areas-source",
   type: "fill",
   paint: {
-    "fill-color": "#008080", // Teal color
-    "fill-opacity": 0.23,
+    "fill-color": "#ff8400", // Teal color
+    "fill-opacity": 0.15,
   },
 };
 
@@ -140,8 +138,8 @@ export const swissProtectedAreasBorderLayer: LineLayer = {
   id: "swiss-protected-areas-border-layer",
   type: "line",
   paint: {
-    "line-color": "#004C4C", // Darker teal
-    "line-width": 2,
+    "line-color": "#ff8400", // Darker teal
+    "line-width": 1,
   },
 };
 

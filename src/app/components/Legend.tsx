@@ -215,9 +215,10 @@ export const Legend = () => {
                 <rect
                   width="21"
                   height="21"
-                  fill="#E6E6FA"
-                  stroke="#4B0082"
+                  fill="#009366"
+                  stroke="#009366"
                   strokeWidth="1"
+                  fillOpacity={0.4}
                 />
               </svg>
               <span style={{ marginLeft: 10 }}>
@@ -237,8 +238,9 @@ export const Legend = () => {
                 width="21"
                 height="21"
                 fill="#98FB98"
-                stroke="#228B22"
+                stroke="#98FB98"
                 strokeWidth="1"
+                fillOpacity={0.6}
               />
             </svg>
             <span style={{ marginLeft: 10 }}>Espaces Naturels Sensibles</span>
@@ -254,9 +256,10 @@ export const Legend = () => {
               <rect
                 width="21"
                 height="21"
-                fill="#FFD700"
-                stroke="#DAA520"
+                fill="#000000"
+                stroke="#000000"
                 strokeWidth="1"
+                fillOpacity={0.2}
               />
             </svg>
             <span style={{ marginLeft: 10 }}>
@@ -274,10 +277,32 @@ export const Legend = () => {
               <rect
                 width="21"
                 height="21"
-                fill="#008080"
-                stroke="#004C4C"
+                fill="#4b0092"
+                stroke="#4b0092"
                 strokeWidth="1"
-                opacity="0.53"
+                fillOpacity={0.15}
+              />
+            </svg>
+            <span style={{ marginLeft: 10 }}>
+              Réserves Naturelles Nationales
+            </span>
+          </Box>
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "5px",
+            }}
+          >
+            <svg width="21" height="21">
+              <rect
+                width="21"
+                height="21"
+                fill="#ff8400"
+                stroke="#ff8400"
+                strokeOpacity={1}
+                strokeWidth="1"
+                opacity={0.15}
               />
             </svg>
             <span style={{ marginLeft: 10 }}>
