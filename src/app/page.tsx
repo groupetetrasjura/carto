@@ -38,12 +38,15 @@ import {
   protectedAreasBorderLayer,
   swissProtectedAreasBorderLayer,
   swissProtectedAreasLayer,
+  ZQFSZonesLayer,
+  ZQFSZonesBorderLayer,
 } from "@/app/lib/styles/mapStyles";
 
 import APPB_DATA from "@/lib/data/geojson/appb_zones.json";
 import APPB_LOGO_DATA from "@/lib/data/geojson/appb_logo.json";
 import PROTECTED_AREAS_DATA from "@/lib/data/geojson/aires_protegees_fusion.json";
 import SWISS_PROTECTED_AREAS_DATA from "@/lib/data/geojson/dff_noirmont.json";
+import ZQFS_DATA from "@/lib/data/geojson/zqfs_rnnhcj.json";
 import allPathsData from "@/lib/data/geojson/authorized_paths_with_dates_zones_and_transport_modes.json";
 import parkingsData from "@/lib/data/geojson/carparks.json";
 import OTHER_APPB_DATA from "@/lib/data/geojson/other_protected_biotopes_250116.json";
@@ -255,6 +258,10 @@ export default function MapPage() {
           interactiveLayerIds={["appb-zones-layer", "other-appb-zones-layer"]}
           attributionControl={false}
         >
+          <Source id="zonages-zqfs-source" type="geojson" data={ZQFS_DATA}>
+            <Layer {...(ZQFSZonesLayer as LayerProps)} />
+            <Layer {...(ZQFSZonesBorderLayer as LayerProps)} />
+          </Source>
           <Source
             id="protected-areas-source"
             type="geojson"
