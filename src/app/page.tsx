@@ -15,6 +15,7 @@ import Map, {
 
 import { useViewState, useMapStoreActions } from "@/app/lib/stores/mapStore";
 import {
+  useActiveMapBackground,
   useMapFiltersActions,
   useMapFiltersSelectedDate,
   useMapFiltersSelectedTransport,
@@ -60,10 +61,10 @@ import {
   filterAuthorizedPathsData,
   getZonesBoundingBox,
 } from "@/lib/utils";
-import { Legend } from "@/app/components/Legend2";
+import { Legend } from "@/app/components/Legend";
 import { MaptilerCredentials } from "@/app/lib/types/api/Credentials";
 import DownloadFormPopup from "@/app/components/DownloadFormPopup";
-import { TransportType } from "@/app/lib/types/mapFilters";
+import { MapBackground, TransportType } from "@/app/lib/types/mapFilters";
 import { FeatureCollection, Geometry } from "geojson";
 import { GeoJSONFeatureProperties } from "./lib/types/generics";
 
@@ -85,6 +86,7 @@ export default function MapPage() {
   const viewState = useViewState();
   const { setViewState } = useMapStoreActions();
   const maptilerMapId = useMaptilerMapId();
+  const activeMapBackground = useActiveMapBackground();
   const selectedTransport = useMapFiltersSelectedTransport();
   const selectedZones = useMapFiltersSelectedZones();
   const selectedDate = useMapFiltersSelectedDate();
@@ -181,7 +183,10 @@ export default function MapPage() {
     const map = mapRef.current?.getMap();
     if (!map) return;
 
-    if (viewState.zoom > 12 && selectedTransport === TransportType.OUTDOOR) {
+    if (
+      (viewState.zoom > 12 && selectedTransport === TransportType.OUTDOOR) ||
+      activeMapBackground === MapBackground.IGN
+    ) {
       addIGNSourceAndLayer();
     } else {
       // Remove IGN layer and source if they exist
@@ -192,7 +197,12 @@ export default function MapPage() {
         map.removeSource("ign-source");
       }
     }
-  }, [addIGNSourceAndLayer, viewState.zoom, selectedTransport]);
+  }, [
+    addIGNSourceAndLayer,
+    viewState.zoom,
+    selectedTransport,
+    activeMapBackground,
+  ]);
 
   useEffect(() => {
     if (allPathsData) {
