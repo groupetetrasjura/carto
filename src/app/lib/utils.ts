@@ -207,7 +207,7 @@ export function filterFeaturesByZones<
   geojson: FeatureCollection<G, P>,
   zoneNames: string[]
 ): FeatureCollection<G, P> {
-  console.log("zoneNames CHECK2 :", zoneNames instanceof Array);
+  /*   console.log("zoneNames CHECK2 :", zoneNames instanceof Array); */
   if (zoneNames.length === 0) return geojson;
   const filteredFeatures = geojson.features.filter((feature) =>
     zoneNames.includes(feature.properties?.name as string)

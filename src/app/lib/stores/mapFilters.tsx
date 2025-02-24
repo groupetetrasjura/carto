@@ -1,6 +1,7 @@
 import { StateCreator, create } from "zustand";
 import { Dayjs } from "dayjs";
 import {
+  MapBackground,
   MapFiltersState,
   TransportType,
   Zone,
@@ -13,6 +14,7 @@ export const initialMapFiltersState = {
   currentStep: 0,
   showMultiStepForm: false,
   maptilerMapId: null,
+  activeMapBackground: null,
 };
 
 export const stateCreator: StateCreator<MapFiltersState> = (set) => ({
@@ -28,11 +30,27 @@ export const stateCreator: StateCreator<MapFiltersState> = (set) => ({
         };
       }),
     setSelectedTransport: (transport: TransportType) =>
-      set({ selectedTransport: transport }),
+      set(() => {
+        let activeMapBackground = null;
+        switch (transport) {
+          case TransportType.CAR:
+            activeMapBackground = MapBackground.STREETS;
+            break;
+          case TransportType.OUTDOOR:
+            activeMapBackground = MapBackground.OUTDOOR;
+            break;
+        }
+        return {
+          selectedTransport: transport,
+          activeMapBackground,
+        };
+      }),
     setSelectedDate: (date: Dayjs | null) => set({ selectedDate: date }),
     setCurrentStep: (step: number) => set({ currentStep: step }),
     setShowMultiStepForm: (value: boolean) => set({ showMultiStepForm: value }),
     setMaptilerMapId: (mapId: string) => set({ maptilerMapId: mapId }),
+    setActiveMapBackground: (background: MapBackground) =>
+      set({ activeMapBackground: background }),
     clearMapFilters: () => set(initialMapFiltersState),
   },
 });
@@ -46,8 +64,23 @@ export const useMapFiltersSelectedZones = () =>
 export const useMapFiltersSelectedTransport = () =>
   useMapFilters((state) => state.selectedTransport);
 
+export const useActiveMapBackground = () =>
+  useMapFilters((state) => state.activeMapBackground);
 export const useMaptilerMapId = () =>
   useMapFilters((state) => {
+    // First check activeMapBackground
+    if (state.activeMapBackground) {
+      switch (state.activeMapBackground) {
+        case MapBackground.STREETS:
+          return "streets-v2";
+        case MapBackground.OUTDOOR:
+          return "outdoor-v2";
+        case MapBackground.LANDSCAPE:
+          return "landscape";
+      }
+    }
+
+    // If no activeMapBackground, fallback to transport type
     switch (state.selectedTransport) {
       case TransportType.CAR:
         return "streets-v2";

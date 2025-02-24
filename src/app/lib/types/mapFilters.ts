@@ -12,6 +12,13 @@ export type Zone =
   | "Haute Joux"
   | "Combe Noire";
 
+export enum MapBackground {
+  OUTDOOR = "outdoor-v2",
+  STREETS = "streets-v2",
+  IGN = "ign-layer",
+  LANDSCAPE = "landscape",
+}
+
 export interface MapFiltersActions {
   setSelectedZones: (zone: Zone) => void;
   setSelectedTransport: (transport: TransportType) => void;
@@ -19,6 +26,7 @@ export interface MapFiltersActions {
   setCurrentStep: (step: number) => void;
   setShowMultiStepForm: (value: boolean) => void;
   setMaptilerMapId: (mapId: string) => void;
+  setActiveMapBackground: (background: MapBackground) => void;
   clearMapFilters: () => void;
 }
 export interface MapFiltersState {
@@ -29,4 +37,5 @@ export interface MapFiltersState {
   actions: MapFiltersActions;
   showMultiStepForm: boolean;
   maptilerMapId: string | null;
+  activeMapBackground: MapBackground | null;
 }
