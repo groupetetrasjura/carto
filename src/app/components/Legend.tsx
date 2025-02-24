@@ -30,10 +30,11 @@ export const Legend = () => {
 
   const tabletStyle: CSSProperties = {
     position: "absolute",
-    bottom: 160,
+    bottom: 155,
     right: 24,
     borderRadius: "5px",
-    overflow: "hidden",
+    overflow: "auto",
+    maxHeight: "calc(100vh - 200px)",
     width: "90%",
     display: isOpen ? "block" : "none",
   };
@@ -42,7 +43,8 @@ export const Legend = () => {
     position: "absolute",
     bottom: 140,
     right: 12,
-    overflow: "hidden",
+    overflow: "auto",
+    maxHeight: "calc(100vh - 180px)",
     borderRadius: "5px",
     display: isOpen ? "block" : "none",
   };
