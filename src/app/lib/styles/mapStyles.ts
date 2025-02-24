@@ -26,15 +26,15 @@ export const otherAppbZonesLayer: FillLayer = {
   source: "other-appb-source",
   type: "fill",
   paint: {
-    "fill-color": "#E6E6FA",
-    "fill-opacity": 0.66,
+    "fill-color": "#009366",
+    "fill-opacity": 0.4,
   },
 };
 export const otherAppbZonesBorderLayer: LineLayer = {
   id: "other-appb-zones-border-layer",
   type: "line",
   paint: {
-    "line-color": "#4B0082",
+    "line-color": "#009366",
     "line-width": 1,
   },
 };
@@ -86,14 +86,22 @@ export const protectedAreasLayer: FillLayer = {
       "match",
       ["get", "type_code"],
       "ENS",
-      "#98FB98", // Pale green
+      "#98FB98",
       "RNR",
-      "#FFD700", // Warm yellow
+      "#000000",
       "RNN",
-      "#00885B", // Forest green
-      "#F4A460", // Default sand color
+      "#4b0092",
+      "#CD853F",
     ],
-    "fill-opacity": 0.66,
+    "fill-opacity": [
+      "match",
+      ["get", "type_code"],
+      "RNN",
+      0.15,
+      "ENS",
+      0.6,
+      0.2,
+    ],
   },
 };
 
@@ -105,11 +113,11 @@ export const protectedAreasBorderLayer: LineLayer = {
       "match",
       ["get", "type_code"],
       "ENS",
-      "#228B22", // Darker green
+      "#98FB98", // Darker green
       "RNR",
-      "#DAA520", // Darker yellow
+      "#000000", // Darker yellow
       "RNN",
-      "#006400", // Darker forest green
+      "#4b0092", // Darker forest green
       "#CD853F", // Darker sand color
     ],
     "line-width": 1,
@@ -121,8 +129,8 @@ export const swissProtectedAreasLayer: FillLayer = {
   source: "swiss-protected-areas-source",
   type: "fill",
   paint: {
-    "fill-color": "#008080", // Teal color
-    "fill-opacity": 0.23,
+    "fill-color": "#ff8400", // Teal color
+    "fill-opacity": 0.15,
   },
 };
 
@@ -130,42 +138,27 @@ export const swissProtectedAreasBorderLayer: LineLayer = {
   id: "swiss-protected-areas-border-layer",
   type: "line",
   paint: {
-    "line-color": "#004C4C", // Darker teal
-    "line-width": 2,
+    "line-color": "#ff8400", // Darker teal
+    "line-width": 1,
   },
 };
 
-export const gelZonesLayer: FillLayer = {
-  id: "gel-zones-layer",
-  source: "gel-zones-source",
+export const ZQFSZonesLayer: FillLayer = {
+  id: "zqfs-zones-layer",
+  source: "zonages-zqfs-source",
   type: "fill",
   paint: {
-    "fill-color": [
-      "match",
-      ["get", "statut"],
-      "Aire de type II",
-      "#D2B48C", // Tan brown
-      "Aire de type I",
-      "#8B4513", // Saddle brown
-      "#DEB887", // Burlywood brown
-    ],
+    "fill-color": "#4b0092",
     "fill-opacity": 0.4,
   },
 };
 
-export const gelZonesBorderLayer: LineLayer = {
-  id: "gel-zones-border-layer",
+export const ZQFSZonesBorderLayer: LineLayer = {
+  id: "zqfs-zones-border-layer",
+  source: "zonages-zqfs-source",
   type: "line",
   paint: {
-    "line-color": [
-      "match",
-      ["get", "statut"],
-      "Aire de type II",
-      "#DEB887", // Darker blue
-      "Aire de type I",
-      "#DEB887", // Even darker blue
-      "#DEB887", // Default darker blue
-    ],
+    "line-color": "#4b0092",
     "line-width": 1,
   },
 };

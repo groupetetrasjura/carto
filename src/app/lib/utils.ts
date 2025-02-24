@@ -5,6 +5,10 @@ import {
 } from "@/app/lib/types/GeoJSON";
 import { Zone } from "./types/mapFilters";
 import dayjs, { Dayjs } from "dayjs";
+import { bbox } from "@turf/bbox";
+import { FeatureCollection, Geometry } from "geojson";
+import { GeoJSONFeatureProperties } from "@/app/lib/types/generics";
+import { IAPPBZone } from "@/app/lib/types/GeoJSON";
 
 /**
  * Filters GeoJSON features based on transport mode, zones, and date
@@ -45,11 +49,15 @@ export function filterAuthorizedPathsData(
           { type: "LineString"; coordinates: [number, number][] }
         >
       ) => {
-        if (
-          isTransportActive &&
-          feature.properties.mode_transport !== modeTransport
-        )
-          return false;
+        if (isTransportActive) {
+          const featureTransport = feature.properties.mode_transport;
+          if (
+            featureTransport !== modeTransport &&
+            featureTransport !== "all"
+          ) {
+            return false;
+          }
+        }
         if (isZoneActive && !zoneSet.has(feature.properties.zone_names as Zone))
           return false;
 
@@ -184,4 +192,53 @@ export function checkAuthorizedDate(selectedDate: Dayjs): boolean {
     (month === 11 && day <= 14)
   ); // December 1-14
   // return selectedDate?.isBetween("2024-06-15", "2024-07-01") ?? false;
+}
+
+/**
+ * Filters features from a GeoJSON based on zone names
+ * @param geojson The GeoJSON to filter
+ * @param zoneNames Array of zone names to filter by
+ * @returns GeoJSON with only features matching the zone names
+ */
+export function filterFeaturesByZones<
+  P extends GeoJSONFeatureProperties & IAPPBZone,
+  G extends Geometry = Geometry
+>(
+  geojson: FeatureCollection<G, P>,
+  zoneNames: string[]
+): FeatureCollection<G, P> {
+  /*   console.log("zoneNames CHECK2 :", zoneNames instanceof Array); */
+  if (zoneNames.length === 0) return geojson;
+  const filteredFeatures = geojson.features.filter((feature) =>
+    zoneNames.includes(feature.properties?.name as string)
+  );
+  return {
+    type: "FeatureCollection",
+    features: filteredFeatures,
+  };
+}
+
+/**
+ * Gets the bounding box of a GeoJSON
+ * @param geojson The GeoJSON to get bounds for
+ * @returns Bounding box as [minLng, minLat, maxLng, maxLat]
+ */
+export function getFeaturesBoundingBox<
+  P extends GeoJSONFeatureProperties = GeoJSONFeatureProperties,
+  G extends Geometry = Geometry
+>(geojson: FeatureCollection<G, P>): number[] {
+  return bbox(geojson);
+}
+/**
+ * Filters features by zones and returns their bounding box
+ * @param geojson The GeoJSON to process
+ * @param zoneNames Array of zone names to filter by
+ * @returns Bounding box of filtered features as [minLng, minLat, maxLng, maxLat]
+ */
+export function getZonesBoundingBox<
+  P extends GeoJSONFeatureProperties & IAPPBZone,
+  G extends Geometry = Geometry
+>(geojson: FeatureCollection<G, P>, zoneNames: string[]): number[] {
+  const filteredFeatures = filterFeaturesByZones(geojson, zoneNames);
+  return getFeaturesBoundingBox(filteredFeatures);
 }
