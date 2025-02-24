@@ -274,26 +274,6 @@ export const Legend = () => {
               <rect
                 width="21"
                 height="21"
-                fill="#00885B"
-                stroke="#006400"
-                strokeWidth="1"
-              />
-            </svg>
-            <span style={{ marginLeft: 10 }}>
-              Réserves Naturelles Nationales
-            </span>
-          </Box>
-          <Box
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "5px",
-            }}
-          >
-            <svg width="21" height="21">
-              <rect
-                width="21"
-                height="21"
                 fill="#008080"
                 stroke="#004C4C"
                 strokeWidth="1"
@@ -309,7 +289,7 @@ export const Legend = () => {
 
       <Box>
         <span>
-          <strong>Zones de quiétude</strong>
+          <strong>Haute Chaîne du Jura</strong>
         </span>
       </Box>
       <Box>
@@ -324,13 +304,14 @@ export const Legend = () => {
             <rect
               width="21"
               height="21"
-              fill="#8B4513"
-              stroke="#DEB887"
+              fill="transparent"
+              stroke="#4b0092"
               strokeWidth="1"
-              opacity="0.3"
             />
           </svg>
-          <span style={{ marginLeft: 10 }}>Aire de type I</span>
+          <span style={{ marginLeft: 10 }}>
+            Limite de la Réserve Naturelle Nationale
+          </span>
         </Box>
         <Box
           style={{
@@ -340,18 +321,33 @@ export const Legend = () => {
           }}
         >
           <svg width="21" height="21">
+            <defs>
+              <pattern
+                id="hatch"
+                patternUnits="userSpaceOnUse"
+                width="4"
+                height="4"
+              >
+                <path
+                  d="M-1,1 l2,-2
+                         M0,4 l4,-4
+                         M3,5 l2,-2"
+                  style={{ stroke: "green", strokeWidth: 1 }}
+                />
+              </pattern>
+            </defs>
             <rect
               width="21"
               height="21"
-              fill="#D2B48C"
-              stroke="#DEB887"
+              fill="url(#hatch)"
+              stroke="green"
               strokeWidth="1"
-              opacity="0.3"
             />
           </svg>
-          <span style={{ marginLeft: 10 }}>Aire de type II</span>
+          <span style={{ marginLeft: 10 }}>
+            Zone de Quiétude de la Faune Sauvage
+          </span>
         </Box>
-
         <Box>
           <span>
             <strong>Autres informations</strong>
