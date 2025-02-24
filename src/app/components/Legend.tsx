@@ -277,27 +277,6 @@ export const Legend = () => {
               <rect
                 width="21"
                 height="21"
-                fill="#4b0092"
-                stroke="#4b0092"
-                strokeWidth="1"
-                fillOpacity={0.15}
-              />
-            </svg>
-            <span style={{ marginLeft: 10 }}>
-              Réserves Naturelles Nationales
-            </span>
-          </Box>
-          <Box
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "5px",
-            }}
-          >
-            <svg width="21" height="21">
-              <rect
-                width="21"
-                height="21"
                 fill="#ff8400"
                 stroke="#ff8400"
                 strokeOpacity={1}
@@ -329,14 +308,13 @@ export const Legend = () => {
             <rect
               width="21"
               height="21"
-              fill="transparent"
+              fill="#4b0092"
               stroke="#4b0092"
               strokeWidth="1"
+              fillOpacity={0.15}
             />
           </svg>
-          <span style={{ marginLeft: 10 }}>
-            Limite de la Réserve Naturelle Nationale
-          </span>
+          <span style={{ marginLeft: 10 }}>Réserve Naturelle Nationale</span>
         </Box>
         <Box
           style={{
@@ -346,31 +324,17 @@ export const Legend = () => {
           }}
         >
           <svg width="21" height="21">
-            <defs>
-              <pattern
-                id="hatch"
-                patternUnits="userSpaceOnUse"
-                width="4"
-                height="4"
-              >
-                <path
-                  d="M-1,1 l2,-2
-                         M0,4 l4,-4
-                         M3,5 l2,-2"
-                  style={{ stroke: "green", strokeWidth: 1 }}
-                />
-              </pattern>
-            </defs>
             <rect
               width="21"
               height="21"
-              fill="url(#hatch)"
-              stroke="green"
+              fill="#4b0092"
+              stroke="#4b0092"
+              fillOpacity={0.4}
               strokeWidth="1"
             />
           </svg>
           <span style={{ marginLeft: 10 }}>
-            Zone de Quiétude de la Faune Sauvage
+            Zones de Quiétude de la Faune Sauvage
           </span>
         </Box>
         <Box>

@@ -148,8 +148,7 @@ export const ZQFSZonesLayer: FillLayer = {
   source: "zonages-zqfs-source",
   type: "fill",
   paint: {
-    "fill-color": "green",
-    "fill-pattern": "hatch",
+    "fill-color": "#4b0092",
     "fill-opacity": 0.4,
   },
 };
@@ -159,7 +158,7 @@ export const ZQFSZonesBorderLayer: LineLayer = {
   source: "zonages-zqfs-source",
   type: "line",
   paint: {
-    "line-color": "green",
+    "line-color": "#4b0092",
     "line-width": 1,
   },
 };
