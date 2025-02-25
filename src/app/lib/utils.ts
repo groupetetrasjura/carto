@@ -5,6 +5,10 @@ import {
 } from "@/app/lib/types/GeoJSON";
 import { Zone } from "./types/mapFilters";
 import dayjs, { Dayjs } from "dayjs";
+import { bbox } from "@turf/bbox";
+import { FeatureCollection, Geometry } from "geojson";
+import { GeoJSONFeatureProperties } from "@/app/lib/types/generics";
+import { IAPPBZone } from "@/app/lib/types/GeoJSON";
 
 /**
  * Filters GeoJSON features based on transport mode, zones, and date
@@ -45,11 +49,15 @@ export function filterAuthorizedPathsData(
           { type: "LineString"; coordinates: [number, number][] }
         >
       ) => {
-        if (
-          isTransportActive &&
-          feature.properties.mode_transport !== modeTransport
-        )
-          return false;
+        if (isTransportActive) {
+          const featureTransport = feature.properties.mode_transport;
+          if (
+            featureTransport !== modeTransport &&
+            featureTransport !== "all"
+          ) {
+            return false;
+          }
+        }
         if (isZoneActive && !zoneSet.has(feature.properties.zone_names as Zone))
           return false;
 
@@ -125,21 +133,31 @@ export function addColorsToFeatures(
       const period =
         feature.properties["Période_autorisation"]?.toLowerCase() || "";
 
-      let color = "#000000"; // Default color (black) if no period matches
+      let color = "#000"; // Default color (black) if no period matches
+      let dashed = false;
       if (period.includes("du 15/12 au 14/05")) {
-        color = "#0288d1";
+        color = "#084aff";
+        dashed = true;
       } else if (period.includes("du 15/12 au 30/06")) {
-        color = "#0F9D58";
+        color = "#084aff";
+        dashed = false;
       } else if (period.includes("du 15/05 au 30/06")) {
-        color = "#F57C00";
+        color = "#ed9e00";
+        dashed = false;
       } else if (period.includes("du 15/12 au 1er dimanche de mars")) {
-        color = "#673AB7";
+        color = "#ff0000";
+        dashed = false;
+      } else if (period.includes("non reglemente par l'appb")) {
+        color = "#ff0000";
+        dashed = true;
       } else if (
-        period.includes("non reglemente par l'appb") ||
+        period.includes("si deneigé") ||
         period.includes("si déneigé")
       ) {
-        color = "#9E9E9E"; // Magenta pour les itinéraires autorisés sur les 3 périodes
+        color = "#9E9E9E";
+        dashed = false; // Magenta pour les itinéraires autorisés sur les 3 périodes
       } else {
+        dashed = false;
         console.log(
           "Période non reconnue :",
           feature.properties["Période_autorisation"]
@@ -151,6 +169,7 @@ export function addColorsToFeatures(
         properties: {
           ...feature.properties,
           color, // Add the color property
+          dashed,
         },
       };
     }),
@@ -173,4 +192,53 @@ export function checkAuthorizedDate(selectedDate: Dayjs): boolean {
     (month === 11 && day <= 14)
   ); // December 1-14
   // return selectedDate?.isBetween("2024-06-15", "2024-07-01") ?? false;
+}
+
+/**
+ * Filters features from a GeoJSON based on zone names
+ * @param geojson The GeoJSON to filter
+ * @param zoneNames Array of zone names to filter by
+ * @returns GeoJSON with only features matching the zone names
+ */
+export function filterFeaturesByZones<
+  P extends GeoJSONFeatureProperties & IAPPBZone,
+  G extends Geometry = Geometry
+>(
+  geojson: FeatureCollection<G, P>,
+  zoneNames: string[]
+): FeatureCollection<G, P> {
+  /*   console.log("zoneNames CHECK2 :", zoneNames instanceof Array); */
+  if (zoneNames.length === 0) return geojson;
+  const filteredFeatures = geojson.features.filter((feature) =>
+    zoneNames.includes(feature.properties?.name as string)
+  );
+  return {
+    type: "FeatureCollection",
+    features: filteredFeatures,
+  };
+}
+
+/**
+ * Gets the bounding box of a GeoJSON
+ * @param geojson The GeoJSON to get bounds for
+ * @returns Bounding box as [minLng, minLat, maxLng, maxLat]
+ */
+export function getFeaturesBoundingBox<
+  P extends GeoJSONFeatureProperties = GeoJSONFeatureProperties,
+  G extends Geometry = Geometry
+>(geojson: FeatureCollection<G, P>): number[] {
+  return bbox(geojson);
+}
+/**
+ * Filters features by zones and returns their bounding box
+ * @param geojson The GeoJSON to process
+ * @param zoneNames Array of zone names to filter by
+ * @returns Bounding box of filtered features as [minLng, minLat, maxLng, maxLat]
+ */
+export function getZonesBoundingBox<
+  P extends GeoJSONFeatureProperties & IAPPBZone,
+  G extends Geometry = Geometry
+>(geojson: FeatureCollection<G, P>, zoneNames: string[]): number[] {
+  const filteredFeatures = filterFeaturesByZones(geojson, zoneNames);
+  return getFeaturesBoundingBox(filteredFeatures);
 }

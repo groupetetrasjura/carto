@@ -9,7 +9,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import WarningIcon from "@mui/icons-material/Warning";
 import CancelIcon from "@mui/icons-material/DoNotDisturb";
 import FindMyLocationIcon from "@mui/icons-material/MyLocation";
-import { Tooltip, useMediaQuery } from "@mui/material";
+import { IconButton, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 
 import {
   useMapFiltersActions,
@@ -21,77 +21,93 @@ import { MapRef } from "react-map-gl/maplibre";
 import { checkAuthorizedDate } from "../lib/utils";
 import dayjs from "dayjs";
 import { TransportType } from "../lib/types/mapFilters";
+import MoreActions from "./MoreActions";
 
 const MapFiltersButtons = ({
   openMultiStepForm,
   mapRef,
 }: {
   openMultiStepForm: (step: number) => void;
-  mapRef: React.MutableRefObject<MapRef | null>;
+  mapRef: React.RefObject<MapRef>;
 }) => {
   const isMobile = useMediaQuery("(max-width:600px)");
   const selectedZones = useMapFiltersSelectedZones();
   const selectedTransport = useMapFiltersSelectedTransport();
   const selectedDate = useMapFiltersSelectedDate();
+  const theme = useTheme();
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
   const { clearMapFilters } = useMapFiltersActions();
 
   const findMyLocation = () => {
     if (navigator.geolocation) {
+      const options = {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      };
+
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude, accuracy } = position.coords;
           const map = mapRef.current?.getMap();
           if (map) {
-            // Remove existing user location marker and radius if they exist
+            // Remove existing layers
             const existingMarker = map.getLayer("user-location-marker");
             const existingRadius = map.getLayer("user-location-radius");
-            if (existingMarker) map.removeLayer("user-location-marker");
-            if (existingRadius) map.removeLayer("user-location-radius");
+            if (existingMarker) {
+              map.removeLayer("user-location-marker");
+              map.removeSource("user-location-marker");
+            }
+            if (existingRadius) {
+              map.removeLayer("user-location-radius");
+              map.removeSource("user-location-radius");
+            }
 
-            // Add accuracy radius circle
+            // Add accuracy radius circle with new source
+            map.addSource("user-location-radius", {
+              type: "geojson",
+              data: {
+                type: "Feature",
+                geometry: {
+                  type: "Point",
+                  coordinates: [longitude, latitude],
+                },
+                properties: {},
+              },
+            });
             map.addLayer({
               id: "user-location-radius",
               type: "circle",
-              source: {
-                type: "geojson",
-                data: {
-                  type: "Feature",
-                  geometry: {
-                    type: "Point",
-                    coordinates: [longitude, latitude],
-                  },
-                  properties: {},
-                },
-              },
+              source: "user-location-radius",
               paint: {
-                "circle-radius": accuracy,
+                "circle-radius": accuracy / 50, //NB: accuracy can vary greatly, radius should be handle more graciously
                 "circle-color": "#007cbf",
                 "circle-opacity": 0.2,
               },
             });
 
-            // Add marker at user location
+            // Add marker with new source
+            map.addSource("user-location-marker", {
+              type: "geojson",
+              data: {
+                type: "Feature",
+                geometry: {
+                  type: "Point",
+                  coordinates: [longitude, latitude],
+                },
+                properties: {},
+              },
+            });
             map.addLayer({
               id: "user-location-marker",
               type: "circle",
-              source: {
-                type: "geojson",
-                data: {
-                  type: "Feature",
-                  geometry: {
-                    type: "Point",
-                    coordinates: [longitude, latitude],
-                  },
-                  properties: {},
-                },
-              },
+              source: "user-location-marker",
               paint: {
                 "circle-radius": 8,
                 "circle-color": "#007cbf",
               },
             });
 
-            // Fly to user location
             map.flyTo({
               center: [longitude, latitude],
               zoom: 14,
@@ -100,11 +116,27 @@ const MapFiltersButtons = ({
           }
         },
         (error) => {
-          console.log("Error getting location:", error.message);
-        }
+          let errorMessage =
+            "Une erreur est survenue lors de la géolocalisation.";
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage =
+                "Veuillez autoriser l'accès à votre position dans les paramètres de votre navigateur.";
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage = "Votre position est actuellement indisponible.";
+              break;
+            case error.TIMEOUT:
+              errorMessage = "La demande de géolocalisation a expiré.";
+              break;
+          }
+          alert(errorMessage);
+          console.error("Geolocation error:", error);
+        },
+        options
       );
     } else {
-      console.log("Geolocation is not supported by this browser");
+      alert("La géolocalisation n'est pas supportée par votre navigateur.");
     }
   };
 
@@ -130,95 +162,110 @@ const MapFiltersButtons = ({
     }
   };
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: "0.5rem",
-        position: "absolute",
-        bottom: "10px",
-        left: "50%",
-        transform: "translateX(-50%)",
-        margin: "0 0.5rem",
-        zIndex: 1000,
-      }}
-    >
-      <Tooltip title="Trouver ma position" placement="top">
-        <Button
-          variant="brownMain"
-          startIcon={<FindMyLocationIcon />}
-          onClick={() => findMyLocation()} // Clear all filters
+    <>
+      <div
+        style={{
+          display: "flex",
+          gap: "0.5rem",
+          position: "absolute",
+          bottom: "10px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          margin: "0 0.5rem",
+          zIndex: 1000,
+        }}
+      >
+        <Tooltip title="Supprimer les filtres" placement="top">
+          <Button
+            variant="brownMain"
+            startIcon={<CancelIcon />}
+            onClick={() => clearMapFilters()} // Clear all filters
+            sx={{
+              "& .MuiButton-startIcon": {
+                marginRight: "0px",
+                marginLeft: "0px",
+              },
+              textTransform: "none",
+              minWidth: "36px",
+            }}
+          ></Button>
+        </Tooltip>
+        <Badge
+          badgeContent={selectedZones.length}
+          color="success"
+          invisible={!Boolean(selectedZones.length > 0)}
+        >
+          <Button
+            variant="brownMain"
+            startIcon={<LandscapeIcon />}
+            onClick={() => openMultiStepForm(0)} // Open form at step 1
+            sx={{ textTransform: "none" }}
+          >
+            Massifs
+          </Button>
+        </Badge>
+        <Badge
+          badgeContent={<CheckIcon fontSize={"inherit"} />}
+          color="success"
+          invisible={!Boolean(selectedTransport)}
+        >
+          <Button
+            variant="brownMain"
+            startIcon={renderTransportButtonIcon()}
+            onClick={() => openMultiStepForm(1)} // Open form at step 2
+            sx={{ textTransform: "none" }}
+          >
+            {isMobile ? "Dépl." : renderTransportButtonLabel()}
+          </Button>
+        </Badge>
+        <Badge
+          badgeContent={
+            checkAuthorizedDate(selectedDate as dayjs.Dayjs) ? (
+              <CheckIcon fontSize={"inherit"} />
+            ) : (
+              <WarningIcon fontSize={"inherit"} />
+            )
+          }
+          color={
+            checkAuthorizedDate(selectedDate as dayjs.Dayjs)
+              ? "success"
+              : "warning"
+          }
+          invisible={!Boolean(selectedDate)}
+        >
+          <Button
+            variant="brownMain"
+            startIcon={<CalendarTodayIcon />}
+            onClick={() => openMultiStepForm(2)} // Open form at step 3
+            sx={{ textTransform: "none" }}
+          >
+            {selectedDate ? selectedDate?.format("DD/MM/YY") : "Date"}
+          </Button>
+        </Badge>
+      </div>
+      <div
+        style={{ position: "absolute", bottom: isTablet ? 60 : 12, right: 12 }}
+      >
+        <IconButton
+          onClick={() => findMyLocation()}
           sx={{
-            "& .MuiButton-startIcon": { marginRight: "0px", marginLeft: "0px" },
-            textTransform: "none",
-            minWidth: "36px",
+            color: "#725E51",
+            backgroundColor: "white",
+            padding: 2,
+            "&:hover": {
+              backgroundColor: "white", // No effect on hover
+            },
           }}
-        ></Button>
-      </Tooltip>
-      <Badge
-        badgeContent={selectedZones.length}
-        color="success"
-        invisible={!Boolean(selectedZones.length > 0)}
-      >
-        <Button
-          variant="brownMain"
-          startIcon={<LandscapeIcon />}
-          onClick={() => openMultiStepForm(0)} // Open form at step 1
-          sx={{ textTransform: "none" }}
         >
-          Massifs
-        </Button>
-      </Badge>
-      <Badge
-        badgeContent={<CheckIcon fontSize={"inherit"} />}
-        color="success"
-        invisible={!Boolean(selectedTransport)}
-      >
-        <Button
-          variant="brownMain"
-          startIcon={renderTransportButtonIcon()}
-          onClick={() => openMultiStepForm(1)} // Open form at step 2
-          sx={{ textTransform: "none" }}
-        >
-          {isMobile ? "Dépl." : renderTransportButtonLabel()}
-        </Button>
-      </Badge>
-      <Badge
-        badgeContent={
-          checkAuthorizedDate(selectedDate as dayjs.Dayjs) ? (
-            <CheckIcon fontSize={"inherit"} />
-          ) : (
-            <WarningIcon fontSize={"inherit"} />
-          )
+          <FindMyLocationIcon />
+        </IconButton>
+      </div>
+      <MoreActions
+        mapRef={
+          mapRef as unknown as React.RefObject<import("react-map-gl").MapRef>
         }
-        color={
-          checkAuthorizedDate(selectedDate as dayjs.Dayjs)
-            ? "success"
-            : "warning"
-        }
-        invisible={!Boolean(selectedDate)}
-      >
-        <Button
-          variant="brownMain"
-          startIcon={<CalendarTodayIcon />}
-          onClick={() => openMultiStepForm(2)} // Open form at step 3
-          sx={{ textTransform: "none" }}
-        >
-          {selectedDate ? selectedDate?.format("DD/MM/YY") : "Date"}
-        </Button>
-      </Badge>
-      <Tooltip title="Supprimer les filtres" placement="top">
-        <Button
-          variant="brownMain"
-          startIcon={<CancelIcon />}
-          onClick={() => clearMapFilters()} // Clear all filters
-          sx={{
-            "& .MuiButton-startIcon": { marginRight: "0px", marginLeft: "0px" },
-            textTransform: "none",
-            minWidth: "36px",
-          }}
-        ></Button>
-      </Tooltip>
-    </div>
+      />
+    </>
   );
 };
 

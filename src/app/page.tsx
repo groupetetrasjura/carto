@@ -15,6 +15,7 @@ import Map, {
 
 import { useViewState, useMapStoreActions } from "@/app/lib/stores/mapStore";
 import {
+  useActiveMapBackground,
   useMapFiltersActions,
   useMapFiltersSelectedDate,
   useMapFiltersSelectedTransport,
@@ -31,11 +32,21 @@ import {
   appbZonesLayer,
   otherAppbZonesBorderLayer,
   otherAppbZonesLayer,
-  pathsLayer,
+  solidPathsLayer,
+  dashedPathsLayer,
+  protectedAreasLayer,
+  protectedAreasBorderLayer,
+  swissProtectedAreasBorderLayer,
+  swissProtectedAreasLayer,
+  ZQFSZonesLayer,
+  ZQFSZonesBorderLayer,
 } from "@/app/lib/styles/mapStyles";
 
 import APPB_DATA from "@/lib/data/geojson/appb_zones.json";
 import APPB_LOGO_DATA from "@/lib/data/geojson/appb_logo.json";
+import PROTECTED_AREAS_DATA from "@/lib/data/geojson/aires_protegees_fusion.json";
+import SWISS_PROTECTED_AREAS_DATA from "@/lib/data/geojson/dff_noirmont.json";
+import ZQFS_DATA from "@/lib/data/geojson/zqfs_rnnhcj.json";
 import allPathsData from "@/lib/data/geojson/authorized_paths_with_dates_zones_and_transport_modes.json";
 import parkingsData from "@/lib/data/geojson/carparks.json";
 import OTHER_APPB_DATA from "@/lib/data/geojson/other_protected_biotopes_250116.json";
@@ -43,14 +54,19 @@ import OTHER_APPB_DATA from "@/lib/data/geojson/other_protected_biotopes_250116.
 import Image from "next/image";
 import MapFiltersButtons from "./components/MapFiltersButtons";
 import { Box } from "@mui/material";
-import ZoneCardPopup from "./components/ZoneCardPopup";
-import { AuthorizedPathsCollection } from "./lib/types/GeoJSON";
-import { addColorsToFeatures, filterAuthorizedPathsData } from "./lib/utils";
-import { Legend } from "./components/Legend2";
-import { MaptilerCredentials } from "./lib/types/api/Credentials";
-import DownloadFormPopup from "./components/DownloadFormPopup";
-import { TransportType } from "./lib/types/mapFilters";
-import MoreActions from "./components/MoreActions";
+import ZoneCardPopup from "@/app/components/ZoneCardPopup";
+import { AuthorizedPathsCollection, IAPPBZone } from "@/app/lib/types/GeoJSON";
+import {
+  addColorsToFeatures,
+  filterAuthorizedPathsData,
+  getZonesBoundingBox,
+} from "@/lib/utils";
+import { Legend } from "@/app/components/Legend";
+import { MaptilerCredentials } from "@/app/lib/types/api/Credentials";
+import DownloadFormPopup from "@/app/components/DownloadFormPopup";
+import { MapBackground, TransportType } from "@/app/lib/types/mapFilters";
+import { FeatureCollection, Geometry } from "geojson";
+import { GeoJSONFeatureProperties } from "./lib/types/generics";
 
 export default function MapPage() {
   const [cursor, setCursor] = useState<string>("auto");
@@ -70,6 +86,7 @@ export default function MapPage() {
   const viewState = useViewState();
   const { setViewState } = useMapStoreActions();
   const maptilerMapId = useMaptilerMapId();
+  const activeMapBackground = useActiveMapBackground();
   const selectedTransport = useMapFiltersSelectedTransport();
   const selectedZones = useMapFiltersSelectedZones();
   const selectedDate = useMapFiltersSelectedDate();
@@ -90,6 +107,9 @@ export default function MapPage() {
         }
       } catch (error) {
         console.error("Failed to fetch credentials:", error);
+        alert(
+          "Erreur lors de la récupération des identifiants de connexion pour les fonds de cartes. Veuillez contacter l'administrateur du site."
+        );
       }
     };
 
@@ -109,54 +129,7 @@ export default function MapPage() {
     setCurrentStep(1);
   };
 
-  const handleMapSnapshot = () => {
-    mapRef.current?.getMap().triggerRepaint();
-    mapRef.current?.getMap().once("render", async () => {
-      const canvas = mapRef.current?.getMap().getCanvas();
-      if (!canvas) return;
-
-      // check webp support
-      const isWebPSupported = () => {
-        const elem = document.createElement("canvas");
-        if (!!(elem.getContext && elem.getContext("2d"))) {
-          return elem.toDataURL("image/webp").indexOf("data:image/webp") === 0;
-        }
-        return false;
-      };
-
-      let imageDataUrl;
-      let fileExtension;
-      // use webp if supported
-      if (isWebPSupported()) {
-        imageDataUrl = await new Promise((resolve) => {
-          canvas.toBlob(
-            (blob) => {
-              const reader = new FileReader();
-              reader.onloadend = () => resolve(reader.result);
-              reader.readAsDataURL(blob as Blob);
-            },
-            "image/webp",
-            0.9
-          );
-        });
-        fileExtension = "webp";
-      } else {
-        // use jpeg format
-        imageDataUrl = canvas.toDataURL("image/jpeg", 0.9); // Qualité JPEG à 90%
-        fileExtension = "jpg";
-      }
-      const link = document.createElement("a");
-      link.href = imageDataUrl as string;
-      link.download = `map_snapshot.${fileExtension}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      console.log(`Snapshot downloaded as ${fileExtension}`);
-    });
-  };
-
   const onClick = useCallback((event: MapLayerMouseEvent) => {
-    console.log("event", event.features);
     const feature = event.features && event.features[0];
     if (
       feature &&
@@ -210,7 +183,10 @@ export default function MapPage() {
     const map = mapRef.current?.getMap();
     if (!map) return;
 
-    if (viewState.zoom > 12 && selectedTransport === TransportType.OUTDOOR) {
+    if (
+      (viewState.zoom > 12 && selectedTransport === TransportType.OUTDOOR) ||
+      activeMapBackground === MapBackground.IGN
+    ) {
       addIGNSourceAndLayer();
     } else {
       // Remove IGN layer and source if they exist
@@ -221,7 +197,12 @@ export default function MapPage() {
         map.removeSource("ign-source");
       }
     }
-  }, [addIGNSourceAndLayer, viewState.zoom, selectedTransport]);
+  }, [
+    addIGNSourceAndLayer,
+    viewState.zoom,
+    selectedTransport,
+    activeMapBackground,
+  ]);
 
   useEffect(() => {
     if (allPathsData) {
@@ -240,6 +221,27 @@ export default function MapPage() {
     }
   }, [selectedTransport, selectedZones, selectedDate]);
 
+  useEffect(() => {
+    const zones = [...selectedZones];
+    const bboxZones = getZonesBoundingBox(
+      APPB_DATA as FeatureCollection<
+        Geometry,
+        GeoJSONFeatureProperties & IAPPBZone
+      >,
+      zones
+    );
+    mapRef.current?.getMap().fitBounds(
+      [
+        [bboxZones[0], bboxZones[1]], // Southwest coordinates
+        [bboxZones[2], bboxZones[3]], // Northeast coordinates
+      ],
+      {
+        padding: 50,
+        duration: 1000,
+      }
+    );
+  }, [selectedZones]);
+
   return (
     <Box style={{ position: "fixed", top: 0, bottom: 0, left: 0, right: 0 }}>
       {maptilerCredentials?.maptilerApiKey && (
@@ -256,6 +258,65 @@ export default function MapPage() {
           interactiveLayerIds={["appb-zones-layer", "other-appb-zones-layer"]}
           attributionControl={false}
         >
+          <Source id="zonages-zqfs-source" type="geojson" data={ZQFS_DATA}>
+            <Layer {...(ZQFSZonesLayer as LayerProps)} />
+            <Layer {...(ZQFSZonesBorderLayer as LayerProps)} />
+          </Source>
+          <Source
+            id="protected-areas-source"
+            type="geojson"
+            data={PROTECTED_AREAS_DATA}
+          >
+            <Layer {...(protectedAreasLayer as LayerProps)} />
+            <Layer {...(protectedAreasBorderLayer as LayerProps)} />
+            <Layer
+              id="protected-areas-labels"
+              type="symbol"
+              paint={{
+                "text-color": "#000000",
+                "text-halo-color": "#ffffff",
+                "text-halo-width": 1,
+              }}
+              layout={{
+                "text-field": [
+                  "concat",
+                  ["get", "type_code"],
+                  "\n",
+                  ["get", "nom_site"],
+                ],
+                "text-font": ["Open Sans Regular"],
+                "text-size": 12,
+                "text-anchor": "center",
+                "text-allow-overlap": false,
+                "text-max-width": 8,
+              }}
+            />
+          </Source>
+          <Source
+            id="swiss-protected-areas-source"
+            type="geojson"
+            data={SWISS_PROTECTED_AREAS_DATA}
+          >
+            <Layer {...(swissProtectedAreasLayer as LayerProps)} />
+            <Layer {...(swissProtectedAreasBorderLayer as LayerProps)} />
+            <Layer
+              id="swiss-protected-areas-labels"
+              type="symbol"
+              paint={{
+                "text-color": "#000000",
+                "text-halo-color": "#ffffff",
+                "text-halo-width": 1,
+              }}
+              layout={{
+                "text-field": "Site fédéral de protection de faune Le Noirmont",
+                "text-font": ["Open Sans Regular"],
+                "text-size": 12,
+                "text-anchor": "center",
+                "text-allow-overlap": false,
+                "text-max-width": 8,
+              }}
+            />
+          </Source>
           <Source id="appb-zones-source" type="geojson" data={APPB_DATA}>
             <Layer {...(appbZonesLayer as LayerProps)} />
             <Layer {...(appbZonesBorderLayer as LayerProps)} />
@@ -270,7 +331,8 @@ export default function MapPage() {
               type="geojson"
               data={filteredData}
             >
-              <Layer {...(pathsLayer as LayerProps)} />
+              <Layer {...(solidPathsLayer as LayerProps)} />
+              <Layer {...(dashedPathsLayer as LayerProps)} />
             </Source>
           )}
           {parkingsData.features.length > 0 &&
@@ -300,10 +362,10 @@ export default function MapPage() {
               </Marker>
             ))}
 
-          {/* <GeolocateControl position="bottom-right" /> */}
           <AttributionControl
-            position="bottom-right"
-            customAttribution={`<a href="#">© Groupe Tétras Jura, IGN</a>`}
+            position="top-right"
+            customAttribution={`<a href="https://groupe-tetras-jura.org/">© Groupe Tétras Jura</a>, IGN`}
+            compact={true}
           />
           <MapFiltersButtons
             openMultiStepForm={openMultiStepForm}
@@ -316,9 +378,8 @@ export default function MapPage() {
               setShowZoneCardPopup(false);
             }}
             title={zoneCardTitle}
-            onDownload={() => console.log("download....")}
+            onDownload={() => console.log("downloading....")}
           />
-          <MoreActions handleMapSnapshot={handleMapSnapshot} />
 
           {showInfoPopup && <InfoPopup onClose={handleInfoPopupClose} />}
 

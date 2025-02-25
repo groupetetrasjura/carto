@@ -78,6 +78,13 @@ const theme = createTheme({
         },
       ],
     },
+    MuiSpeedDial: {
+      styleOverrides: {
+        fab: {
+          backgroundColor: "#FFFFFF", // Added white color to FAB props
+        },
+      },
+    },
   },
 });
 

@@ -6,9 +6,9 @@ export const appbZonesLayer: FillLayer = {
   source: "appb-zones-source",
   type: "fill",
   paint: {
-    "fill-color": "#c0dac8",
+    "fill-color": "#009366",
     "fill-outline-color": "gray",
-    "fill-opacity": 0.5,
+    "fill-opacity": 0.23,
   },
 };
 
@@ -26,15 +26,15 @@ export const otherAppbZonesLayer: FillLayer = {
   source: "other-appb-source",
   type: "fill",
   paint: {
-    "fill-color": "#E6E6FA",
-    "fill-opacity": 0.66,
+    "fill-color": "#009366",
+    "fill-opacity": 0.4,
   },
 };
 export const otherAppbZonesBorderLayer: LineLayer = {
   id: "other-appb-zones-border-layer",
   type: "line",
   paint: {
-    "line-color": "#4B0082",
+    "line-color": "#009366",
     "line-width": 1,
   },
 };
@@ -52,13 +52,113 @@ export const logoLayer: LayerProps = {
   },
 };
 
-export const pathsLayer: LayerProps = {
-  id: "paths-layer",
+export const solidPathsLayer: LayerProps = {
+  id: "solid-paths-layer",
   type: "line",
   source: "authorized-paths-source",
   paint: {
     "line-color": ["get", "color"],
     "line-width": 3,
     "line-opacity": 0.8,
+  },
+  filter: ["==", ["get", "dashed"], false],
+};
+
+export const dashedPathsLayer: LayerProps = {
+  id: "dashed-paths-layer",
+  type: "line",
+  source: "authorized-paths-source",
+  paint: {
+    "line-color": ["get", "color"],
+    "line-width": 3,
+    "line-opacity": 0.8,
+    "line-dasharray": ["literal", [2, 4]], // Pointillés fixes
+  },
+  filter: ["==", ["get", "dashed"], true],
+};
+
+export const protectedAreasLayer: FillLayer = {
+  id: "protected-areas-layer",
+  source: "protected-areas-source",
+  type: "fill",
+  paint: {
+    "fill-color": [
+      "match",
+      ["get", "type_code"],
+      "ENS",
+      "#98FB98",
+      "RNR",
+      "#000000",
+      "RNN",
+      "#4b0092",
+      "#CD853F",
+    ],
+    "fill-opacity": [
+      "match",
+      ["get", "type_code"],
+      "RNN",
+      0.15,
+      "ENS",
+      0.6,
+      0.2,
+    ],
+  },
+};
+
+export const protectedAreasBorderLayer: LineLayer = {
+  id: "protected-areas-border-layer",
+  type: "line",
+  paint: {
+    "line-color": [
+      "match",
+      ["get", "type_code"],
+      "ENS",
+      "#98FB98", // Darker green
+      "RNR",
+      "#000000", // Darker yellow
+      "RNN",
+      "#4b0092", // Darker forest green
+      "#CD853F", // Darker sand color
+    ],
+    "line-width": 1,
+  },
+};
+
+export const swissProtectedAreasLayer: FillLayer = {
+  id: "swiss-protected-areas-layer",
+  source: "swiss-protected-areas-source",
+  type: "fill",
+  paint: {
+    "fill-color": "#ff8400", // Teal color
+    "fill-opacity": 0.15,
+  },
+};
+
+export const swissProtectedAreasBorderLayer: LineLayer = {
+  id: "swiss-protected-areas-border-layer",
+  type: "line",
+  paint: {
+    "line-color": "#ff8400", // Darker teal
+    "line-width": 1,
+  },
+};
+
+export const ZQFSZonesLayer: FillLayer = {
+  id: "zqfs-zones-layer",
+  source: "zonages-zqfs-source",
+  type: "fill",
+  paint: {
+    "fill-color": "#4b0092",
+    "fill-opacity": 0.4,
+  },
+};
+
+export const ZQFSZonesBorderLayer: LineLayer = {
+  id: "zqfs-zones-border-layer",
+  source: "zonages-zqfs-source",
+  type: "line",
+  paint: {
+    "line-color": "#4b0092",
+    "line-width": 1,
   },
 };

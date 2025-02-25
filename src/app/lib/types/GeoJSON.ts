@@ -39,7 +39,15 @@ export interface AuthorizedPathProperties {
   end_day: number | null;
   end_month: number | null;
   zone_names: string;
-  mode_transport: "outdoor" | "car";
+  mode_transport: "outdoor" | "car" | "all";
+}
+
+//Properties type for APPB zones
+export interface IAPPBZone {
+  fid: number;
+  name: string;
+  area: number;
+  perimeter: number;
 }
 
 // Type for authorized paths feature

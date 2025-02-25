@@ -1,6 +1,6 @@
 {
   "name": "grand-tetras-jura",
-  "version": "1.0.1",
+  "version": "1.0.6",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -15,7 +15,9 @@
     "@mui/material": "^6.1.9",
     "@mui/x-date-pickers": "^7.22.3",
     "@mui/x-date-pickers-pro": "^7.22.3",
+    "@turf/bbox": "^7.2.0",
     "dayjs": "^1.11.13",
+    "geojson": "^0.5.0",
     "maplibre-gl": "^4.7.1",
     "next": "15.0.3",
     "react": "^18.3.1",
