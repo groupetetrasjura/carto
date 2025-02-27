@@ -28,30 +28,26 @@ export const Legend = () => {
     setActiveMapBackground(background);
   };
 
-  const tabletStyle: CSSProperties = {
+  const modalStyle: CSSProperties = {
     position: "absolute",
-    bottom: 155,
-    right: 24,
+    bottom: isTablet
+      ? window.innerHeight < 600
+        ? 100
+        : 155
+      : window.innerHeight < 600
+      ? 80
+      : 140,
+    right: isTablet ? 24 : 12,
     borderRadius: "5px",
     overflow: "auto",
-    maxHeight: "calc(100vh - 200px)",
-    width: "90%",
-    display: isOpen ? "block" : "none",
-  };
-
-  const desktopStyle: CSSProperties = {
-    position: "absolute",
-    bottom: 140,
-    right: 12,
-    overflow: "auto",
-    maxHeight: "calc(100vh - 180px)",
-    borderRadius: "5px",
+    maxHeight: `calc(100vh - ${isTablet ? 200 : 180}px)`,
+    width: isTablet ? "90%" : "30%",
     display: isOpen ? "block" : "none",
   };
 
   const buttonStyle: CSSProperties = {
     position: "absolute",
-    bottom: isTablet ? 125 : 80,
+    bottom: isTablet ? (window.innerHeight < 600 ? 75 : 125) : 80,
     right: 12,
     backgroundColor: "white",
     borderRadius: "50%",
@@ -287,7 +283,7 @@ export const Legend = () => {
               />
             </svg>
             <span style={{ marginLeft: 10 }}>
-              Site fédéral de protection de faune Le Noirmont
+              District franc fédéral Le Noirmont
             </span>
           </Box>
         </Box>
@@ -389,7 +385,7 @@ export const Legend = () => {
       </IconButton>
       <Box
         style={{
-          ...(isTablet ? tabletStyle : desktopStyle),
+          ...modalStyle,
           backgroundColor: "white",
           padding: 5,
         }}
