@@ -4,7 +4,11 @@ export async function GET() {
   try {
     const credentials = {
       maptilerApiKey: process.env.NEXT_PUBLIC_MAPTILER_API_KEY,
-      maptilerMapId: process.env.NEXT_PUBLIC_MAPTILER_MAP_ID,
+      maptilerMapIds: {
+        outdoor: process.env.NEXT_PUBLIC_MAPTILER_MAP_ID_OUTDOOR,
+        streets: process.env.NEXT_PUBLIC_MAPTILER_MAP_ID_STREETS,
+        landscape: process.env.NEXT_PUBLIC_MAPTILER_MAP_ID_LANDSCAPE,
+      },
     };
 
     return NextResponse.json(credentials);

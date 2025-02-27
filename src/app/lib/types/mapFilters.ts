@@ -18,6 +18,11 @@ export enum MapBackground {
   IGN = "ign-layer",
   LANDSCAPE = "landscape",
 }
+export type MaptilerMapIds = {
+  outdoor: string;
+  streets: string;
+  landscape: string;
+} | null;
 
 export interface MapFiltersActions {
   setSelectedZones: (zone: Zone) => void;
@@ -26,6 +31,7 @@ export interface MapFiltersActions {
   setCurrentStep: (step: number) => void;
   setShowMultiStepForm: (value: boolean) => void;
   setMaptilerMapId: (mapId: string) => void;
+  setMaptilerMapIds: (mapIds: MaptilerMapIds) => void;
   setActiveMapBackground: (background: MapBackground) => void;
   clearMapFilters: () => void;
 }
@@ -37,5 +43,10 @@ export interface MapFiltersState {
   actions: MapFiltersActions;
   showMultiStepForm: boolean;
   maptilerMapId: string | null;
+  maptilerMapIds: {
+    outdoor: string;
+    streets: string;
+    landscape: string;
+  } | null;
   activeMapBackground: MapBackground | null;
 }
