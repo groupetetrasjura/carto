@@ -73,7 +73,7 @@ export default function MapPage() {
   const [showInfoPopup, setShowInfoPopup] = useState(true);
   const [showZoneCardPopup, setShowZoneCardPopup] = useState(false);
   const [zoneCardTitle, setZoneCardTitle] = useState("");
-  const { setCurrentStep, setShowMultiStepForm, setMaptilerMapId } =
+  const { setCurrentStep, setShowMultiStepForm, setMaptilerMapIds } =
     useMapFiltersActions();
   const showMultiStepFormPopup = useMapFiltersShowMultiStepForm();
   const [maptilerCredentials, setMaptilerCredentials] = useState<
@@ -102,8 +102,8 @@ export default function MapPage() {
         const response = await fetch("/api/credentials");
         const data = await response.json();
         setMaptilerCredentials(data);
-        if (data.maptilerMapId) {
-          setMaptilerMapId(data.maptilerMapId);
+        if (data.maptilerMapIds) {
+          setMaptilerMapIds(data.maptilerMapIds);
         }
       } catch (error) {
         console.error("Failed to fetch credentials:", error);
@@ -114,7 +114,7 @@ export default function MapPage() {
     };
 
     fetchCredentials();
-  }, [setMaptilerMapId]);
+  }, [setMaptilerMapIds]);
 
   const onMouseEnter = useCallback(() => setCursor("pointer"), []);
   const onMouseLeave = useCallback(() => setCursor("grab"), []);
@@ -308,7 +308,7 @@ export default function MapPage() {
                 "text-halo-width": 1,
               }}
               layout={{
-                "text-field": "Site fédéral de protection de faune Le Noirmont",
+                "text-field": "District franc fédéral Le Noirmont",
                 "text-font": ["Open Sans Regular"],
                 "text-size": 12,
                 "text-anchor": "center",
