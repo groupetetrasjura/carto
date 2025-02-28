@@ -13,7 +13,11 @@ import Map, {
   AttributionControl,
 } from "react-map-gl/maplibre";
 
-import { useViewState, useMapStoreActions } from "@/app/lib/stores/mapStore";
+import {
+  useViewState,
+  useMapStoreActions,
+  useLayersVisibility,
+} from "@/app/lib/stores/mapStore";
 import {
   useActiveMapBackground,
   useMapFiltersActions,
@@ -90,6 +94,7 @@ export default function MapPage() {
   const selectedTransport = useMapFiltersSelectedTransport();
   const selectedZones = useMapFiltersSelectedZones();
   const selectedDate = useMapFiltersSelectedDate();
+  const layersVisibility = useLayersVisibility();
 
   const openMultiStepForm = (step: number) => {
     setShowMultiStepForm(true);
@@ -147,6 +152,15 @@ export default function MapPage() {
       window.open(feature.properties.URL_FICHE, "_blank");
     }
   }, []);
+
+  const filteredFeatures = PROTECTED_AREAS_DATA.features.filter((feature) => {
+    const typeCode = feature.properties.type_code;
+    return (
+      (typeCode === "RNR" && layersVisibility["protected-areas-source"].RNR) ||
+      (typeCode === "ENS" && layersVisibility["protected-areas-source"].ENS) ||
+      (typeCode === "RNN" && layersVisibility["protected-areas-source"].RNN)
+    );
+  });
 
   // Add this new function
   const addIGNSourceAndLayer = useCallback(() => {
@@ -258,73 +272,88 @@ export default function MapPage() {
           interactiveLayerIds={["appb-zones-layer", "other-appb-zones-layer"]}
           attributionControl={false}
         >
-          <Source id="zonages-zqfs-source" type="geojson" data={ZQFS_DATA}>
-            <Layer {...(ZQFSZonesLayer as LayerProps)} />
-            <Layer {...(ZQFSZonesBorderLayer as LayerProps)} />
-          </Source>
-          <Source
-            id="protected-areas-source"
-            type="geojson"
-            data={PROTECTED_AREAS_DATA}
-          >
-            <Layer {...(protectedAreasLayer as LayerProps)} />
-            <Layer {...(protectedAreasBorderLayer as LayerProps)} />
-            <Layer
-              id="protected-areas-labels"
-              type="symbol"
-              paint={{
-                "text-color": "#000000",
-                "text-halo-color": "#ffffff",
-                "text-halo-width": 1,
+          {layersVisibility["zonages-zqfs-source"] && (
+            <Source id="zonages-zqfs-source" type="geojson" data={ZQFS_DATA}>
+              <Layer {...(ZQFSZonesLayer as LayerProps)} />
+              <Layer {...(ZQFSZonesBorderLayer as LayerProps)} />
+            </Source>
+          )}
+          {layersVisibility["protected-areas-source"] && (
+            <Source
+              id="protected-areas-source"
+              type="geojson"
+              data={{
+                type: "FeatureCollection",
+                features: filteredFeatures,
               }}
-              layout={{
-                "text-field": [
-                  "concat",
-                  ["get", "type_code"],
-                  "\n",
-                  ["get", "nom_site"],
-                ],
-                "text-font": ["Open Sans Regular"],
-                "text-size": 12,
-                "text-anchor": "center",
-                "text-allow-overlap": false,
-                "text-max-width": 8,
-              }}
-            />
-          </Source>
-          <Source
-            id="swiss-protected-areas-source"
-            type="geojson"
-            data={SWISS_PROTECTED_AREAS_DATA}
-          >
-            <Layer {...(swissProtectedAreasLayer as LayerProps)} />
-            <Layer {...(swissProtectedAreasBorderLayer as LayerProps)} />
-            <Layer
-              id="swiss-protected-areas-labels"
-              type="symbol"
-              paint={{
-                "text-color": "#000000",
-                "text-halo-color": "#ffffff",
-                "text-halo-width": 1,
-              }}
-              layout={{
-                "text-field": "District franc fédéral Le Noirmont",
-                "text-font": ["Open Sans Regular"],
-                "text-size": 12,
-                "text-anchor": "center",
-                "text-allow-overlap": false,
-                "text-max-width": 8,
-              }}
-            />
-          </Source>
+            >
+              <Layer {...(protectedAreasLayer as LayerProps)} />
+              <Layer {...(protectedAreasBorderLayer as LayerProps)} />
+              <Layer
+                id="protected-areas-labels"
+                type="symbol"
+                paint={{
+                  "text-color": "#000000",
+                  "text-halo-color": "#ffffff",
+                  "text-halo-width": 1,
+                }}
+                layout={{
+                  "text-field": [
+                    "concat",
+                    ["get", "type_code"],
+                    "\n",
+                    ["get", "nom_site"],
+                  ],
+                  "text-font": ["Open Sans Regular"],
+                  "text-size": 12,
+                  "text-anchor": "center",
+                  "text-allow-overlap": false,
+                  "text-max-width": 8,
+                }}
+              />
+            </Source>
+          )}
+          {layersVisibility["swiss-protected-areas-source"] && (
+            <Source
+              id="swiss-protected-areas-source"
+              type="geojson"
+              data={SWISS_PROTECTED_AREAS_DATA}
+            >
+              <Layer {...(swissProtectedAreasLayer as LayerProps)} />
+              <Layer {...(swissProtectedAreasBorderLayer as LayerProps)} />
+              <Layer
+                id="swiss-protected-areas-labels"
+                type="symbol"
+                paint={{
+                  "text-color": "#000000",
+                  "text-halo-color": "#ffffff",
+                  "text-halo-width": 1,
+                }}
+                layout={{
+                  "text-field": "District franc fédéral Le Noirmont",
+                  "text-font": ["Open Sans Regular"],
+                  "text-size": 12,
+                  "text-anchor": "center",
+                  "text-allow-overlap": false,
+                  "text-max-width": 8,
+                }}
+              />
+            </Source>
+          )}
           <Source id="appb-zones-source" type="geojson" data={APPB_DATA}>
             <Layer {...(appbZonesLayer as LayerProps)} />
             <Layer {...(appbZonesBorderLayer as LayerProps)} />
           </Source>
-          <Source id="other-appb-source" type="geojson" data={OTHER_APPB_DATA}>
-            <Layer {...(otherAppbZonesLayer as LayerProps)} />
-            <Layer {...(otherAppbZonesBorderLayer as LayerProps)} />
-          </Source>
+          {layersVisibility["other-appb-source"] && (
+            <Source
+              id="other-appb-source"
+              type="geojson"
+              data={OTHER_APPB_DATA}
+            >
+              <Layer {...(otherAppbZonesLayer as LayerProps)} />
+              <Layer {...(otherAppbZonesBorderLayer as LayerProps)} />
+            </Source>
+          )}
           {filteredData && (
             <Source
               id="authorized-paths-source"

@@ -4,6 +4,8 @@ import { CSSProperties, useState } from "react";
 import MapIcon from "@mui/icons-material/Map";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 import Typography from "@mui/material/Typography";
 import LayersIcon from "@mui/icons-material/Layers";
@@ -14,15 +16,21 @@ import {
   useMaptilerMapId,
 } from "@/app/lib/stores/mapFilters";
 import { MapBackground } from "../lib/types/mapFilters";
+import {
+  useLayersVisibility,
+  useMapStoreActions,
+} from "../lib/stores/mapStore";
 
 export const Legend = () => {
   const [isOpenMapBackgrounds, setIsOpenMapBackgrounds] = useState(false);
-  const [isCollapsedLegend, setIsCollapsedLegend] = useState(false);
+  const [isCollapsedLegend, setIsCollapsedLegend] = useState(true);
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
   const { setActiveMapBackground } = useMapFiltersActions();
   const activeMapBackground = useActiveMapBackground();
   const maptilerMapId = useMaptilerMapId();
+  const layersVisibility = useLayersVisibility();
+  const { toggleLayer } = useMapStoreActions();
 
   const toggleMapBackgrounds = () => {
     setIsOpenMapBackgrounds(!isOpenMapBackgrounds);
@@ -239,97 +247,163 @@ export const Legend = () => {
               ></Box>
               <span>{`Si déneigé`}</span>
             </Box>
-
             <Box>
               <span>
                 <strong>Aires protégées</strong>
               </span>
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "5px",
+                }}
+              >
+                <svg width="24" height="24" style={{ flexShrink: 0 }}>
+                  <rect
+                    width="24"
+                    height="24"
+                    fill="#009366"
+                    stroke="gray"
+                    strokeWidth={3}
+                    fillOpacity={0.23}
+                  />
+                </svg>
+                <span style={{ marginLeft: 10 }}>
+                  Arrêtés Préfectoraux de Protection de Biotopes
+                </span>
+              </Box>
+
               <Box>
                 <Box
                   style={{
                     display: "flex",
                     alignItems: "center",
+                    justifyContent: "space-between",
                     marginBottom: "5px",
                   }}
                 >
-                  <svg width="21" height="21">
-                    <rect
-                      width="21"
-                      height="21"
-                      fill="#009366"
-                      stroke="#009366"
-                      strokeWidth="1"
-                      fillOpacity={0.4}
-                    />
-                  </svg>
-                  <span style={{ marginLeft: 10 }}>
-                    Autres Arrêtés Préfectoraux de Protection de Biotopes
-                  </span>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <svg width="24" height="24" style={{ flexShrink: 0 }}>
+                      <rect
+                        width="24"
+                        height="24"
+                        fill="#009366"
+                        stroke="#009366"
+                        strokeWidth={3}
+                        fillOpacity={0.4}
+                      />
+                    </svg>
+                    <span style={{ marginLeft: 10 }}>
+                      Autres Arrêtés Préfectoraux de Protection de Biotopes
+                    </span>
+                  </div>
+                  <IconButton onClick={() => toggleLayer("other-appb-source")}>
+                    {layersVisibility["other-appb-source"] ? (
+                      <VisibilityIcon className="w-5 h-5 text-green-500" />
+                    ) : (
+                      <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                    )}
+                  </IconButton>
                 </Box>
               </Box>
               <Box
                 style={{
                   display: "flex",
                   alignItems: "center",
+                  justifyContent: "space-between",
                   marginBottom: "5px",
                 }}
               >
-                <svg width="21" height="21">
-                  <rect
-                    width="21"
-                    height="21"
-                    fill="#98FB98"
-                    stroke="#98FB98"
-                    strokeWidth="1"
-                    fillOpacity={0.6}
-                  />
-                </svg>
-                <span style={{ marginLeft: 10 }}>
-                  Espaces Naturels Sensibles
-                </span>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <svg width="24" height="24" style={{ flexShrink: 0 }}>
+                    <rect
+                      width="24"
+                      height="24"
+                      fill="#98FB98"
+                      stroke="#98FB98"
+                      strokeWidth={3}
+                      fillOpacity={0.6}
+                    />
+                  </svg>
+                  <span style={{ marginLeft: 10 }}>
+                    Espaces Naturels Sensibles
+                  </span>
+                </div>
+                <IconButton
+                  onClick={() => toggleLayer("protected-areas-source", "ENS")}
+                >
+                  {layersVisibility["protected-areas-source"].ENS ? (
+                    <VisibilityIcon className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                  )}
+                </IconButton>
               </Box>
               <Box
                 style={{
                   display: "flex",
                   alignItems: "center",
+                  justifyContent: "space-between",
                   marginBottom: "5px",
                 }}
               >
-                <svg width="21" height="21">
-                  <rect
-                    width="21"
-                    height="21"
-                    fill="#000000"
-                    stroke="#000000"
-                    strokeWidth="1"
-                    fillOpacity={0.2}
-                  />
-                </svg>
-                <span style={{ marginLeft: 10 }}>
-                  Réserves Naturelles Régionales
-                </span>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <svg width="24" height="24" style={{ flexShrink: 0 }}>
+                    <rect
+                      width="24"
+                      height="24"
+                      fill="#000000"
+                      stroke="#000000"
+                      strokeWidth={3}
+                      fillOpacity={0.2}
+                    />
+                  </svg>
+                  <span style={{ marginLeft: 10 }}>
+                    Réserves Naturelles Régionales
+                  </span>
+                </div>
+                <IconButton
+                  onClick={() => toggleLayer("protected-areas-source", "RNR")}
+                >
+                  {layersVisibility["protected-areas-source"].RNR ? (
+                    <VisibilityIcon className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                  )}
+                </IconButton>
               </Box>
               <Box
                 style={{
                   display: "flex",
                   alignItems: "center",
+                  justifyContent: "space-between",
                   marginBottom: "5px",
                 }}
               >
-                <svg width="21" height="21">
+                <svg width="24" height="24" style={{ flexShrink: 0 }}>
                   <rect
-                    width="21"
-                    height="21"
+                    width="24"
+                    height="24"
                     fill="#ff8400"
                     stroke="#ff8400"
                     strokeOpacity={1}
-                    strokeWidth="1"
-                    opacity={0.15}
+                    strokeWidth={3}
+                    fillOpacity={0.15}
                   />
                 </svg>
                 <span style={{ marginLeft: 10 }}>
                   District franc fédéral Le Noirmont
                 </span>
+                <IconButton
+                  onClick={() => toggleLayer("swiss-protected-areas-source")}
+                >
+                  {layersVisibility["swiss-protected-areas-source"] ? (
+                    <VisibilityIcon className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                  )}
+                </IconButton>
               </Box>
             </Box>
           </Box>
@@ -344,43 +418,62 @@ export const Legend = () => {
               style={{
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "space-between",
                 marginBottom: "5px",
               }}
             >
-              <svg width="21" height="21">
+              <svg width="24" height="24" style={{ flexShrink: 0 }}>
                 <rect
-                  width="21"
-                  height="21"
+                  width="24"
+                  height="24"
                   fill="#4b0092"
                   stroke="#4b0092"
-                  strokeWidth="1"
+                  strokeWidth={3}
                   fillOpacity={0.15}
                 />
               </svg>
               <span style={{ marginLeft: 10 }}>
                 Réserve Naturelle Nationale
               </span>
+              <IconButton
+                onClick={() => toggleLayer("protected-areas-source", "RNN")}
+              >
+                {layersVisibility["protected-areas-source"].RNN ? (
+                  <VisibilityIcon className="w-5 h-5 text-green-500" />
+                ) : (
+                  <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                )}
+              </IconButton>
             </Box>
             <Box
               style={{
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "space-around",
                 marginBottom: "5px",
               }}
             >
-              <svg width="21" height="21">
+              <svg width="24" height="24" style={{ flexShrink: 0 }}>
                 <rect
-                  width="21"
-                  height="21"
+                  width="24"
+                  height="24"
                   fill="#4b0092"
                   stroke="#4b0092"
                   fillOpacity={0.4}
-                  strokeWidth="1"
+                  strokeWidth={3}
                 />
               </svg>
               <span style={{ marginLeft: 10 }}>
                 Zones de Quiétude de la Faune Sauvage
               </span>
+
+              <IconButton onClick={() => toggleLayer("zonages-zqfs-source")}>
+                {layersVisibility["zonages-zqfs-source"] ? (
+                  <VisibilityIcon className="w-5 h-5 text-green-500" />
+                ) : (
+                  <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                )}
+              </IconButton>
             </Box>
             <Box>
               <span>
