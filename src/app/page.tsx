@@ -68,7 +68,7 @@ import {
 import { Legend } from "@/app/components/Legend";
 import { MaptilerCredentials } from "@/app/lib/types/api/Credentials";
 import DownloadFormPopup from "@/app/components/DownloadFormPopup";
-import { MapBackground, TransportType } from "@/app/lib/types/mapFilters";
+import { MapBackground } from "@/app/lib/types/mapFilters";
 import { FeatureCollection, Geometry } from "geojson";
 import { GeoJSONFeatureProperties } from "./lib/types/generics";
 
@@ -197,10 +197,7 @@ export default function MapPage() {
     const map = mapRef.current?.getMap();
     if (!map) return;
 
-    if (
-      (viewState.zoom > 12 && selectedTransport === TransportType.OUTDOOR) ||
-      activeMapBackground === MapBackground.IGN
-    ) {
+    if (viewState.zoom > 12 || activeMapBackground === MapBackground.IGN) {
       addIGNSourceAndLayer();
     } else {
       // Remove IGN layer and source if they exist
@@ -211,12 +208,7 @@ export default function MapPage() {
         map.removeSource("ign-source");
       }
     }
-  }, [
-    addIGNSourceAndLayer,
-    viewState.zoom,
-    selectedTransport,
-    activeMapBackground,
-  ]);
+  }, [addIGNSourceAndLayer, viewState.zoom, activeMapBackground]);
 
   useEffect(() => {
     if (allPathsData) {

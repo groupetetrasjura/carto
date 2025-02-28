@@ -16,7 +16,7 @@ export const initialMapFiltersState = {
   showMultiStepForm: false,
   maptilerMapId: null,
   maptilerMapIds: null,
-  activeMapBackground: null,
+  activeMapBackground: MapBackground.LANDSCAPE,
 };
 
 export const stateCreator: StateCreator<MapFiltersState> = (set) => ({
@@ -81,6 +81,8 @@ export const useMaptilerMapId = () =>
           return state.maptilerMapIds?.outdoor || "outdoor-v2";
         case MapBackground.LANDSCAPE:
           return state.maptilerMapIds?.landscape || "landscape";
+        case MapBackground.IGN:
+          return null;
       }
     }
 
