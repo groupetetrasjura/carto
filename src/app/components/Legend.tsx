@@ -2,6 +2,11 @@ import Image from "next/image";
 import { Box, useMediaQuery, useTheme, IconButton } from "@mui/material";
 import { CSSProperties, useState } from "react";
 import MapIcon from "@mui/icons-material/Map";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+
 import Typography from "@mui/material/Typography";
 import LayersIcon from "@mui/icons-material/Layers";
 import CheckIcon from "@mui/icons-material/Check";
@@ -11,42 +16,51 @@ import {
   useMaptilerMapId,
 } from "@/app/lib/stores/mapFilters";
 import { MapBackground } from "../lib/types/mapFilters";
+import {
+  useLayersVisibility,
+  useMapStoreActions,
+} from "../lib/stores/mapStore";
 
 export const Legend = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenMapBackgrounds, setIsOpenMapBackgrounds] = useState(false);
+  const [isCollapsedLegend, setIsCollapsedLegend] = useState(true);
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
   const { setActiveMapBackground } = useMapFiltersActions();
   const activeMapBackground = useActiveMapBackground();
   const maptilerMapId = useMaptilerMapId();
+  const layersVisibility = useLayersVisibility();
+  const { toggleLayer } = useMapStoreActions();
 
-  const toggleLegend = () => {
-    setIsOpen(!isOpen);
+  const toggleMapBackgrounds = () => {
+    setIsOpenMapBackgrounds(!isOpenMapBackgrounds);
   };
 
   const handleBackgroundChange = (background: MapBackground) => {
     setActiveMapBackground(background);
   };
 
-  const tabletStyle: CSSProperties = {
+  const modalStyleMapBackgrounds: CSSProperties = {
     position: "absolute",
-    bottom: 155,
-    right: 24,
+    bottom: isTablet ? 180 : 140,
+    right: isTablet ? 24 : 12,
     borderRadius: "5px",
-    overflow: "auto",
-    maxHeight: "calc(100vh - 200px)",
-    width: "90%",
-    display: isOpen ? "block" : "none",
+    width: "200px",
+    display: isOpenMapBackgrounds ? "block" : "none",
   };
 
-  const desktopStyle: CSSProperties = {
-    position: "absolute",
-    bottom: 140,
-    right: 12,
-    overflow: "auto",
-    maxHeight: "calc(100vh - 180px)",
+  const styleLegend: CSSProperties = {
+    position: "fixed",
+    top: 20,
+    left: "50%",
+    transform: "translateX(-50%)",
+    backgroundColor: "white",
+    padding: "10px",
     borderRadius: "5px",
-    display: isOpen ? "block" : "none",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
+    maxHeight: isCollapsedLegend ? "60px" : isTablet ? "75%" : "100%",
+    maxWidth: "300px",
+    overflow: isCollapsedLegend ? "hidden" : "auto",
   };
 
   const buttonStyle: CSSProperties = {
@@ -97,115 +111,38 @@ export const Legend = () => {
 
   const legendContent = (
     <>
-      <Box>
-        <span>
-          <strong>Itinéraires autorisés</strong>
-        </span>
-        <Box
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "5px",
-          }}
-        >
-          <Box
-            style={{
-              width: 20,
-              height: 3,
-              borderStyle: "dashed",
-              borderWidth: 2,
-              borderColor: "#084aff",
-              backgroundColor: "transparent",
-              marginRight: 5,
-            }}
-          ></Box>
-          <span>{`Du 15/12 au 14/05`}</span>
-        </Box>
-        <Box
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "5px",
-          }}
-        >
-          <Box
-            style={{
-              width: 20,
-              height: 3,
-              backgroundColor: "#084aff",
-              marginRight: 10,
-            }}
-          ></Box>
-          <span>{`Du 15/12 au 30/06`}</span>
-        </Box>
-        <Box
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "5px",
-          }}
-        >
-          <Box
-            style={{
-              width: 20,
-              height: 3,
-              backgroundColor: "#ed9e00",
-              marginRight: 10,
-            }}
-          ></Box>
-          <span>{`Du 15/05 au 30/06`}</span>
-        </Box>
-        <Box
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "5px",
-          }}
-        >
-          <Box
-            style={{
-              width: 20,
-              height: 3,
-              backgroundColor: "#ff0000",
-              marginRight: 10,
-            }}
-          ></Box>
-          <span>{`Du 15/12 au 1er dimanche de mars`}</span>
-        </Box>
-        <Box
-          style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}
-        >
-          <Box
-            style={{
-              width: 20,
-              height: 3,
-              borderStyle: "dashed",
-              borderWidth: 2,
-              borderColor: "#ff0000",
-              backgroundColor: "transparent",
-              marginRight: 5,
-            }}
-          ></Box>
-          <span>{`Non réglementé par l'APPB`}</span>
+      <Box
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", width: "300px" }}>
+          <MapIcon style={{ marginRight: "5px", color: "#725E51" }} />
+          <Typography
+            variant="inherit"
+            fontSize={"15px"}
+            textTransform={"uppercase"}
+          >
+            {`Légende et couches`}
+          </Typography>
         </Box>
 
-        <Box style={{ display: "flex", alignItems: "center" }}>
-          <Box
-            style={{
-              width: 20,
-              height: 3,
-              backgroundColor: "#9E9E9E",
-              marginRight: 10,
-            }}
-          ></Box>
-          <span>{`Si déneigé`}</span>
-        </Box>
+        <IconButton
+          onClick={() => setIsCollapsedLegend(!isCollapsedLegend)}
+          size="small"
+        >
+          {isCollapsedLegend ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+        </IconButton>
+      </Box>
 
-        <Box>
-          <span>
-            <strong>Aires protégées</strong>
-          </span>
+      {!isCollapsedLegend && (
+        <>
           <Box>
+            <span>
+              <strong>Itinéraires autorisés</strong>
+            </span>
             <Box
               style={{
                 display: "flex",
@@ -213,168 +150,376 @@ export const Legend = () => {
                 marginBottom: "5px",
               }}
             >
-              <svg width="21" height="21">
+              <Box
+                style={{
+                  width: 20,
+                  height: 3,
+                  borderStyle: "dashed",
+                  borderWidth: 2,
+                  borderColor: "#084aff",
+                  backgroundColor: "transparent",
+                  marginRight: 10,
+                }}
+              ></Box>
+              <span>{`Du 15/12 au 14/05`}</span>
+            </Box>
+            <Box
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "5px",
+              }}
+            >
+              <Box
+                style={{
+                  width: 20,
+                  height: 3,
+                  backgroundColor: "#084aff",
+                  marginRight: 10,
+                }}
+              ></Box>
+              <span>{`Du 15/12 au 30/06`}</span>
+            </Box>
+            <Box
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "5px",
+              }}
+            >
+              <Box
+                style={{
+                  width: 20,
+                  height: 3,
+                  backgroundColor: "#ed9e00",
+                  marginRight: 10,
+                }}
+              ></Box>
+              <span>{`Du 15/05 au 30/06`}</span>
+            </Box>
+            <Box
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "5px",
+              }}
+            >
+              <Box
+                style={{
+                  width: 20,
+                  height: 3,
+                  backgroundColor: "#ff0000",
+                  marginRight: 10,
+                }}
+              ></Box>
+              <span>{`Du 15/12 au 1er dimanche de mars`}</span>
+            </Box>
+            <Box
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "5px",
+              }}
+            >
+              <Box
+                style={{
+                  width: 20,
+                  height: 3,
+                  borderStyle: "dashed",
+                  borderWidth: 2,
+                  borderColor: "#ff0000",
+                  backgroundColor: "transparent",
+                  marginRight: 10,
+                }}
+              ></Box>
+              <span>{`Non réglementé par l'APPB`}</span>
+            </Box>
+
+            <Box style={{ display: "flex", alignItems: "center" }}>
+              <Box
+                style={{
+                  width: 20,
+                  height: 3,
+                  backgroundColor: "#9E9E9E",
+                  marginRight: 10,
+                }}
+              ></Box>
+              <span>{`Si déneigé`}</span>
+            </Box>
+            <Box>
+              <span>
+                <strong>Aires protégées</strong>
+              </span>
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "5px",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <svg width="24" height="24" style={{ flexShrink: 0 }}>
+                    <rect
+                      width="24"
+                      height="24"
+                      fill="#009366"
+                      stroke="gray"
+                      strokeWidth={3}
+                      fillOpacity={0.23}
+                    />
+                  </svg>
+                  <span style={{ marginLeft: 10 }}>
+                    Arrêtés Préfectoraux de Protection de Biotopes
+                  </span>
+                </div>
+              </Box>
+              <Box>
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginBottom: "5px",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <svg width="24" height="24" style={{ flexShrink: 0 }}>
+                      <rect
+                        width="24"
+                        height="24"
+                        fill="#009366"
+                        stroke="#009366"
+                        strokeWidth={3}
+                        fillOpacity={0.4}
+                      />
+                    </svg>
+                    <span style={{ marginLeft: 10 }}>
+                      Autres Arrêtés Préfectoraux de Protection de Biotopes
+                    </span>
+                  </div>
+                  <IconButton onClick={() => toggleLayer("other-appb-source")}>
+                    {layersVisibility["other-appb-source"] ? (
+                      <VisibilityIcon className="w-5 h-5 text-green-500" />
+                    ) : (
+                      <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                    )}
+                  </IconButton>
+                </Box>
+              </Box>
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "5px",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <svg width="24" height="24" style={{ flexShrink: 0 }}>
+                    <rect
+                      width="24"
+                      height="24"
+                      fill="#98FB98"
+                      stroke="#98FB98"
+                      strokeWidth={3}
+                      fillOpacity={0.6}
+                    />
+                  </svg>
+                  <span style={{ marginLeft: 10 }}>
+                    Espaces Naturels Sensibles
+                  </span>
+                </div>
+                <IconButton
+                  onClick={() => toggleLayer("protected-areas-source", "ENS")}
+                >
+                  {layersVisibility["protected-areas-source"].ENS ? (
+                    <VisibilityIcon className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                  )}
+                </IconButton>
+              </Box>
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "5px",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <svg width="24" height="24" style={{ flexShrink: 0 }}>
+                    <rect
+                      width="24"
+                      height="24"
+                      fill="#000000"
+                      stroke="#000000"
+                      strokeWidth={3}
+                      fillOpacity={0.2}
+                    />
+                  </svg>
+                  <span style={{ marginLeft: 10 }}>
+                    Réserves Naturelles Régionales
+                  </span>
+                </div>
+                <IconButton
+                  onClick={() => toggleLayer("protected-areas-source", "RNR")}
+                >
+                  {layersVisibility["protected-areas-source"].RNR ? (
+                    <VisibilityIcon className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                  )}
+                </IconButton>
+              </Box>
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "5px",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <svg width="24" height="24" style={{ flexShrink: 0 }}>
+                    <rect
+                      width="24"
+                      height="24"
+                      fill="#ff8400"
+                      stroke="#ff8400"
+                      strokeOpacity={1}
+                      strokeWidth={3}
+                      fillOpacity={0.15}
+                    />
+                  </svg>
+                  <span style={{ marginLeft: 10 }}>
+                    District franc fédéral Le Noirmont
+                  </span>
+                </div>
+                <IconButton
+                  onClick={() => toggleLayer("swiss-protected-areas-source")}
+                >
+                  {layersVisibility["swiss-protected-areas-source"] ? (
+                    <VisibilityIcon className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                  )}
+                </IconButton>
+              </Box>
+            </Box>
+          </Box>
+
+          <Box>
+            <span>
+              <strong>Haute Chaîne du Jura</strong>
+            </span>
+          </Box>
+          <Box>
+            <Box
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "5px",
+                justifyContent: "space-between",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <svg width="24" height="24" style={{ flexShrink: 0 }}>
+                  <rect
+                    width="24"
+                    height="24"
+                    fill="#4b0092"
+                    stroke="#4b0092"
+                    strokeWidth={3}
+                    fillOpacity={0.15}
+                  />
+                </svg>
+                <span style={{ marginLeft: 10 }}>
+                  Réserve Naturelle Nationale
+                </span>
+              </div>
+              <Box style={{ alignSelf: "flex-end" }}>
+                <IconButton
+                  onClick={() => toggleLayer("protected-areas-source", "RNN")}
+                >
+                  {layersVisibility["protected-areas-source"].RNN ? (
+                    <VisibilityIcon className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                  )}
+                </IconButton>
+              </Box>
+            </Box>
+            <Box
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: "5px",
+              }}
+            >
+              <svg width="24" height="24" style={{ flexShrink: 0 }}>
                 <rect
-                  width="21"
-                  height="21"
-                  fill="#009366"
-                  stroke="#009366"
-                  strokeWidth="1"
+                  width="24"
+                  height="24"
+                  fill="#4b0092"
+                  stroke="#4b0092"
                   fillOpacity={0.4}
+                  strokeWidth={3}
                 />
               </svg>
               <span style={{ marginLeft: 10 }}>
-                Autres Arrêtés Préfectoraux de Protection de Biotopes
+                Zones de Quiétude de la Faune Sauvage
+              </span>
+
+              <IconButton onClick={() => toggleLayer("zonages-zqfs-source")}>
+                {layersVisibility["zonages-zqfs-source"] ? (
+                  <VisibilityIcon className="w-5 h-5 text-green-500" />
+                ) : (
+                  <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                )}
+              </IconButton>
+            </Box>
+            <Box>
+              <span>
+                <strong>Autres informations</strong>
               </span>
             </Box>
-          </Box>
-          <Box
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "5px",
-            }}
-          >
-            <svg width="21" height="21">
-              <rect
-                width="21"
-                height="21"
-                fill="#98FB98"
-                stroke="#98FB98"
-                strokeWidth="1"
-                fillOpacity={0.6}
-              />
-            </svg>
-            <span style={{ marginLeft: 10 }}>Espaces Naturels Sensibles</span>
-          </Box>
-          <Box
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "5px",
-            }}
-          >
-            <svg width="21" height="21">
-              <rect
-                width="21"
-                height="21"
-                fill="#000000"
-                stroke="#000000"
-                strokeWidth="1"
-                fillOpacity={0.2}
-              />
-            </svg>
-            <span style={{ marginLeft: 10 }}>
-              Réserves Naturelles Régionales
-            </span>
-          </Box>
-          <Box
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "5px",
-            }}
-          >
-            <svg width="21" height="21">
-              <rect
-                width="21"
-                height="21"
-                fill="#ff8400"
-                stroke="#ff8400"
-                strokeOpacity={1}
-                strokeWidth="1"
-                opacity={0.15}
-              />
-            </svg>
-            <span style={{ marginLeft: 10 }}>
-              Site fédéral de protection de faune Le Noirmont
-            </span>
-          </Box>
-        </Box>
-      </Box>
-
-      <Box>
-        <span>
-          <strong>Haute Chaîne du Jura</strong>
-        </span>
-      </Box>
-      <Box>
-        <Box
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "5px",
-          }}
-        >
-          <svg width="21" height="21">
-            <rect
-              width="21"
-              height="21"
-              fill="#4b0092"
-              stroke="#4b0092"
-              strokeWidth="1"
-              fillOpacity={0.15}
-            />
-          </svg>
-          <span style={{ marginLeft: 10 }}>Réserve Naturelle Nationale</span>
-        </Box>
-        <Box
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "5px",
-          }}
-        >
-          <svg width="21" height="21">
-            <rect
-              width="21"
-              height="21"
-              fill="#4b0092"
-              stroke="#4b0092"
-              fillOpacity={0.4}
-              strokeWidth="1"
-            />
-          </svg>
-          <span style={{ marginLeft: 10 }}>
-            Zones de Quiétude de la Faune Sauvage
-          </span>
-        </Box>
-        <Box>
-          <span>
-            <strong>Autres informations</strong>
-          </span>
-        </Box>
-        <Box>
-          <Box
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "5px",
-            }}
-          >
-            <Image
-              src="/icons/parking_marker.png"
-              alt="Parking Icon"
-              width={20}
-              height={20}
-              style={{ marginRight: 10 }}
-            />
-            <span>Parking à proximité</span>
-          </Box>
-        </Box>
-        <Box sx={{ maxWidth: 380, mt: 1, fontSize: "13px" }}>
-          {`D'autres zones réglementées sont également présentes sur le massif
+            <Box>
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "5px",
+                }}
+              >
+                <Image
+                  src="/icons/parking_marker.png"
+                  alt="Parking Icon"
+                  width={20}
+                  height={20}
+                  style={{ marginRight: 10 }}
+                />
+                <span>Parking à proximité</span>
+              </Box>
+            </Box>
+            <Box sx={{ maxWidth: 380, mt: 1, fontSize: "13px" }}>
+              {`D'autres zones réglementées sont également présentes sur le massif
           jurassien. Pour plus d'informations, consulter la réglementation
           locale.`}
-        </Box>
-      </Box>
+            </Box>
+          </Box>
+        </>
+      )}
     </>
   );
 
   return (
     <>
+      <Box style={styleLegend}>{legendContent}</Box>
       <IconButton
-        onClick={toggleLegend}
+        onClick={toggleMapBackgrounds}
         style={buttonStyle}
         sx={{
           color: "#725E51",
@@ -389,27 +534,14 @@ export const Legend = () => {
       </IconButton>
       <Box
         style={{
-          ...(isTablet ? tabletStyle : desktopStyle),
+          ...modalStyleMapBackgrounds,
           backgroundColor: "white",
           padding: 5,
         }}
       >
         <Box sx={{ mb: 1, display: "flex", alignItems: "center" }}>
-          <MapIcon style={{ marginRight: "5px", color: "#725E51" }} />
-          <Typography component="span" variant="button">
-            Légende et couches
-          </Typography>
-        </Box>
-        {legendContent}
-        <Box
-          sx={{
-            my: 1.5,
-            borderBottom: "1px solid #E0E0E0",
-          }}
-        />
-        <Box sx={{ mb: 1, display: "flex", alignItems: "center" }}>
           <LayersIcon style={{ marginRight: "5px", color: "#725E51" }} />
-          <Typography component="span" variant="button">
+          <Typography component="span" variant="button" fontSize={"15px"}>
             Fonds de carte
           </Typography>
         </Box>

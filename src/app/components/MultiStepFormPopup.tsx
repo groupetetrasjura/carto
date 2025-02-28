@@ -218,6 +218,7 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   {
                     ...styles.paper,
                     opacity: selectedTransport === TransportType.CAR ? 1 : 0.5,
+                    width: { xs: "100%", sm: "auto" },
                   },
                 ]}
                 onClick={() => setSelectedTransport(TransportType.CAR)}
@@ -236,6 +237,7 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     ...styles.paper,
                     opacity:
                       selectedTransport === TransportType.OUTDOOR ? 1 : 0.5,
+                    width: { xs: "100%", sm: "auto" },
                   },
                 ]}
                 onClick={() => setSelectedTransport(TransportType.OUTDOOR)}
