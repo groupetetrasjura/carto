@@ -58,9 +58,9 @@ export const Legend = () => {
     padding: "10px",
     borderRadius: "5px",
     boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
-    maxHeight: isCollapsedLegend ? "60px" : "100%", // Increased height when not collapsed
+    maxHeight: isCollapsedLegend ? "60px" : isTablet ? "75%" : "100%",
     maxWidth: "300px",
-
+    overflow: "scroll",
     transition: "max-height 0.3s ease",
   };
 
@@ -259,21 +259,22 @@ export const Legend = () => {
                   marginBottom: "5px",
                 }}
               >
-                <svg width="24" height="24" style={{ flexShrink: 0 }}>
-                  <rect
-                    width="24"
-                    height="24"
-                    fill="#009366"
-                    stroke="gray"
-                    strokeWidth={3}
-                    fillOpacity={0.23}
-                  />
-                </svg>
-                <span style={{ marginLeft: 10 }}>
-                  Arrêtés Préfectoraux de Protection de Biotopes
-                </span>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <svg width="24" height="24" style={{ flexShrink: 0 }}>
+                    <rect
+                      width="24"
+                      height="24"
+                      fill="#009366"
+                      stroke="gray"
+                      strokeWidth={3}
+                      fillOpacity={0.23}
+                    />
+                  </svg>
+                  <span style={{ marginLeft: 10 }}>
+                    Arrêtés Préfectoraux de Protection de Biotopes
+                  </span>
+                </div>
               </Box>
-
               <Box>
                 <Box
                   style={{
@@ -377,24 +378,26 @@ export const Legend = () => {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "space-between",
                   marginBottom: "5px",
+                  justifyContent: "space-between",
                 }}
               >
-                <svg width="24" height="24" style={{ flexShrink: 0 }}>
-                  <rect
-                    width="24"
-                    height="24"
-                    fill="#ff8400"
-                    stroke="#ff8400"
-                    strokeOpacity={1}
-                    strokeWidth={3}
-                    fillOpacity={0.15}
-                  />
-                </svg>
-                <span style={{ marginLeft: 10 }}>
-                  District franc fédéral Le Noirmont
-                </span>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <svg width="24" height="24" style={{ flexShrink: 0 }}>
+                    <rect
+                      width="24"
+                      height="24"
+                      fill="#ff8400"
+                      stroke="#ff8400"
+                      strokeOpacity={1}
+                      strokeWidth={3}
+                      fillOpacity={0.15}
+                    />
+                  </svg>
+                  <span style={{ marginLeft: 10 }}>
+                    District franc fédéral Le Noirmont
+                  </span>
+                </div>
                 <IconButton
                   onClick={() => toggleLayer("swiss-protected-areas-source")}
                 >
@@ -418,38 +421,42 @@ export const Legend = () => {
               style={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "space-between",
                 marginBottom: "5px",
+                justifyContent: "space-between",
               }}
             >
-              <svg width="24" height="24" style={{ flexShrink: 0 }}>
-                <rect
-                  width="24"
-                  height="24"
-                  fill="#4b0092"
-                  stroke="#4b0092"
-                  strokeWidth={3}
-                  fillOpacity={0.15}
-                />
-              </svg>
-              <span style={{ marginLeft: 10 }}>
-                Réserve Naturelle Nationale
-              </span>
-              <IconButton
-                onClick={() => toggleLayer("protected-areas-source", "RNN")}
-              >
-                {layersVisibility["protected-areas-source"].RNN ? (
-                  <VisibilityIcon className="w-5 h-5 text-green-500" />
-                ) : (
-                  <VisibilityOffIcon className="w-5 h-5 text-red-500" />
-                )}
-              </IconButton>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <svg width="24" height="24" style={{ flexShrink: 0 }}>
+                  <rect
+                    width="24"
+                    height="24"
+                    fill="#4b0092"
+                    stroke="#4b0092"
+                    strokeWidth={3}
+                    fillOpacity={0.15}
+                  />
+                </svg>
+                <span style={{ marginLeft: 10 }}>
+                  Réserve Naturelle Nationale
+                </span>
+              </div>
+              <Box style={{ alignSelf: "flex-end" }}>
+                <IconButton
+                  onClick={() => toggleLayer("protected-areas-source", "RNN")}
+                >
+                  {layersVisibility["protected-areas-source"].RNN ? (
+                    <VisibilityIcon className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                  )}
+                </IconButton>
+              </Box>
             </Box>
             <Box
               style={{
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "space-around",
+                justifyContent: "space-between",
                 marginBottom: "5px",
               }}
             >
