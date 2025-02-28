@@ -162,11 +162,9 @@ export default function MapPage() {
     );
   });
 
-  // Add this new function
   const addIGNSourceAndLayer = useCallback(() => {
     const map = mapRef.current?.getMap();
     if (!map) return;
-    // Add source if it doesn't exist
     if (!map.getSource("ign-source")) {
       map.addSource("ign-source", {
         type: "raster",
@@ -188,11 +186,10 @@ export default function MapPage() {
           },
         },
         "appb-zones-layer"
-      ); // TODO: check if this layer is present in the map style
+      );
     }
   }, []);
 
-  // You can call this function in useEffect or any other event handler
   useEffect(() => {
     const map = mapRef.current?.getMap();
     if (!map) return;
@@ -200,7 +197,6 @@ export default function MapPage() {
     if (viewState.zoom > 12 || activeMapBackground === MapBackground.IGN) {
       addIGNSourceAndLayer();
     } else {
-      // Remove IGN layer and source if they exist
       if (map.getLayer("ign-layer")) {
         map.removeLayer("ign-layer");
       }
@@ -260,7 +256,11 @@ export default function MapPage() {
           onMouseLeave={onMouseLeave}
           cursor={cursor}
           style={{ width: "100%", height: "100%" }}
-          mapStyle={`https://api.maptiler.com/maps/${maptilerMapId}/style.json?key=${maptilerCredentials?.maptilerApiKey}`}
+          mapStyle={
+            maptilerMapId !== null
+              ? `https://api.maptiler.com/maps/${maptilerMapId}/style.json?key=${maptilerCredentials?.maptilerApiKey}`
+              : `https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/classique.json`
+          }
           interactiveLayerIds={["appb-zones-layer", "other-appb-zones-layer"]}
           attributionControl={false}
         >
