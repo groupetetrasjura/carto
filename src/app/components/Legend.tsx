@@ -60,8 +60,7 @@ export const Legend = () => {
     boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
     maxHeight: isCollapsedLegend ? "60px" : isTablet ? "75%" : "100%",
     maxWidth: "300px",
-    overflow: "scroll",
-    transition: "max-height 0.3s ease",
+    overflow: isCollapsedLegend ? "hidden" : "auto",
   };
 
   const buttonStyle: CSSProperties = {
