@@ -94,6 +94,7 @@ export const Legend = () => {
                 : "transparent",
             padding: isTablet ? "3px" : "5px",
             borderRadius: "4px",
+            color: "#000",
           }}
         >
           <Box style={{ width: 24, display: "flex", justifyContent: "center" }}>
@@ -124,6 +125,7 @@ export const Legend = () => {
             variant="inherit"
             fontSize={"15px"}
             textTransform={"uppercase"}
+            color="#434A4A"
           >
             {`Légende et couches`}
           </Typography>
@@ -139,7 +141,7 @@ export const Legend = () => {
 
       {!isCollapsedLegend && (
         <>
-          <Box>
+          <Box sx={{ color: "#000" }}>
             <span>
               <strong>Itinéraires autorisés</strong>
             </span>
@@ -410,12 +412,12 @@ export const Legend = () => {
             </Box>
           </Box>
 
-          <Box>
+          <Box sx={{ color: "#000" }}>
             <span>
               <strong>Haute Chaîne du Jura</strong>
             </span>
           </Box>
-          <Box>
+          <Box sx={{ color: "#000" }}>
             <Box
               style={{
                 display: "flex",
@@ -541,7 +543,12 @@ export const Legend = () => {
       >
         <Box sx={{ mb: 1, display: "flex", alignItems: "center" }}>
           <LayersIcon style={{ marginRight: "5px", color: "#725E51" }} />
-          <Typography component="span" variant="button" fontSize={"15px"}>
+          <Typography
+            component="span"
+            variant="button"
+            fontSize={"15px"}
+            color="#434A4A"
+          >
             Fonds de carte
           </Typography>
         </Box>
