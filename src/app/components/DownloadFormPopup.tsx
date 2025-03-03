@@ -63,7 +63,7 @@ const DownloadFormPopup = () => {
       <Card>
         <CardContent>
           <Typography
-            variant="h4"
+            variant="h6"
             component="div"
             textAlign="left"
             gutterBottom
