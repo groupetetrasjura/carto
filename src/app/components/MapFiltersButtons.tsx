@@ -36,6 +36,7 @@ const MapFiltersButtons = ({
   const selectedDate = useMapFiltersSelectedDate();
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
+  const isTinyScreen = useMediaQuery("(max-width:374px)");
   const { clearMapFilters } = useMapFiltersActions();
 
   const findMyLocation = () => {
@@ -187,6 +188,11 @@ const MapFiltersButtons = ({
               },
               textTransform: "none",
               minWidth: "36px",
+              padding: isTinyScreen
+                ? "4px 6px"
+                : isMobile
+                ? "6px 8px"
+                : "8px 12px",
             }}
           ></Button>
         </Tooltip>
@@ -199,7 +205,14 @@ const MapFiltersButtons = ({
             variant="brownMain"
             startIcon={<LandscapeIcon />}
             onClick={() => openMultiStepForm(0)} // Open form at step 1
-            sx={{ textTransform: "none" }}
+            sx={{
+              textTransform: "none",
+              padding: isTinyScreen
+                ? "4px 6px"
+                : isMobile
+                ? "6px 8px"
+                : "8px 12px",
+            }}
           >
             Massifs
           </Button>
@@ -213,7 +226,14 @@ const MapFiltersButtons = ({
             variant="brownMain"
             startIcon={renderTransportButtonIcon()}
             onClick={() => openMultiStepForm(1)} // Open form at step 2
-            sx={{ textTransform: "none" }}
+            sx={{
+              textTransform: "none",
+              padding: isTinyScreen
+                ? "4px 6px"
+                : isMobile
+                ? "6px 8px"
+                : "8px 12px",
+            }}
           >
             {isMobile ? "Dépl." : renderTransportButtonLabel()}
           </Button>
@@ -237,7 +257,14 @@ const MapFiltersButtons = ({
             variant="brownMain"
             startIcon={<CalendarTodayIcon />}
             onClick={() => openMultiStepForm(2)} // Open form at step 3
-            sx={{ textTransform: "none" }}
+            sx={{
+              textTransform: "none",
+              padding: isTinyScreen
+                ? "4px 6px"
+                : isMobile
+                ? "6px 8px"
+                : "8px 12px",
+            }}
           >
             {selectedDate ? selectedDate?.format("DD/MM/YY") : "Date"}
           </Button>
