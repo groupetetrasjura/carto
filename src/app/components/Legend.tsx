@@ -272,7 +272,7 @@ export const Legend = () => {
                     />
                   </svg>
                   <span style={{ marginLeft: 10 }}>
-                    Arrêté Préfectoral de Protection de Biotope "Forêts d'altitude du Haut-Jura"
+                    Arrêté Préfectoral de Protection de Biotope « Forêts d'altitude du Haut-Jura »
                   </span>
                 </div>
               </Box>
