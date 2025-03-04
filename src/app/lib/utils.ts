@@ -28,7 +28,7 @@ export function filterAuthorizedPathsData(
     return { type: "FeatureCollection", features: [] };
 
   const isTransportActive = modeTransport !== null;
-  const isZoneActive = zoneNames.length > 0;
+  // const isZoneActive = zoneNames.length > 0;
   const isDateActive = selectedDate !== null;
 
   let selectedDay: number, selectedMonth: number;
@@ -38,7 +38,7 @@ export function filterAuthorizedPathsData(
     selectedMonth = date.month() + 1;
   }
 
-  const zoneSet = new Set(zoneNames);
+  // const zoneSet = new Set(zoneNames);
 
   return {
     type: "FeatureCollection",
