@@ -237,7 +237,7 @@ export const Legend = () => {
               <span>{`Non réglementé par l'APPB`}</span>
             </Box>
               
-            <Box style={{ display: "flex", alignItems: "center", arginBottom: "15px"}}>
+            <Box style={{ display: "flex", alignItems: "center", marginBottom: "15px"}}>
               <Box
                 style={{
                   width: 20,
