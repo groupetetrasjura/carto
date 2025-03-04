@@ -58,8 +58,8 @@ export function filterAuthorizedPathsData(
             return false;
           }
         }
-        if (isZoneActive && !zoneSet.has(feature.properties.zone_names as Zone))
-          return false;
+        // if (isZoneActive && !zoneSet.has(feature.properties.zone_names as Zone))
+          // return false;
 
         if (isDateActive) {
           const { Période_autorisation } = feature.properties;
