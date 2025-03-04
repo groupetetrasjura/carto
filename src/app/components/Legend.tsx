@@ -272,7 +272,7 @@ export const Legend = () => {
                     />
                   </svg>
                   <span style={{ marginLeft: 10 }}>
-                    Arrêtés Préfectoraux de Protection de Biotopes
+                    Arrêté Préfectoral de Protection de Biotope "Forêts d'altitude du Haut-Jura"
                   </span>
                 </div>
               </Box>
@@ -297,7 +297,7 @@ export const Legend = () => {
                       />
                     </svg>
                     <span style={{ marginLeft: 10 }}>
-                      Autres Arrêtés Préfectoraux de Protection de Biotopes
+                      Autres Arrêtés Préfectoraux de Protection de Biotope
                     </span>
                   </div>
                   <IconButton onClick={() => toggleLayer("other-appb-source")}>
