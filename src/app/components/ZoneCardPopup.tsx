@@ -83,6 +83,7 @@ const ZoneCardPopup = ({
             "& .MuiButton-root": {
               flex: 1,
               margin: "0 8px",
+              fontSize: isMobile ? "12px" : "14px",
             },
           }}
         >

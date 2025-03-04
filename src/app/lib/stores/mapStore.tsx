@@ -1,5 +1,5 @@
 import { StateCreator, create } from "zustand";
-import { MapStoreState } from "@/lib/types/MapStore";
+import { LayersVisibility, MapStoreState } from "@/lib/types/MapStore";
 import { ViewState } from "react-map-gl";
 
 export const initialMapStoreState = {
@@ -16,6 +16,16 @@ export const initialMapStoreState = {
       right: 0,
     },
   } as ViewState,
+  layersVisibility: {
+    "zonages-zqfs-source": false,
+    "protected-areas-source": {
+      ENS: false,
+      RNR: false,
+      RNN: false,
+    },
+    "swiss-protected-areas-source": false,
+    "other-appb-source": false,
+  } as LayersVisibility,
 };
 
 export const stateCreator: StateCreator<MapStoreState> = (set) => ({
@@ -27,6 +37,32 @@ export const stateCreator: StateCreator<MapStoreState> = (set) => ({
         viewState,
       }));
     },
+    toggleLayer: (
+      layerId: keyof LayersVisibility,
+      subLayerId?: keyof LayersVisibility["protected-areas-source"]
+    ) => {
+      set((state) => {
+        const updatedVisibility = { ...state.layersVisibility };
+
+        if (layerId === "protected-areas-source" && subLayerId) {
+          const currentLayerVisibility = updatedVisibility[
+            layerId
+          ] as LayersVisibility["protected-areas-source"];
+          updatedVisibility[layerId] = {
+            ...currentLayerVisibility,
+            [subLayerId]: !currentLayerVisibility[subLayerId], // Toggle the specific sub-layer
+          };
+        } else if (
+          layerId in updatedVisibility &&
+          layerId !== "protected-areas-source"
+        ) {
+          // Toggle a normal layer (that is not protected areas)
+          updatedVisibility[layerId] = !updatedVisibility[layerId] as boolean;
+        }
+
+        return { layersVisibility: updatedVisibility };
+      });
+    },
   },
 });
 
@@ -35,6 +71,8 @@ export const useMapStore = create<MapStoreState>()(stateCreator);
 // GETTERS
 
 export const useViewState = () => useMapStore((state) => state.viewState);
+export const useLayersVisibility = () =>
+  useMapStore((state) => state.layersVisibility);
 
 // 🎉 one selector for all our actions
 export const useMapStoreActions = () => useMapStore((state) => state.actions);

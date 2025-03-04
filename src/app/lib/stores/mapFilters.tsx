@@ -3,6 +3,7 @@ import { Dayjs } from "dayjs";
 import {
   MapBackground,
   MapFiltersState,
+  MaptilerMapIds,
   TransportType,
   Zone,
 } from "@/app/lib/types/mapFilters";
@@ -14,7 +15,8 @@ export const initialMapFiltersState = {
   currentStep: 0,
   showMultiStepForm: false,
   maptilerMapId: null,
-  activeMapBackground: null,
+  maptilerMapIds: null,
+  activeMapBackground: MapBackground.LANDSCAPE,
 };
 
 export const stateCreator: StateCreator<MapFiltersState> = (set) => ({
@@ -49,6 +51,8 @@ export const stateCreator: StateCreator<MapFiltersState> = (set) => ({
     setCurrentStep: (step: number) => set({ currentStep: step }),
     setShowMultiStepForm: (value: boolean) => set({ showMultiStepForm: value }),
     setMaptilerMapId: (mapId: string) => set({ maptilerMapId: mapId }),
+    setMaptilerMapIds: (mapIds: MaptilerMapIds) =>
+      set({ maptilerMapIds: mapIds }),
     setActiveMapBackground: (background: MapBackground) =>
       set({ activeMapBackground: background }),
     clearMapFilters: () => set(initialMapFiltersState),
@@ -72,22 +76,24 @@ export const useMaptilerMapId = () =>
     if (state.activeMapBackground) {
       switch (state.activeMapBackground) {
         case MapBackground.STREETS:
-          return "streets-v2";
+          return state.maptilerMapIds?.streets || "streets-v2";
         case MapBackground.OUTDOOR:
-          return "outdoor-v2";
+          return state.maptilerMapIds?.outdoor || "outdoor-v2";
         case MapBackground.LANDSCAPE:
-          return "landscape";
+          return state.maptilerMapIds?.landscape || "landscape";
+        case MapBackground.IGN:
+          return null;
       }
     }
 
     // If no activeMapBackground, fallback to transport type
     switch (state.selectedTransport) {
       case TransportType.CAR:
-        return "streets-v2";
+        return state.maptilerMapIds?.streets || "streets-v2";
       case TransportType.OUTDOOR:
-        return state?.maptilerMapId || "outdoor-v2";
+        return state.maptilerMapIds?.outdoor || "outdoor-v2";
       default:
-        return "landscape";
+        return state.maptilerMapIds?.landscape || "landscape";
     }
   });
 
