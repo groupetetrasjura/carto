@@ -236,7 +236,15 @@ export const Legend = () => {
               ></Box>
               <span>{`Non réglementé par l'APPB`}</span>
             </Box>
-
+            
+            <Box
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "10px",
+              }}
+            >
+              
             <Box style={{ display: "flex", alignItems: "center" }}>
               <Box
                 style={{
@@ -248,6 +256,7 @@ export const Legend = () => {
               ></Box>
               <span>{`Si déneigé`}</span>
             </Box>
+            
             <Box>
               <span>
                 <strong>Aires protégées</strong>
