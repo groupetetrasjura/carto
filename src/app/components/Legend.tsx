@@ -58,7 +58,7 @@ export const Legend = () => {
     padding: "10px",
     borderRadius: "5px",
     boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
-    maxHeight: isCollapsedLegend ? "60px" : isTablet ? "75%" : "100%",
+    maxHeight: isCollapsedLegend ? "60px" : isTablet ? "75%" : "85%",
     maxWidth: "300px",
     overflow: isCollapsedLegend ? "hidden" : "auto",
   };
