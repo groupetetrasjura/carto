@@ -58,7 +58,7 @@ export const Legend = () => {
     padding: "10px",
     borderRadius: "5px",
     boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
-    maxHeight: isCollapsedLegend ? "60px" : isTablet ? "75%" : "100%",
+    maxHeight: isCollapsedLegend ? "60px" : isTablet ? "75%" : "85%",
     maxWidth: "300px",
     overflow: isCollapsedLegend ? "hidden" : "auto",
   };
@@ -75,7 +75,11 @@ export const Legend = () => {
   const mapBackgrounds = (
     <>
       {[
-        { id: "ign-layer", label: "IGN Scan 25" },
+        {
+          id: "dynamic",
+          label: "Dynamique (Maptiler Landscape + IGN SCAN 25®)",
+        },
+        { id: "ign-layer", label: "IGN SCAN 25®" },
         { id: "outdoor-v2", label: "Maptiler Outdoor" },
         { id: "streets-v2", label: "Maptiler Streets" },
         { id: "landscape", label: "Maptiler Landscape" },

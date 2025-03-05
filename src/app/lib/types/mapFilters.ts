@@ -17,6 +17,7 @@ export enum MapBackground {
   STREETS = "streets-v2",
   IGN = "ign-layer",
   LANDSCAPE = "landscape",
+  DYNAMIC = "dynamic",
 }
 export type MaptilerMapIds = {
   outdoor: string;

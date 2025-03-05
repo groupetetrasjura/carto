@@ -194,7 +194,10 @@ export default function MapPage() {
     const map = mapRef.current?.getMap();
     if (!map) return;
 
-    if (viewState.zoom > 12 || activeMapBackground === MapBackground.IGN) {
+    if (
+      (viewState.zoom > 12 && activeMapBackground === MapBackground.DYNAMIC) ||
+      activeMapBackground === MapBackground.IGN
+    ) {
       addIGNSourceAndLayer();
     } else {
       if (map.getLayer("ign-layer")) {
@@ -259,7 +262,7 @@ export default function MapPage() {
           mapStyle={
             maptilerMapId !== null
               ? `https://api.maptiler.com/maps/${maptilerMapId}/style.json?key=${maptilerCredentials?.maptilerApiKey}`
-              : `https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/classique.json`
+              : `https://data.geopf.fr/private/wmts?SERVICE=WMTS&REQUEST=GetCapabilities&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR&apikey=ign_scan_ws`
           }
           interactiveLayerIds={["appb-zones-layer", "other-appb-zones-layer"]}
           attributionControl={false}
