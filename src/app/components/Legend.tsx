@@ -75,7 +75,11 @@ export const Legend = () => {
   const mapBackgrounds = (
     <>
       {[
-        { id: "ign-layer", label: "IGN Scan 25" },
+        {
+          id: "dynamic",
+          label: "Dynamique (Maptiler Landscape + IGN SCAN 25®)",
+        },
+        { id: "ign-layer", label: "IGN SCAN 25®" },
         { id: "outdoor-v2", label: "Maptiler Outdoor" },
         { id: "streets-v2", label: "Maptiler Streets" },
         { id: "landscape", label: "Maptiler Landscape" },
