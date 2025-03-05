@@ -18,7 +18,7 @@ import {
   useMapFiltersSelectedZones,
 } from "@/app/lib/stores/mapFilters";
 import { MapRef } from "react-map-gl/maplibre";
-import { checkAuthorizedDate } from "../lib/utils";
+import { checkAuthorizedDate, isIOS } from "../lib/utils";
 import dayjs from "dayjs";
 import { TransportType } from "../lib/types/mapFilters";
 import MoreActions from "./MoreActions";
@@ -119,6 +119,7 @@ const MapFiltersButtons = ({
         (error) => {
           let errorMessage =
             "Une erreur est survenue lors de la géolocalisation.";
+
           switch (error.code) {
             case error.PERMISSION_DENIED:
               errorMessage =
@@ -131,8 +132,20 @@ const MapFiltersButtons = ({
               errorMessage = "La demande de géolocalisation a expiré.";
               break;
           }
+
+          // Add custom message is user on ios
+          if (isIOS()) {
+            errorMessage +=
+              "\n📍 Si vous utilisez un iPhone, activez la géolocalisation :\n" +
+              '1️⃣ Appuyez sur "aA" dans la barre d’adresse.\n' +
+              '2️⃣ Sélectionnez "Réglages du site web".\n' +
+              '3️⃣ Allez dans "Localisation" et choisissez "Demander" ou "Autoriser".\n' +
+              "4️⃣ Rechargez la page et réessayez.\n\n" +
+              "👉 Si le problème persiste, vérifiez dans Réglages > Confidentialité et sécurité > Service de localisation que Safari ait accès à votre position.";
+          }
+
           alert(errorMessage);
-          console.error("Geolocation error:", error);
+          //console.error("Geolocation error:", error);
         },
         options
       );

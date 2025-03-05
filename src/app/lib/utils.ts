@@ -242,3 +242,12 @@ export function getZonesBoundingBox<
   const filteredFeatures = filterFeaturesByZones(geojson, zoneNames);
   return getFeaturesBoundingBox(filteredFeatures);
 }
+
+// function to know is user is on ios device
+export const isIOS = () => {
+  return (
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    // iPad on iOS 13+ detection
+    (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+  );
+};
