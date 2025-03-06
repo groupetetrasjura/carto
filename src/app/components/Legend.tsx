@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Box, useMediaQuery, useTheme, IconButton } from "@mui/material";
-import { CSSProperties, useState } from "react";
+import { CSSProperties, useState, useEffect, useRef } from "react";
 import MapIcon from "@mui/icons-material/Map";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
@@ -31,6 +31,9 @@ export const Legend = () => {
   const maptilerMapId = useMaptilerMapId();
   const layersVisibility = useLayersVisibility();
   const { toggleLayer } = useMapStoreActions();
+
+  const legendRef = useRef<HTMLDivElement>(null);
+  const mapBackgroundRef = useRef<HTMLDivElement>(null);
 
   const toggleMapBackgrounds = () => {
     setIsOpenMapBackgrounds(!isOpenMapBackgrounds);
@@ -73,7 +76,7 @@ export const Legend = () => {
   };
 
   const mapBackgrounds = (
-    <>
+    <Box ref={mapBackgroundRef}>
       {[
         {
           id: "dynamic",
@@ -111,7 +114,7 @@ export const Legend = () => {
           <span style={{ marginLeft: 5 }}>{background.label}</span>
         </Box>
       ))}
-    </>
+    </Box>
   );
 
   const legendContent = (
@@ -521,9 +524,30 @@ export const Legend = () => {
     </>
   );
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      legendRef.current &&
+      !legendRef.current.contains(event.target as Node) &&
+      mapBackgroundRef.current &&
+      !mapBackgroundRef.current.contains(event.target as Node)
+    ) {
+      setIsCollapsedLegend(true);
+      setIsOpenMapBackgrounds(false);
+    }
+  };
+  // close element Legend and mapBackgrounds if click outside
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
-      <Box style={styleLegend}>{legendContent}</Box>
+      <Box ref={legendRef} style={styleLegend}>
+        {legendContent}
+      </Box>
       <IconButton
         onClick={toggleMapBackgrounds}
         style={buttonStyle}
@@ -539,6 +563,7 @@ export const Legend = () => {
         <LayersIcon />
       </IconButton>
       <Box
+        ref={mapBackgroundRef}
         style={{
           ...modalStyleMapBackgrounds,
           backgroundColor: "white",
