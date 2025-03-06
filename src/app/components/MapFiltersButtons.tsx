@@ -185,7 +185,7 @@ const MapFiltersButtons = ({
           bottom: "10px",
           left: "50%",
           transform: "translateX(-50%)",
-          margin: "0 0.5rem",
+          width: "fit-content",
           zIndex: 1000,
         }}
       >
