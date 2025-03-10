@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Box, useMediaQuery, useTheme, IconButton } from "@mui/material";
-import { CSSProperties, useState } from "react";
+import { CSSProperties, useState, useEffect, useRef } from "react";
 import MapIcon from "@mui/icons-material/Map";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
@@ -32,6 +32,9 @@ export const Legend = () => {
   const layersVisibility = useLayersVisibility();
   const { toggleLayer } = useMapStoreActions();
 
+  const legendRef = useRef<HTMLDivElement>(null);
+  const mapBackgroundRef = useRef<HTMLDivElement>(null);
+
   const toggleMapBackgrounds = () => {
     setIsOpenMapBackgrounds(!isOpenMapBackgrounds);
   };
@@ -58,7 +61,7 @@ export const Legend = () => {
     padding: "10px",
     borderRadius: "5px",
     boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
-    maxHeight: isCollapsedLegend ? "60px" : isTablet ? "75%" : "100%",
+    maxHeight: isCollapsedLegend ? "60px" : isTablet ? "75%" : "85%",
     maxWidth: "300px",
     overflow: isCollapsedLegend ? "hidden" : "auto",
   };
@@ -73,9 +76,13 @@ export const Legend = () => {
   };
 
   const mapBackgrounds = (
-    <>
+    <Box ref={mapBackgroundRef}>
       {[
-        { id: "ign-layer", label: "IGN Scan 25" },
+        {
+          id: "dynamic",
+          label: "Dynamique (Maptiler Landscape + IGN SCAN 25®)",
+        },
+        { id: "ign-layer", label: "IGN SCAN 25®" },
         { id: "outdoor-v2", label: "Maptiler Outdoor" },
         { id: "streets-v2", label: "Maptiler Streets" },
         { id: "landscape", label: "Maptiler Landscape" },
@@ -107,7 +114,7 @@ export const Legend = () => {
           <span style={{ marginLeft: 5 }}>{background.label}</span>
         </Box>
       ))}
-    </>
+    </Box>
   );
 
   const legendContent = (
@@ -517,9 +524,30 @@ export const Legend = () => {
     </>
   );
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      legendRef.current &&
+      !legendRef.current.contains(event.target as Node) &&
+      mapBackgroundRef.current &&
+      !mapBackgroundRef.current.contains(event.target as Node)
+    ) {
+      setIsCollapsedLegend(true);
+      setIsOpenMapBackgrounds(false);
+    }
+  };
+  // close element Legend and mapBackgrounds if click outside
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
-      <Box style={styleLegend}>{legendContent}</Box>
+      <Box ref={legendRef} style={styleLegend}>
+        {legendContent}
+      </Box>
       <IconButton
         onClick={toggleMapBackgrounds}
         style={buttonStyle}
@@ -535,6 +563,7 @@ export const Legend = () => {
         <LayersIcon />
       </IconButton>
       <Box
+        ref={mapBackgroundRef}
         style={{
           ...modalStyleMapBackgrounds,
           backgroundColor: "white",

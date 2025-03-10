@@ -21,6 +21,7 @@ import {
   Paper,
   Box,
   Alert,
+  useMediaQuery,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -123,6 +124,7 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const selectedDate = useMapFiltersSelectedDate();
   const currentStep = useMapFiltersCurrentStep();
   const theme = useTheme();
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   const [open] = useState<boolean>(true);
 
@@ -211,7 +213,12 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             >
               Comment souhaitez-vous visiter le massif ?
             </Typography>
-            <Stack direction="row" justifyContent="center" spacing={3} mt={2}>
+            <Stack
+              direction={isMobile ? "column" : "row"}
+              justifyContent="center"
+              spacing={3}
+              mt={2}
+            >
               <Paper
                 elevation={3}
                 sx={[
