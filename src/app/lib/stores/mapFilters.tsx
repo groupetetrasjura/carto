@@ -89,9 +89,9 @@ export const useMaptilerMapId = () =>
     // If no activeMapBackground, fallback to transport type
     switch (state.selectedTransport) {
       case TransportType.CAR:
-        return state.maptilerMapIds?.streets || "streets-v2";
+        return state.maptilerMapIds?.landscape || "landscape";
       case TransportType.OUTDOOR:
-        return state.maptilerMapIds?.outdoor || "outdoor-v2";
+        return state.maptilerMapIds?.landscape || "landscape";
       default:
         return state.maptilerMapIds?.landscape || "landscape";
     }
