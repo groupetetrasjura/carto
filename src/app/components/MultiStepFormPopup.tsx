@@ -90,7 +90,7 @@ const DateWarningAlert = () => {
         </Typography>
         <Box component="span" display="inline">
           En dehors des itinéraires autorisés, l&apos;accès est interdit. Merci de suivre ces itinéraires et de respecter la réglementation. 
-          Le <Typography fontWeight={600} component="span">bivouac</Typography> et les <Typography fontWeight={600} component="span">chiens même en laisse</Typography> y sont interdits. 
+          Le <Typography fontWeight={600} component="span">bivouac</Typography> et les <Typography fontWeight={600} component="span">chiens même en laisse</Typography> y <Typography fontWeight={600} component="span">sont interdits</Typography>. 
           Suivant la durée de votre séjour, il se peut que plusieurs périodes réglementaires soient concernées. Merci de vérifier les itinéraires autorisés pour chaque période.
           </Box>
       </Box>
