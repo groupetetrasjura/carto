@@ -51,6 +51,7 @@ import APPB_LOGO_DATA from "@/lib/data/geojson/appb_logo.json";
 import PROTECTED_AREAS_DATA from "@/lib/data/geojson/aires_protegees_fusion.json";
 import SWISS_PROTECTED_AREAS_DATA from "@/lib/data/geojson/dff_noirmont.json";
 import ZQFS_DATA from "@/lib/data/geojson/zqfs_rnnhcj.json";
+import recommendedPathData from "@/lib/data/geojson/recommended_paths.json";
 import allPathsData from "@/lib/data/geojson/authorized_paths_with_dates_zones_and_transport_modes.json";
 import parkingsData from "@/lib/data/geojson/carparks.json";
 import OTHER_APPB_DATA from "@/lib/data/geojson/other_protected_biotopes_250116.json";
@@ -359,6 +360,22 @@ export default function MapPage() {
               <Layer {...(dashedPathsLayer as LayerProps)} />
             </Source>
           )}
+          <Source
+            id="recommended-paths-source"
+            type="geojson"
+            data={recommendedPathData}
+          >
+            <Layer
+              id="recommended-paths-layer"
+              type="line"
+              paint={{
+                "line-color": "#228B22",
+                "line-width": 3,
+                "line-opacity": 0.8,
+                "line-dasharray": [2, 4],
+              }}
+            />
+          </Source>
           {parkingsData.features.length > 0 &&
             parkingsData.features.map((feature, index) => (
               <Marker

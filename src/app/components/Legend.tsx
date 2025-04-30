@@ -257,6 +257,31 @@ export const Legend = () => {
             </Box>
             <Box>
               <span>
+                <strong>Itinéraires recommandés</strong>
+              </span>
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "5px",
+                }}
+              >
+                <Box
+                  style={{
+                    width: 20,
+                    height: 3,
+                    borderStyle: "dashed",
+                    borderWidth: 2,
+                    borderColor: "#228B22",
+                    backgroundColor: "transparent",
+                    marginRight: 10,
+                  }}
+                ></Box>
+                <span>{`Sans moteur`}</span>
+              </Box>
+            </Box>
+            <Box>
+              <span>
                 <strong>Aires protégées</strong>
               </span>
               <Box
