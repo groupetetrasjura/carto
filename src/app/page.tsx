@@ -195,7 +195,7 @@ export default function MapPage() {
     if (!map) return;
 
     if (
-      (viewState.zoom > 12 && activeMapBackground === MapBackground.DYNAMIC) ||
+      (viewState.zoom > 14 && activeMapBackground === MapBackground.DYNAMIC) ||
       activeMapBackground === MapBackground.IGN
     ) {
       addIGNSourceAndLayer();

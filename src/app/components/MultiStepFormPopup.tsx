@@ -85,14 +85,14 @@ const DateWarningAlert = () => {
     <Alert severity="warning">
       <Box>
         <Typography fontWeight={600}>
-          Du 15/12 au 30/06 : ATTENTION, cette période est très sensible pour
-          les espèces.
+          Du 15/12 au 30/06 : ATTENTION, cette période est très sensible pour les espèces.
         </Typography>
-        En dehors des itinéraires autorisés, l&apos;accès est interdit. Merci de
-        suivre ces itinéraires et de respecter la réglementation. Suivant la
-        durée de votre séjour, il se peut que plusieurs périodes réglementaires
-        soient concernées. Merci de vérifier les itinéraires autorisés pour
-        chaque période.
+        <Box component="span" display="inline">
+          <Typography fontWeight={600} component="span">L&apos;accès au sein des massifs est interdit,</Typography> sauf itinéraires autorisés. 
+          Merci de suivre ces itinéraires et de respecter la réglementation. 
+          Le <Typography fontWeight={600} component="span">bivouac</Typography> et les <Typography fontWeight={600} component="span">chiens même en laisse</Typography> y <Typography fontWeight={600} component="span">sont interdits</Typography>. 
+          Suivant la durée de votre séjour, il se peut que plusieurs périodes réglementaires soient concernées. Merci de vérifier les itinéraires autorisés pour chaque période.
+          </Box>
       </Box>
     </Alert>
   );
@@ -101,12 +101,24 @@ const DateWarningAlert = () => {
 const DateInfoAlert = () => {
   return (
     <Alert severity="success">
-      <Box>
-        Du 01/07 au 14/12 : Accès autorisé sur l&apos;ensemble des itinéraires
-        balisés. Merci de respecter la réglementation, et de garder votre chien
-        en laisse. Suivant la durée de votre séjour, il se peut que plusieurs
-        périodes réglementaires soient concernées. Merci de vérifier les
-        itinéraires autorisés pour chaque période.
+      <Box component="span" display="inline">
+        Du 01/07 au 14/12 :{" "}
+        <Typography
+          component="span"
+          display="inline"
+          sx={{ fontWeight: 600 }} // Force bold using sx
+        >L'accès est autorisé sur l&apos;ensemble des itinéraires balisés. 
+        </Typography>
+        Merci de respecter la réglementation, et de{" "}
+        <Typography
+          component="span"
+          display="inline"
+          sx={{ fontWeight: 600 }} // Force bold using sx
+        >
+          garder votre chien en laisse
+        </Typography>. 
+        Suivant la durée de votre séjour, il se peut que plusieurs périodes réglementaires soient concernées. 
+        Merci de vérifier les itinéraires autorisés pour chaque période.
       </Box>
     </Alert>
   );
