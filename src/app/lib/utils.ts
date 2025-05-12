@@ -60,7 +60,7 @@ export function filterAuthorizedPathsData(
           }
         }
         // if (isZoneActive && !zoneSet.has(feature.properties.zone_names as Zone))
-          // return false;
+        // return false;
 
         if (isDateActive) {
           const { Période_autorisation } = feature.properties;
@@ -264,7 +264,7 @@ export function filterRecommendedPathsData(
 
   return {
     type: "FeatureCollection",
-    features: geojsonData.features.filter((feature) => {
+    features: geojsonData.features.filter(() => {
       // Filter by transport
       if (isTransportActive && modeTransport !== "outdoor") {
         console.log("transport active not outdoor");
