@@ -257,7 +257,7 @@ export const Legend = () => {
             </Box>
             <Box>
               <span>
-                <strong>Itinéraires recommandés</strong>
+                <strong>Itinéraires recommandés du 01/07 au 14/12</strong>
               </span>
               <Box
                 style={{
@@ -272,7 +272,7 @@ export const Legend = () => {
                     height: 3,
                     borderStyle: "dashed",
                     borderWidth: 2,
-                    borderColor: "#228B22",
+                    borderColor: "#000",
                     backgroundColor: "transparent",
                     marginRight: 10,
                   }}

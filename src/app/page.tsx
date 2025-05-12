@@ -60,10 +60,15 @@ import Image from "next/image";
 import MapFiltersButtons from "./components/MapFiltersButtons";
 import { Box } from "@mui/material";
 import ZoneCardPopup from "@/app/components/ZoneCardPopup";
-import { AuthorizedPathsCollection, IAPPBZone } from "@/app/lib/types/GeoJSON";
+import {
+  AuthorizedPathsCollection,
+  IAPPBZone,
+  RecommendedPathsCollection,
+} from "@/app/lib/types/GeoJSON";
 import {
   addColorsToFeatures,
   filterAuthorizedPathsData,
+  filterRecommendedPathsData,
   getZonesBoundingBox,
 } from "@/lib/utils";
 import { Legend } from "@/app/components/Legend";
@@ -84,8 +89,10 @@ export default function MapPage() {
   const [maptilerCredentials, setMaptilerCredentials] = useState<
     MaptilerCredentials | undefined
   >(undefined);
-  const [filteredData, setFilteredData] =
+  const [authorizedFilteredData, setAuthorizedFilteredData] =
     useState<AuthorizedPathsCollection | null>(null);
+  const [recommendedFilteredData, setRecommendedFilteredData] =
+    useState<RecommendedPathsCollection | null>(null);
 
   const mapRef = useRef<MapRef | null>(null);
   const viewState = useViewState();
@@ -221,11 +228,26 @@ export default function MapPage() {
         selectedDate
       );
       const coloredData = addColorsToFeatures(filtered);
-      setFilteredData(coloredData);
+      setAuthorizedFilteredData(coloredData);
     } else {
-      setFilteredData(null);
+      setAuthorizedFilteredData(null);
     }
   }, [selectedTransport, selectedZones, selectedDate]);
+
+  useEffect(() => {
+    if (recommendedPathData) {
+      const filtered = filterRecommendedPathsData(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        recommendedPathData,
+        selectedTransport,
+        selectedDate
+      );
+      setRecommendedFilteredData(filtered);
+    } else {
+      setRecommendedFilteredData(null);
+    }
+  }, [selectedTransport, selectedDate]);
 
   useEffect(() => {
     const zones = [...selectedZones];
@@ -350,32 +372,35 @@ export default function MapPage() {
               <Layer {...(otherAppbZonesBorderLayer as LayerProps)} />
             </Source>
           )}
-          {filteredData && (
+          {authorizedFilteredData && (
             <Source
               id="authorized-paths-source"
               type="geojson"
-              data={filteredData}
+              data={authorizedFilteredData}
             >
               <Layer {...(solidPathsLayer as LayerProps)} />
               <Layer {...(dashedPathsLayer as LayerProps)} />
             </Source>
           )}
-          <Source
-            id="recommended-paths-source"
-            type="geojson"
-            data={recommendedPathData}
-          >
-            <Layer
-              id="recommended-paths-layer"
-              type="line"
-              paint={{
-                "line-color": "#228B22",
-                "line-width": 3,
-                "line-opacity": 0.8,
-                "line-dasharray": [2, 4],
-              }}
-            />
-          </Source>
+          {recommendedFilteredData && (
+            <Source
+              id="recommended-paths-source"
+              type="geojson"
+              data={recommendedFilteredData}
+            >
+              <Layer
+                id="recommended-paths-layer"
+                source="recommended-paths-source"
+                type="line"
+                paint={{
+                  "line-color": "#000",
+                  "line-width": 3,
+                  "line-opacity": 0.8,
+                  "line-dasharray": [2, 4],
+                }}
+              />
+            </Source>
+          )}
           {parkingsData.features.length > 0 &&
             parkingsData.features.map((feature, index) => (
               <Marker

@@ -2,6 +2,7 @@ import {
   AuthorizedPathProperties,
   AuthorizedPathsCollection,
   GeoJSONFeature,
+  RecommendedPathsCollection,
 } from "@/app/lib/types/GeoJSON";
 import { Zone } from "./types/mapFilters";
 import dayjs, { Dayjs } from "dayjs";
@@ -241,6 +242,59 @@ export function getZonesBoundingBox<
 >(geojson: FeatureCollection<G, P>, zoneNames: string[]): number[] {
   const filteredFeatures = filterFeaturesByZones(geojson, zoneNames);
   return getFeaturesBoundingBox(filteredFeatures);
+}
+
+/**
+/*  * Filters recommended paths based on transport mode, zones, and date
+ * @param geojsonData Input GeoJSON data
+ * @param modeTransport The transport mode (must be "outdoor" to pass the filter)
+ * @param selectedDate Selected date (must be between 01/07 and 14/12)
+ * @returns Filtered recommended paths */
+
+export function filterRecommendedPathsData(
+  geojsonData: RecommendedPathsCollection,
+  modeTransport: string | null,
+  selectedDate: Dayjs | null
+): RecommendedPathsCollection {
+  if (!geojsonData || !geojsonData.features) {
+    return { type: "FeatureCollection", features: [] };
+  }
+  const isTransportActive = modeTransport !== null;
+  const isDateActive = selectedDate !== null;
+
+  return {
+    type: "FeatureCollection",
+    features: geojsonData.features.filter((feature) => {
+      // Filter by transport
+      if (isTransportActive && modeTransport !== "outdoor") {
+        console.log("transport active not outdoor");
+        return false;
+      }
+      // Filter by date
+      if (isDateActive && selectedDate) {
+        if (!isDateBetweenJulyAndDecember(selectedDate)) {
+          return false;
+        }
+      }
+      return true;
+    }),
+  };
+}
+
+/**
+ * Checks if a date is between July 1st and December 14th
+ * @param date The date to check
+ * @returns true if within the interval, otherwise false
+ */
+export function isDateBetweenJulyAndDecember(date: Dayjs): boolean {
+  const month = date.month(); // month (0 = january, 1 = february...)
+  const day = date.date();
+
+  return (
+    (month === 6 && day >= 1) || // From July 1st
+    (month > 6 && month < 11) || // August to November
+    (month === 11 && day <= 14) // Up to December 14th
+  );
 }
 
 // function to know is user is on ios device
