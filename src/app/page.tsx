@@ -51,6 +51,7 @@ import APPB_LOGO_DATA from "@/lib/data/geojson/appb_logo.json";
 import PROTECTED_AREAS_DATA from "@/lib/data/geojson/aires_protegees_fusion.json";
 import SWISS_PROTECTED_AREAS_DATA from "@/lib/data/geojson/dff_noirmont.json";
 import ZQFS_DATA from "@/lib/data/geojson/zqfs_rnnhcj.json";
+import recommendedPathData from "@/lib/data/geojson/recommended_paths.json";
 import allPathsData from "@/lib/data/geojson/authorized_paths_with_dates_zones_and_transport_modes.json";
 import parkingsData from "@/lib/data/geojson/carparks.json";
 import OTHER_APPB_DATA from "@/lib/data/geojson/other_protected_biotopes_250116.json";
@@ -59,10 +60,15 @@ import Image from "next/image";
 import MapFiltersButtons from "./components/MapFiltersButtons";
 import { Box } from "@mui/material";
 import ZoneCardPopup from "@/app/components/ZoneCardPopup";
-import { AuthorizedPathsCollection, IAPPBZone } from "@/app/lib/types/GeoJSON";
+import {
+  AuthorizedPathsCollection,
+  IAPPBZone,
+  RecommendedPathsCollection,
+} from "@/app/lib/types/GeoJSON";
 import {
   addColorsToFeatures,
   filterAuthorizedPathsData,
+  filterRecommendedPathsData,
   getZonesBoundingBox,
 } from "@/lib/utils";
 import { Legend } from "@/app/components/Legend";
@@ -83,8 +89,10 @@ export default function MapPage() {
   const [maptilerCredentials, setMaptilerCredentials] = useState<
     MaptilerCredentials | undefined
   >(undefined);
-  const [filteredData, setFilteredData] =
+  const [authorizedFilteredData, setAuthorizedFilteredData] =
     useState<AuthorizedPathsCollection | null>(null);
+  const [recommendedFilteredData, setRecommendedFilteredData] =
+    useState<RecommendedPathsCollection | null>(null);
 
   const mapRef = useRef<MapRef | null>(null);
   const viewState = useViewState();
@@ -195,7 +203,7 @@ export default function MapPage() {
     if (!map) return;
 
     if (
-      (viewState.zoom > 12 && activeMapBackground === MapBackground.DYNAMIC) ||
+      (viewState.zoom > 14 && activeMapBackground === MapBackground.DYNAMIC) ||
       activeMapBackground === MapBackground.IGN
     ) {
       addIGNSourceAndLayer();
@@ -220,11 +228,26 @@ export default function MapPage() {
         selectedDate
       );
       const coloredData = addColorsToFeatures(filtered);
-      setFilteredData(coloredData);
+      setAuthorizedFilteredData(coloredData);
     } else {
-      setFilteredData(null);
+      setAuthorizedFilteredData(null);
     }
   }, [selectedTransport, selectedZones, selectedDate]);
+
+  useEffect(() => {
+    if (recommendedPathData) {
+      const filtered = filterRecommendedPathsData(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        recommendedPathData,
+        selectedTransport,
+        selectedDate
+      );
+      setRecommendedFilteredData(filtered);
+    } else {
+      setRecommendedFilteredData(null);
+    }
+  }, [selectedTransport, selectedDate]);
 
   useEffect(() => {
     const zones = [...selectedZones];
@@ -349,14 +372,33 @@ export default function MapPage() {
               <Layer {...(otherAppbZonesBorderLayer as LayerProps)} />
             </Source>
           )}
-          {filteredData && (
+          {authorizedFilteredData && (
             <Source
               id="authorized-paths-source"
               type="geojson"
-              data={filteredData}
+              data={authorizedFilteredData}
             >
               <Layer {...(solidPathsLayer as LayerProps)} />
               <Layer {...(dashedPathsLayer as LayerProps)} />
+            </Source>
+          )}
+          {recommendedFilteredData && (
+            <Source
+              id="recommended-paths-source"
+              type="geojson"
+              data={recommendedFilteredData}
+            >
+              <Layer
+                id="recommended-paths-layer"
+                source="recommended-paths-source"
+                type="line"
+                paint={{
+                  "line-color": "#000",
+                  "line-width": 3,
+                  "line-opacity": 0.8,
+                  "line-dasharray": [2, 4],
+                }}
+              />
             </Source>
           )}
           {parkingsData.features.length > 0 &&

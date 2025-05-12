@@ -10,7 +10,7 @@ import {
 
 export const initialMapFiltersState = {
   selectedZones: [],
-  selectedTransport: null,
+  selectedTransport: TransportType.OUTDOOR,
   selectedDate: null,
   currentStep: 0,
   showMultiStepForm: false,
@@ -33,18 +33,18 @@ export const stateCreator: StateCreator<MapFiltersState> = (set) => ({
       }),
     setSelectedTransport: (transport: TransportType) =>
       set(() => {
-        let activeMapBackground = null;
+        // let activeMapBackground = null;
         switch (transport) {
           case TransportType.CAR:
-            activeMapBackground = MapBackground.STREETS;
+            // activeMapBackground = MapBackground.STREETS;
             break;
           case TransportType.OUTDOOR:
-            activeMapBackground = MapBackground.OUTDOOR;
+            // activeMapBackground = MapBackground.OUTDOOR;
             break;
         }
         return {
           selectedTransport: transport,
-          activeMapBackground,
+          // activeMapBackground,
         };
       }),
     setSelectedDate: (date: Dayjs | null) => set({ selectedDate: date }),
@@ -89,9 +89,9 @@ export const useMaptilerMapId = () =>
     // If no activeMapBackground, fallback to transport type
     switch (state.selectedTransport) {
       case TransportType.CAR:
-        return state.maptilerMapIds?.streets || "streets-v2";
+        return state.maptilerMapIds?.landscape || "landscape";
       case TransportType.OUTDOOR:
-        return state.maptilerMapIds?.outdoor || "outdoor-v2";
+        return state.maptilerMapIds?.landscape || "landscape";
       default:
         return state.maptilerMapIds?.landscape || "landscape";
     }
