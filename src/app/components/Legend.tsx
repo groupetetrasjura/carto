@@ -258,6 +258,31 @@ export const Legend = () => {
             
             <Box>
               <span>
+                <strong>Itinéraires recommandés du 01/07 au 14/12</strong>
+              </span>
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "5px",
+                }}
+              >
+                <Box
+                  style={{
+                    width: 20,
+                    height: 3,
+                    borderStyle: "dashed",
+                    borderWidth: 2,
+                    borderColor: "#000",
+                    backgroundColor: "transparent",
+                    marginRight: 10,
+                  }}
+                ></Box>
+                <span>{`Sans moteur`}</span>
+              </Box>
+            </Box>
+            <Box>
+              <span>
                 <strong>Aires protégées</strong>
               </span>
               <Box
