@@ -150,7 +150,7 @@ export const Legend = () => {
         <>
           <Box sx={{ color: "#000" }}>
             <span>
-              <strong>Itinéraires autorisés</strong>
+              <strong>Itinéraires autorisés :</strong>
             </span>
             <Box
               style={{
@@ -170,7 +170,7 @@ export const Legend = () => {
                   marginRight: 10,
                 }}
               ></Box>
-              <span>{`Du 15/12 au 14/05`}</span>
+              <span>{`Du 01/07 au 14/05`}</span>
             </Box>
             <Box
               style={{
@@ -187,7 +187,7 @@ export const Legend = () => {
                   marginRight: 10,
                 }}
               ></Box>
-              <span>{`Du 15/12 au 30/06`}</span>
+              <span>{`Toute l'année`}</span>
             </Box>
             <Box
               style={{
@@ -204,7 +204,7 @@ export const Legend = () => {
                   marginRight: 10,
                 }}
               ></Box>
-              <span>{`Du 15/05 au 30/06`}</span>
+              <span>{`Du 15/05 au 14/12`}</span>
             </Box>
             <Box
               style={{
@@ -221,7 +221,7 @@ export const Legend = () => {
                   marginRight: 10,
                 }}
               ></Box>
-              <span>{`Du 15/12 au 1er dimanche de mars`}</span>
+              <span>{`Du 01/07 au 1er dimanche de mars`}</span>
             </Box>
             <Box
               style={{
