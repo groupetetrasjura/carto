@@ -258,7 +258,7 @@ export const Legend = () => {
             
             <Box>
               <span>
-                <strong>Aires protégées</strong>
+                <strong>Aires protégées :</strong>
               </span>
               <Box
                 style={{
@@ -417,16 +417,7 @@ export const Legend = () => {
                   )}
                 </IconButton>
               </Box>
-            </Box>
-          </Box>
-
-          <Box sx={{ color: "#000" }}>
-            <span>
-              <strong>Haute Chaîne du Jura</strong>
-            </span>
-          </Box>
-          <Box sx={{ color: "#000" }}>
-            <Box
+              <Box
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -446,7 +437,7 @@ export const Legend = () => {
                   />
                 </svg>
                 <span style={{ marginLeft: 10 }}>
-                  Réserve Naturelle Nationale
+                  Réserve Naturelle Nationale de la Haute-Chaîne du Jura
                 </span>
               </div>
               <Box style={{ alignSelf: "flex-end" }}>
@@ -491,9 +482,13 @@ export const Legend = () => {
                 )}
               </IconButton>
             </Box>
+            </Box>
+          </Box>
+
+          <Box sx={{ color: "#000" }}>
             <Box>
               <span>
-                <strong>Autres informations</strong>
+                <strong>Autres informations :</strong>
               </span>
             </Box>
             <Box>
@@ -576,7 +571,7 @@ export const Legend = () => {
           <Typography
             component="span"
             variant="button"
-            fontSize={"15px"}
+            fontSize={"14px"}
             color="#434A4A"
           >
             Fonds de carte
