@@ -150,7 +150,7 @@ export const Legend = () => {
         <>
           <Box sx={{ color: "#000" }}>
             <span>
-              <strong>Itinéraires autorisés</strong>
+              <strong>Itinéraires autorisés :</strong>
             </span>
             <Box
               style={{
@@ -170,7 +170,7 @@ export const Legend = () => {
                   marginRight: 10,
                 }}
               ></Box>
-              <span>{`Du 15/12 au 14/05`}</span>
+              <span>{`Du 01/07 au 14/05`}</span>
             </Box>
             <Box
               style={{
@@ -187,7 +187,7 @@ export const Legend = () => {
                   marginRight: 10,
                 }}
               ></Box>
-              <span>{`Du 15/12 au 30/06`}</span>
+              <span>{`Toute l'année`}</span>
             </Box>
             <Box
               style={{
@@ -204,7 +204,7 @@ export const Legend = () => {
                   marginRight: 10,
                 }}
               ></Box>
-              <span>{`Du 15/05 au 30/06`}</span>
+              <span>{`Du 15/05 au 14/12`}</span>
             </Box>
             <Box
               style={{
@@ -221,7 +221,7 @@ export const Legend = () => {
                   marginRight: 10,
                 }}
               ></Box>
-              <span>{`Du 15/12 au 1er dimanche de mars`}</span>
+              <span>{`Du 01/07 au 1er dimanche de mars`}</span>
             </Box>
             <Box
               style={{
@@ -243,8 +243,14 @@ export const Legend = () => {
               ></Box>
               <span>{`Non réglementé par l'APPB`}</span>
             </Box>
-              
-            <Box style={{ display: "flex", alignItems: "center", marginBottom: "15px"}}>
+
+            <Box
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "15px",
+              }}
+            >
               <Box
                 style={{
                   width: 20,
@@ -255,7 +261,7 @@ export const Legend = () => {
               ></Box>
               <span>{`Si déneigé`}</span>
             </Box>
-            
+
             <Box>
               <span>
                 <strong>Itinéraires recommandés du 01/07 au 14/12</strong>
@@ -283,7 +289,7 @@ export const Legend = () => {
             </Box>
             <Box>
               <span>
-                <strong>Aires protégées</strong>
+                <strong>Aires protégées :</strong>
               </span>
               <Box
                 style={{
@@ -442,43 +448,65 @@ export const Legend = () => {
                   )}
                 </IconButton>
               </Box>
-            </Box>
-          </Box>
-
-          <Box sx={{ color: "#000" }}>
-            <span>
-              <strong>Haute Chaîne du Jura</strong>
-            </span>
-          </Box>
-          <Box sx={{ color: "#000" }}>
-            <Box
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "5px",
-                justifyContent: "space-between",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center" }}>
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "5px",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <svg width="24" height="24" style={{ flexShrink: 0 }}>
+                    <rect
+                      width="24"
+                      height="24"
+                      fill="#4b0092"
+                      stroke="#4b0092"
+                      strokeWidth={3}
+                      fillOpacity={0.15}
+                    />
+                  </svg>
+                  <span style={{ marginLeft: 10 }}>
+                    Réserve Naturelle Nationale de la Haute-Chaîne du Jura
+                  </span>
+                </div>
+                <Box style={{ alignSelf: "flex-end" }}>
+                  <IconButton
+                    onClick={() => toggleLayer("protected-areas-source", "RNN")}
+                  >
+                    {layersVisibility["protected-areas-source"].RNN ? (
+                      <VisibilityIcon className="w-5 h-5 text-green-500" />
+                    ) : (
+                      <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                    )}
+                  </IconButton>
+                </Box>
+              </Box>
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "5px",
+                }}
+              >
                 <svg width="24" height="24" style={{ flexShrink: 0 }}>
                   <rect
                     width="24"
                     height="24"
                     fill="#4b0092"
                     stroke="#4b0092"
+                    fillOpacity={0.4}
                     strokeWidth={3}
-                    fillOpacity={0.15}
                   />
                 </svg>
                 <span style={{ marginLeft: 10 }}>
-                  Réserve Naturelle Nationale
+                  Zones de Quiétude de la Faune Sauvage
                 </span>
-              </div>
-              <Box style={{ alignSelf: "flex-end" }}>
-                <IconButton
-                  onClick={() => toggleLayer("protected-areas-source", "RNN")}
-                >
-                  {layersVisibility["protected-areas-source"].RNN ? (
+
+                <IconButton onClick={() => toggleLayer("zonages-zqfs-source")}>
+                  {layersVisibility["zonages-zqfs-source"] ? (
                     <VisibilityIcon className="w-5 h-5 text-green-500" />
                   ) : (
                     <VisibilityOffIcon className="w-5 h-5 text-red-500" />
@@ -486,39 +514,12 @@ export const Legend = () => {
                 </IconButton>
               </Box>
             </Box>
-            <Box
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginBottom: "5px",
-              }}
-            >
-              <svg width="24" height="24" style={{ flexShrink: 0 }}>
-                <rect
-                  width="24"
-                  height="24"
-                  fill="#4b0092"
-                  stroke="#4b0092"
-                  fillOpacity={0.4}
-                  strokeWidth={3}
-                />
-              </svg>
-              <span style={{ marginLeft: 10 }}>
-                Zones de Quiétude de la Faune Sauvage
-              </span>
+          </Box>
 
-              <IconButton onClick={() => toggleLayer("zonages-zqfs-source")}>
-                {layersVisibility["zonages-zqfs-source"] ? (
-                  <VisibilityIcon className="w-5 h-5 text-green-500" />
-                ) : (
-                  <VisibilityOffIcon className="w-5 h-5 text-red-500" />
-                )}
-              </IconButton>
-            </Box>
+          <Box sx={{ color: "#000" }}>
             <Box>
               <span>
-                <strong>Autres informations</strong>
+                <strong>Autres informations :</strong>
               </span>
             </Box>
             <Box>
@@ -601,7 +602,7 @@ export const Legend = () => {
           <Typography
             component="span"
             variant="button"
-            fontSize={"15px"}
+            fontSize={"14px"}
             color="#434A4A"
           >
             Fonds de carte
