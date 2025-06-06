@@ -19,5 +19,6 @@ export interface MapStoreState {
   actions: {
     setViewState(viewState: ViewState): void;
     toggleLayer(layerId: string, subLayerId?: string): void;
+    setLayerVisibility(layerId: string): void;
   };
 }

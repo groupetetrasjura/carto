@@ -70,6 +70,7 @@ import {
   filterAuthorizedPathsData,
   filterRecommendedPathsData,
   getZonesBoundingBox,
+  isInRecommendedPeriod,
 } from "@/lib/utils";
 import { Legend } from "@/app/components/Legend";
 import { MaptilerCredentials } from "@/app/lib/types/api/Credentials";
@@ -103,6 +104,7 @@ export default function MapPage() {
   const selectedZones = useMapFiltersSelectedZones();
   const selectedDate = useMapFiltersSelectedDate();
   const layersVisibility = useLayersVisibility();
+  const { setLayerVisibility } = useMapStoreActions();
 
   const openMultiStepForm = (step: number) => {
     setShowMultiStepForm(true);
@@ -128,6 +130,16 @@ export default function MapPage() {
 
     fetchCredentials();
   }, [setMaptilerMapIds]);
+
+  useEffect(() => {
+    const inSummer =
+      selectedDate !== null && isInRecommendedPeriod(selectedDate);
+    if (inSummer) {
+      setLayerVisibility("recommended-paths-source");
+    } else {
+      setLayerVisibility("authorized-paths-source");
+    }
+  }, [selectedDate, setLayerVisibility]);
 
   const onMouseEnter = useCallback(() => setCursor("pointer"), []);
   const onMouseLeave = useCallback(() => setCursor("grab"), []);

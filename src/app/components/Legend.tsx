@@ -28,7 +28,7 @@ import {
   useLayersVisibility,
   useMapStoreActions,
 } from "../lib/stores/mapStore";
-import { isOutsideRecommendedPeriod } from "../lib/utils";
+import { isInRecommendedPeriod } from "../lib/utils";
 
 export const Legend = () => {
   const [isOpenMapBackgrounds, setIsOpenMapBackgrounds] = useState(false);
@@ -43,9 +43,6 @@ export const Legend = () => {
   const selectedDate = useMapFiltersSelectedDate();
   const { setSelectedDate } = useMapFiltersActions();
   const { toggleLayer } = useMapStoreActions();
-  const isRecommendedVisible =
-    layersVisibility["recommended-paths-source"] &&
-    !isOutsideRecommendedPeriod(selectedDate);
 
   const legendRef = useRef<HTMLDivElement>(null);
   const mapBackgroundRef = useRef<HTMLDivElement>(null);
@@ -59,14 +56,16 @@ export const Legend = () => {
   };
 
   const handleToggleRecommendedPaths = () => {
-    const shouldClearDate = isOutsideRecommendedPeriod(selectedDate);
+    const shouldClearDate =
+      selectedDate !== null && !isInRecommendedPeriod(selectedDate);
 
     if (shouldClearDate) {
       setSelectedDate(null);
       setOpenSnackbar(true);
     }
-
-    toggleLayer("recommended-paths-source");
+    setTimeout(() => {
+      toggleLayer("recommended-paths-source");
+    }, 0);
   };
 
   const modalStyleMapBackgrounds: CSSProperties = {
@@ -323,14 +322,14 @@ export const Legend = () => {
                   <strong>Itinéraires recommandés du 01/07 au 14/12 :</strong>
                 </span>
                 <IconButton onClick={handleToggleRecommendedPaths}>
-                  {isRecommendedVisible ? (
+                  {layersVisibility["recommended-paths-source"] ? (
                     <VisibilityIcon className="w-5 h-5 text-green-500" />
                   ) : (
                     <VisibilityOffIcon className="w-5 h-5 text-red-500" />
                   )}
                 </IconButton>
               </Box>
-              {isRecommendedVisible && (
+              {layersVisibility["recommended-paths-source"] && (
                 <Box
                   style={{
                     display: "flex",
