@@ -62,7 +62,7 @@ export const Legend = () => {
     borderRadius: "5px",
     boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
     maxHeight: isCollapsedLegend ? "60px" : isTablet ? "75%" : "85%",
-    maxWidth: "300px",
+    maxWidth: "320px",
     overflow: isCollapsedLegend ? "hidden" : "auto",
   };
 
@@ -149,143 +149,185 @@ export const Legend = () => {
       {!isCollapsedLegend && (
         <>
           <Box sx={{ color: "#000" }}>
-            <span>
-              <strong>Itinéraires autorisés :</strong>
-            </span>
             <Box
-              style={{
+              sx={{
                 display: "flex",
+                justifyContent: "space-between",
                 alignItems: "center",
-                marginBottom: "5px",
               }}
             >
-              <Box
-                style={{
-                  width: 20,
-                  height: 3,
-                  borderStyle: "dashed",
-                  borderWidth: 2,
-                  borderColor: "#084aff",
-                  backgroundColor: "transparent",
-                  marginRight: 10,
-                }}
-              ></Box>
-              <span>{`Du 01/07 au 14/05`}</span>
-            </Box>
-            <Box
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "5px",
-              }}
-            >
-              <Box
-                style={{
-                  width: 20,
-                  height: 3,
-                  backgroundColor: "#084aff",
-                  marginRight: 10,
-                }}
-              ></Box>
-              <span>{`Toute l'année`}</span>
-            </Box>
-            <Box
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "5px",
-              }}
-            >
-              <Box
-                style={{
-                  width: 20,
-                  height: 3,
-                  backgroundColor: "#ed9e00",
-                  marginRight: 10,
-                }}
-              ></Box>
-              <span>{`Du 15/05 au 14/12`}</span>
-            </Box>
-            <Box
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "5px",
-              }}
-            >
-              <Box
-                style={{
-                  width: 20,
-                  height: 3,
-                  backgroundColor: "#ff0000",
-                  marginRight: 10,
-                }}
-              ></Box>
-              <span>{`Du 01/07 au 1er dimanche de mars`}</span>
-            </Box>
-            <Box
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "5px",
-              }}
-            >
-              <Box
-                style={{
-                  width: 20,
-                  height: 3,
-                  borderStyle: "dashed",
-                  borderWidth: 2,
-                  borderColor: "#ff0000",
-                  backgroundColor: "transparent",
-                  marginRight: 10,
-                }}
-              ></Box>
-              <span>{`Non réglementé par l'APPB`}</span>
-            </Box>
+              <span>
+                <strong>Itinéraires autorisés :</strong>
+              </span>
 
-            <Box
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "15px",
-              }}
-            >
-              <Box
-                style={{
-                  width: 20,
-                  height: 3,
-                  backgroundColor: "#9E9E9E",
-                  marginRight: 10,
-                }}
-              ></Box>
-              <span>{`Si déneigé`}</span>
+              <IconButton
+                onClick={() => toggleLayer("authorized-paths-source")}
+              >
+                {layersVisibility["authorized-paths-source"] ? (
+                  <VisibilityIcon className="w-5 h-5 text-green-500" />
+                ) : (
+                  <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                )}
+              </IconButton>
             </Box>
+            {layersVisibility["authorized-paths-source"] && (
+              <>
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "5px",
+                  }}
+                >
+                  <Box
+                    style={{
+                      width: 20,
+                      height: 3,
+                      borderStyle: "dashed",
+                      borderWidth: 2,
+                      borderColor: "#084aff",
+                      backgroundColor: "transparent",
+                      marginRight: 10,
+                    }}
+                  ></Box>
+                  <span>{`Du 01/07 au 14/05`}</span>
+                </Box>
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "5px",
+                  }}
+                >
+                  <Box
+                    style={{
+                      width: 20,
+                      height: 3,
+                      backgroundColor: "#084aff",
+                      marginRight: 10,
+                    }}
+                  ></Box>
+                  <span>{`Toute l'année`}</span>
+                </Box>
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "5px",
+                  }}
+                >
+                  <Box
+                    style={{
+                      width: 20,
+                      height: 3,
+                      backgroundColor: "#ed9e00",
+                      marginRight: 10,
+                    }}
+                  ></Box>
+                  <span>{`Du 15/05 au 14/12`}</span>
+                </Box>
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "5px",
+                  }}
+                >
+                  <Box
+                    style={{
+                      width: 20,
+                      height: 3,
+                      backgroundColor: "#ff0000",
+                      marginRight: 10,
+                    }}
+                  ></Box>
+                  <span>{`Du 01/07 au 1er dimanche de mars`}</span>
+                </Box>
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "5px",
+                  }}
+                >
+                  <Box
+                    style={{
+                      width: 20,
+                      height: 3,
+                      borderStyle: "dashed",
+                      borderWidth: 2,
+                      borderColor: "#ff0000",
+                      backgroundColor: "transparent",
+                      marginRight: 10,
+                    }}
+                  ></Box>
+                  <span>{`Non réglementé par l'APPB`}</span>
+                </Box>
+
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "15px",
+                  }}
+                >
+                  <Box
+                    style={{
+                      width: 20,
+                      height: 3,
+                      backgroundColor: "#9E9E9E",
+                      marginRight: 10,
+                    }}
+                  ></Box>
+                  <span>{`Si déneigé`}</span>
+                </Box>
+              </>
+            )}
 
             <Box>
-              <span>
-                <strong>Itinéraires recommandés du 01/07 au 14/12</strong>
-              </span>
               <Box
                 style={{
                   display: "flex",
                   alignItems: "center",
+                  justifyContent: "space-between",
                   marginBottom: "5px",
                 }}
               >
+                <span>
+                  <strong>Itinéraires recommandés du 01/07 au 14/12 :</strong>
+                </span>
+                <IconButton
+                  onClick={() => toggleLayer("recommended-paths-source")}
+                >
+                  {layersVisibility["recommended-paths-source"] ? (
+                    <VisibilityIcon className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                  )}
+                </IconButton>
+              </Box>
+              {layersVisibility["recommended-paths-source"] && (
                 <Box
                   style={{
-                    width: 20,
-                    height: 3,
-                    borderStyle: "dashed",
-                    borderWidth: 2,
-                    borderColor: "#000",
-                    backgroundColor: "transparent",
-                    marginRight: 10,
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "5px",
                   }}
-                ></Box>
-                <span>{`Sans moteur`}</span>
-              </Box>
+                >
+                  <Box
+                    style={{
+                      width: 20,
+                      height: 3,
+                      borderStyle: "dashed",
+                      borderWidth: 2,
+                      borderColor: "#000",
+                      backgroundColor: "transparent",
+                      marginRight: 10,
+                    }}
+                  ></Box>
+                  <span>{`Sans moteur`}</span>
+                </Box>
+              )}
             </Box>
             <Box>
               <span>

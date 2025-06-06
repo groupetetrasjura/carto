@@ -25,6 +25,8 @@ export const initialMapStoreState = {
     },
     "swiss-protected-areas-source": false,
     "other-appb-source": false,
+    "authorized-paths-source": false,
+    "recommended-paths-source": false,
   } as LayersVisibility,
 };
 
@@ -52,6 +54,21 @@ export const stateCreator: StateCreator<MapStoreState> = (set) => ({
             ...currentLayerVisibility,
             [subLayerId]: !currentLayerVisibility[subLayerId], // Toggle the specific sub-layer
           };
+        } else if (
+          layerId === "authorized-paths-source" ||
+          layerId === "recommended-paths-source"
+        ) {
+          const current = updatedVisibility[layerId] as boolean;
+          updatedVisibility[layerId] = !current;
+
+          // exclusivity: disables the other if this one is activated
+          if (!current) {
+            const other =
+              layerId === "authorized-paths-source"
+                ? "recommended-paths-source"
+                : "authorized-paths-source";
+            updatedVisibility[other] = false;
+          }
         } else if (
           layerId in updatedVisibility &&
           layerId !== "protected-areas-source"

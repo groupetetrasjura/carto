@@ -372,35 +372,37 @@ export default function MapPage() {
               <Layer {...(otherAppbZonesBorderLayer as LayerProps)} />
             </Source>
           )}
-          {authorizedFilteredData && (
-            <Source
-              id="authorized-paths-source"
-              type="geojson"
-              data={authorizedFilteredData}
-            >
-              <Layer {...(solidPathsLayer as LayerProps)} />
-              <Layer {...(dashedPathsLayer as LayerProps)} />
-            </Source>
-          )}
-          {recommendedFilteredData && (
-            <Source
-              id="recommended-paths-source"
-              type="geojson"
-              data={recommendedFilteredData}
-            >
-              <Layer
-                id="recommended-paths-layer"
-                source="recommended-paths-source"
-                type="line"
-                paint={{
-                  "line-color": "#000",
-                  "line-width": 3,
-                  "line-opacity": 0.8,
-                  "line-dasharray": [2, 4],
-                }}
-              />
-            </Source>
-          )}
+          {authorizedFilteredData &&
+            layersVisibility["authorized-paths-source"] && (
+              <Source
+                id="authorized-paths-source"
+                type="geojson"
+                data={authorizedFilteredData}
+              >
+                <Layer {...(solidPathsLayer as LayerProps)} />
+                <Layer {...(dashedPathsLayer as LayerProps)} />
+              </Source>
+            )}
+          {recommendedFilteredData &&
+            layersVisibility["recommended-paths-source"] && (
+              <Source
+                id="recommended-paths-source"
+                type="geojson"
+                data={recommendedFilteredData}
+              >
+                <Layer
+                  id="recommended-paths-layer"
+                  source="recommended-paths-source"
+                  type="line"
+                  paint={{
+                    "line-color": "#000",
+                    "line-width": 3,
+                    "line-opacity": 0.8,
+                    "line-dasharray": [2, 4],
+                  }}
+                />
+              </Source>
+            )}
           {parkingsData.features.length > 0 &&
             parkingsData.features.map((feature, index) => (
               <Marker
