@@ -1,5 +1,5 @@
 import { StateCreator, create } from "zustand";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import {
   MapBackground,
   MapFiltersState,
@@ -11,7 +11,7 @@ import {
 export const initialMapFiltersState = {
   selectedZones: [],
   selectedTransport: TransportType.OUTDOOR,
-  selectedDate: null,
+  selectedDate: dayjs(),
   currentStep: 0,
   showMultiStepForm: false,
   maptilerMapId: null,

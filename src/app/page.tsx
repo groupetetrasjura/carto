@@ -70,6 +70,7 @@ import {
   filterAuthorizedPathsData,
   filterRecommendedPathsData,
   getZonesBoundingBox,
+  isInRecommendedPeriod,
 } from "@/lib/utils";
 import { Legend } from "@/app/components/Legend";
 import { MaptilerCredentials } from "@/app/lib/types/api/Credentials";
@@ -103,6 +104,7 @@ export default function MapPage() {
   const selectedZones = useMapFiltersSelectedZones();
   const selectedDate = useMapFiltersSelectedDate();
   const layersVisibility = useLayersVisibility();
+  const { setLayerVisibility } = useMapStoreActions();
 
   const openMultiStepForm = (step: number) => {
     setShowMultiStepForm(true);
@@ -128,6 +130,16 @@ export default function MapPage() {
 
     fetchCredentials();
   }, [setMaptilerMapIds]);
+
+  useEffect(() => {
+    const inSummer =
+      selectedDate !== null && isInRecommendedPeriod(selectedDate);
+    if (inSummer) {
+      setLayerVisibility("recommended-paths-source");
+    } else {
+      setLayerVisibility("authorized-paths-source");
+    }
+  }, [selectedDate, setLayerVisibility]);
 
   const onMouseEnter = useCallback(() => setCursor("pointer"), []);
   const onMouseLeave = useCallback(() => setCursor("grab"), []);
@@ -372,35 +384,37 @@ export default function MapPage() {
               <Layer {...(otherAppbZonesBorderLayer as LayerProps)} />
             </Source>
           )}
-          {authorizedFilteredData && (
-            <Source
-              id="authorized-paths-source"
-              type="geojson"
-              data={authorizedFilteredData}
-            >
-              <Layer {...(solidPathsLayer as LayerProps)} />
-              <Layer {...(dashedPathsLayer as LayerProps)} />
-            </Source>
-          )}
-          {recommendedFilteredData && (
-            <Source
-              id="recommended-paths-source"
-              type="geojson"
-              data={recommendedFilteredData}
-            >
-              <Layer
-                id="recommended-paths-layer"
-                source="recommended-paths-source"
-                type="line"
-                paint={{
-                  "line-color": "#000",
-                  "line-width": 3,
-                  "line-opacity": 0.8,
-                  "line-dasharray": [2, 4],
-                }}
-              />
-            </Source>
-          )}
+          {authorizedFilteredData &&
+            layersVisibility["authorized-paths-source"] && (
+              <Source
+                id="authorized-paths-source"
+                type="geojson"
+                data={authorizedFilteredData}
+              >
+                <Layer {...(solidPathsLayer as LayerProps)} />
+                <Layer {...(dashedPathsLayer as LayerProps)} />
+              </Source>
+            )}
+          {recommendedFilteredData &&
+            layersVisibility["recommended-paths-source"] && (
+              <Source
+                id="recommended-paths-source"
+                type="geojson"
+                data={recommendedFilteredData}
+              >
+                <Layer
+                  id="recommended-paths-layer"
+                  source="recommended-paths-source"
+                  type="line"
+                  paint={{
+                    "line-color": "#000",
+                    "line-width": 3,
+                    "line-opacity": 0.8,
+                    "line-dasharray": [2, 4],
+                  }}
+                />
+              </Source>
+            )}
           {parkingsData.features.length > 0 &&
             parkingsData.features.map((feature, index) => (
               <Marker
