@@ -90,20 +90,12 @@ const DateWarningAlert = () => {
         </Typography>
         <Box component="span" display="inline">
           <Typography fontWeight={600} component="span">
-            L&apos;accès au sein des massifs est interdit,
-          </Typography>{" "}
-          sauf itinéraires autorisés. Merci de suivre ces itinéraires et de
-          respecter la réglementation. Le{" "}
+            L&apos;accès au sein des massifs est interdit, sauf itinéraires
+            autorisés.{" "}
+          </Typography>
+          Merci de suivre ces itinéraires et de respecter la réglementation.
           <Typography fontWeight={600} component="span">
-            bivouac
-          </Typography>{" "}
-          et les{" "}
-          <Typography fontWeight={600} component="span">
-            chiens même en laisse
-          </Typography>{" "}
-          y{" "}
-          <Typography fontWeight={600} component="span">
-            sont interdits
+            Le bivouac et les chiens même en laisse y sont interdits
           </Typography>
           . Suivant la durée de votre séjour, il se peut que plusieurs périodes
           réglementaires soient concernées. Merci de vérifier les itinéraires

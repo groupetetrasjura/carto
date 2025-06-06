@@ -9,6 +9,8 @@ export type LayersVisibility = {
   };
   "swiss-protected-areas-source": boolean;
   "other-appb-source": boolean;
+  "authorized-paths-source": boolean;
+  "recommended-paths-source": boolean;
 };
 
 export interface MapStoreState {
@@ -17,5 +19,6 @@ export interface MapStoreState {
   actions: {
     setViewState(viewState: ViewState): void;
     toggleLayer(layerId: string, subLayerId?: string): void;
+    setLayerVisibility(layerId: string): void;
   };
 }
