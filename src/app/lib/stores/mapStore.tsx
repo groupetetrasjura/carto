@@ -25,7 +25,7 @@ export const initialMapStoreState = {
     },
     "swiss-protected-areas-source": false,
     "other-appb-source": false,
-    "authorized-paths-source": false,
+    "authorized-paths-source": true,
     "recommended-paths-source": false,
   } as LayersVisibility,
 };

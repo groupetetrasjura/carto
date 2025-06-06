@@ -1,5 +1,12 @@
 import Image from "next/image";
-import { Box, useMediaQuery, useTheme, IconButton } from "@mui/material";
+import {
+  Box,
+  useMediaQuery,
+  useTheme,
+  IconButton,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { CSSProperties, useState, useEffect, useRef } from "react";
 import MapIcon from "@mui/icons-material/Map";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -13,6 +20,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import {
   useActiveMapBackground,
   useMapFiltersActions,
+  useMapFiltersSelectedDate,
   useMaptilerMapId,
 } from "@/app/lib/stores/mapFilters";
 import { MapBackground } from "../lib/types/mapFilters";
@@ -20,17 +28,24 @@ import {
   useLayersVisibility,
   useMapStoreActions,
 } from "../lib/stores/mapStore";
+import { isOutsideRecommendedPeriod } from "../lib/utils";
 
 export const Legend = () => {
   const [isOpenMapBackgrounds, setIsOpenMapBackgrounds] = useState(false);
   const [isCollapsedLegend, setIsCollapsedLegend] = useState(true);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
   const { setActiveMapBackground } = useMapFiltersActions();
   const activeMapBackground = useActiveMapBackground();
   const maptilerMapId = useMaptilerMapId();
   const layersVisibility = useLayersVisibility();
+  const selectedDate = useMapFiltersSelectedDate();
+  const { setSelectedDate } = useMapFiltersActions();
   const { toggleLayer } = useMapStoreActions();
+  const isRecommendedVisible =
+    layersVisibility["recommended-paths-source"] &&
+    !isOutsideRecommendedPeriod(selectedDate);
 
   const legendRef = useRef<HTMLDivElement>(null);
   const mapBackgroundRef = useRef<HTMLDivElement>(null);
@@ -41,6 +56,17 @@ export const Legend = () => {
 
   const handleBackgroundChange = (background: MapBackground) => {
     setActiveMapBackground(background);
+  };
+
+  const handleToggleRecommendedPaths = () => {
+    const shouldClearDate = isOutsideRecommendedPeriod(selectedDate);
+
+    if (shouldClearDate) {
+      setSelectedDate(null);
+      setOpenSnackbar(true);
+    }
+
+    toggleLayer("recommended-paths-source");
   };
 
   const modalStyleMapBackgrounds: CSSProperties = {
@@ -296,17 +322,15 @@ export const Legend = () => {
                 <span>
                   <strong>Itinéraires recommandés du 01/07 au 14/12 :</strong>
                 </span>
-                <IconButton
-                  onClick={() => toggleLayer("recommended-paths-source")}
-                >
-                  {layersVisibility["recommended-paths-source"] ? (
+                <IconButton onClick={handleToggleRecommendedPaths}>
+                  {isRecommendedVisible ? (
                     <VisibilityIcon className="w-5 h-5 text-green-500" />
                   ) : (
                     <VisibilityOffIcon className="w-5 h-5 text-red-500" />
                   )}
                 </IconButton>
               </Box>
-              {layersVisibility["recommended-paths-source"] && (
+              {isRecommendedVisible && (
                 <Box
                   style={{
                     display: "flex",
@@ -652,6 +676,21 @@ export const Legend = () => {
         </Box>
         {mapBackgrounds}
       </Box>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={4000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity="info"
+          sx={{ width: "100%" }}
+        >
+          Le filtre de date a été désactivé : les itinéraires recommandés sont
+          accessibles du 01/07 au 14/12.
+        </Alert>
+      </Snackbar>
     </>
   );
 };

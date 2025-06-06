@@ -305,3 +305,12 @@ export const isIOS = () => {
     (navigator.userAgent.includes("Mac") && "ontouchend" in document)
   );
 };
+export const isOutsideRecommendedPeriod = (date: Dayjs | null) => {
+  if (!date) return false;
+
+  const year = date.year();
+  const start = dayjs(`${year}-07-01`);
+  const end = dayjs(`${year}-12-14`);
+
+  return date.isBefore(start) || date.isAfter(end);
+};
