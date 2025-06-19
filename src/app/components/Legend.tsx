@@ -29,11 +29,28 @@ import {
   useMapStoreActions,
 } from "../lib/stores/mapStore";
 import { isInRecommendedPeriod } from "../lib/utils";
+import { Dayjs } from "dayjs";
+
+const PATH_TYPES = {
+  recommended: {
+    source: "recommended-paths-source",
+    shouldClear: (date: Dayjs | null) =>
+      date !== null && !isInRecommendedPeriod(date),
+    message: "les itinéraires recommandés sont accessibles du 01/07 au 14/12.",
+  },
+  authorized: {
+    source: "authorized-paths-source",
+    shouldClear: (date: Dayjs | null) =>
+      date !== null && isInRecommendedPeriod(date),
+    message: "",
+  },
+};
 
 export const Legend = () => {
   const [isOpenMapBackgrounds, setIsOpenMapBackgrounds] = useState(false);
   const [isCollapsedLegend, setIsCollapsedLegend] = useState(true);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
   const { setActiveMapBackground } = useMapFiltersActions();
@@ -42,7 +59,7 @@ export const Legend = () => {
   const layersVisibility = useLayersVisibility();
   const selectedDate = useMapFiltersSelectedDate();
   const { setSelectedDate } = useMapFiltersActions();
-  const { toggleLayer } = useMapStoreActions();
+  const { setLayerVisibility, toggleLayer } = useMapStoreActions();
 
   const legendRef = useRef<HTMLDivElement>(null);
   const mapBackgroundRef = useRef<HTMLDivElement>(null);
@@ -55,16 +72,18 @@ export const Legend = () => {
     setActiveMapBackground(background);
   };
 
-  const handleToggleRecommendedPaths = () => {
-    const shouldClearDate =
-      selectedDate !== null && !isInRecommendedPeriod(selectedDate);
+  const handleTogglePaths = (type: "recommended" | "authorized") => {
+    const config = PATH_TYPES[type];
+    const shouldClearDate = config.shouldClear(selectedDate);
 
     if (shouldClearDate) {
       setSelectedDate(null);
+      setSnackbarMessage(config.message);
       setOpenSnackbar(true);
     }
+
     setTimeout(() => {
-      toggleLayer("recommended-paths-source");
+      setLayerVisibility(config.source);
     }, 0);
   };
 
@@ -185,9 +204,7 @@ export const Legend = () => {
                 <strong>Itinéraires autorisés :</strong>
               </span>
 
-              <IconButton
-                onClick={() => toggleLayer("authorized-paths-source")}
-              >
+              <IconButton onClick={() => handleTogglePaths("authorized")}>
                 {layersVisibility["authorized-paths-source"] ? (
                   <VisibilityIcon className="w-5 h-5 text-green-500" />
                 ) : (
@@ -321,7 +338,7 @@ export const Legend = () => {
                 <span>
                   <strong>Itinéraires recommandés du 01/07 au 14/12 :</strong>
                 </span>
-                <IconButton onClick={handleToggleRecommendedPaths}>
+                <IconButton onClick={() => handleTogglePaths("recommended")}>
                   {layersVisibility["recommended-paths-source"] ? (
                     <VisibilityIcon className="w-5 h-5 text-green-500" />
                   ) : (
@@ -686,8 +703,8 @@ export const Legend = () => {
           severity="info"
           sx={{ width: "100%" }}
         >
-          Le filtre de date a été désactivé : les itinéraires recommandés sont
-          accessibles du 01/07 au 14/12.
+          Le filtre de date a été désactivé
+          {snackbarMessage ? `: ${snackbarMessage}` : ""}
         </Alert>
       </Snackbar>
     </>
