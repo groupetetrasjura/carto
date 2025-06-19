@@ -78,12 +78,15 @@ import DownloadFormPopup from "@/app/components/DownloadFormPopup";
 import { MapBackground } from "@/app/lib/types/mapFilters";
 import { FeatureCollection, Geometry } from "geojson";
 import { GeoJSONFeatureProperties } from "./lib/types/generics";
+import Footer, { FOOTER_HEIGHT } from "./components/Footer";
+import { MaptilerIcon } from "./components/icons/MaptilerIcon";
 
 export default function MapPage() {
   const [cursor, setCursor] = useState<string>("auto");
   const [showInfoPopup, setShowInfoPopup] = useState(true);
   const [showZoneCardPopup, setShowZoneCardPopup] = useState(false);
   const [zoneCardTitle, setZoneCardTitle] = useState("");
+  const hasInteractedRef = useRef(false);
   const { setCurrentStep, setShowMultiStepForm, setMaptilerMapIds } =
     useMapFiltersActions();
   const showMultiStepFormPopup = useMapFiltersShowMultiStepForm();
@@ -132,8 +135,10 @@ export default function MapPage() {
   }, [setMaptilerMapIds]);
 
   useEffect(() => {
+    if (hasInteractedRef.current) return;
     const inSummer =
       selectedDate !== null && isInRecommendedPeriod(selectedDate);
+
     if (inSummer) {
       setLayerVisibility("recommended-paths-source");
     } else {
@@ -283,192 +288,221 @@ export default function MapPage() {
   }, [selectedZones]);
 
   return (
-    <Box style={{ position: "fixed", top: 0, bottom: 0, left: 0, right: 0 }}>
-      {maptilerCredentials?.maptilerApiKey && (
-        <Map
-          ref={mapRef}
-          {...viewState}
-          onMove={(evt: ViewStateChangeEvent) => setViewState(evt.viewState)}
-          onClick={onClick}
-          onMouseEnter={onMouseEnter}
-          onMouseLeave={onMouseLeave}
-          cursor={cursor}
-          style={{ width: "100%", height: "100%" }}
-          mapStyle={
-            maptilerMapId !== null
-              ? `https://api.maptiler.com/maps/${maptilerMapId}/style.json?key=${maptilerCredentials?.maptilerApiKey}`
-              : `https://data.geopf.fr/private/wmts?SERVICE=WMTS&REQUEST=GetCapabilities&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR&apikey=ign_scan_ws`
-          }
-          interactiveLayerIds={["appb-zones-layer", "other-appb-zones-layer"]}
-          attributionControl={false}
-        >
-          {layersVisibility["zonages-zqfs-source"] && (
-            <Source id="zonages-zqfs-source" type="geojson" data={ZQFS_DATA}>
-              <Layer {...(ZQFSZonesLayer as LayerProps)} />
-              <Layer {...(ZQFSZonesBorderLayer as LayerProps)} />
-            </Source>
-          )}
-          {layersVisibility["protected-areas-source"] && (
-            <Source
-              id="protected-areas-source"
-              type="geojson"
-              data={{
-                type: "FeatureCollection",
-                features: filteredFeatures,
-              }}
+    <>
+      <Box
+        style={{
+          position: "fixed",
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1,
+        }}
+      >
+        {maptilerCredentials?.maptilerApiKey && (
+          <Box sx={{ height: "100%", pb: `${FOOTER_HEIGHT}px` }}>
+            <Map
+              ref={mapRef}
+              {...viewState}
+              onMove={(evt: ViewStateChangeEvent) =>
+                setViewState(evt.viewState)
+              }
+              onClick={onClick}
+              onMouseEnter={onMouseEnter}
+              onMouseLeave={onMouseLeave}
+              cursor={cursor}
+              style={{ width: "100%", height: "100%" }}
+              mapStyle={
+                maptilerMapId !== null
+                  ? `https://api.maptiler.com/maps/${maptilerMapId}/style.json?key=${maptilerCredentials?.maptilerApiKey}`
+                  : `https://data.geopf.fr/private/wmts?SERVICE=WMTS&REQUEST=GetCapabilities&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR&apikey=ign_scan_ws`
+              }
+              interactiveLayerIds={[
+                "appb-zones-layer",
+                "other-appb-zones-layer",
+              ]}
+              attributionControl={false}
             >
-              <Layer {...(protectedAreasLayer as LayerProps)} />
-              <Layer {...(protectedAreasBorderLayer as LayerProps)} />
-              <Layer
-                id="protected-areas-labels"
-                type="symbol"
-                paint={{
-                  "text-color": "#000000",
-                  "text-halo-color": "#ffffff",
-                  "text-halo-width": 1,
-                }}
-                layout={{
-                  "text-field": [
-                    "concat",
-                    ["get", "type_code"],
-                    "\n",
-                    ["get", "nom_site"],
-                  ],
-                  "text-font": ["Open Sans Regular"],
-                  "text-size": 12,
-                  "text-anchor": "center",
-                  "text-allow-overlap": false,
-                  "text-max-width": 8,
-                }}
-              />
-            </Source>
-          )}
-          {layersVisibility["swiss-protected-areas-source"] && (
-            <Source
-              id="swiss-protected-areas-source"
-              type="geojson"
-              data={SWISS_PROTECTED_AREAS_DATA}
-            >
-              <Layer {...(swissProtectedAreasLayer as LayerProps)} />
-              <Layer {...(swissProtectedAreasBorderLayer as LayerProps)} />
-              <Layer
-                id="swiss-protected-areas-labels"
-                type="symbol"
-                paint={{
-                  "text-color": "#000000",
-                  "text-halo-color": "#ffffff",
-                  "text-halo-width": 1,
-                }}
-                layout={{
-                  "text-field": "District franc fédéral Le Noirmont",
-                  "text-font": ["Open Sans Regular"],
-                  "text-size": 12,
-                  "text-anchor": "center",
-                  "text-allow-overlap": false,
-                  "text-max-width": 8,
-                }}
-              />
-            </Source>
-          )}
-          <Source id="appb-zones-source" type="geojson" data={APPB_DATA}>
-            <Layer {...(appbZonesLayer as LayerProps)} />
-            <Layer {...(appbZonesBorderLayer as LayerProps)} />
-          </Source>
-          {layersVisibility["other-appb-source"] && (
-            <Source
-              id="other-appb-source"
-              type="geojson"
-              data={OTHER_APPB_DATA}
-            >
-              <Layer {...(otherAppbZonesLayer as LayerProps)} />
-              <Layer {...(otherAppbZonesBorderLayer as LayerProps)} />
-            </Source>
-          )}
-          {authorizedFilteredData &&
-            layersVisibility["authorized-paths-source"] && (
-              <Source
-                id="authorized-paths-source"
-                type="geojson"
-                data={authorizedFilteredData}
-              >
-                <Layer {...(solidPathsLayer as LayerProps)} />
-                <Layer {...(dashedPathsLayer as LayerProps)} />
-              </Source>
-            )}
-          {recommendedFilteredData &&
-            layersVisibility["recommended-paths-source"] && (
-              <Source
-                id="recommended-paths-source"
-                type="geojson"
-                data={recommendedFilteredData}
-              >
-                <Layer
-                  id="recommended-paths-layer"
-                  source="recommended-paths-source"
-                  type="line"
-                  paint={{
-                    "line-color": "#000",
-                    "line-width": 3,
-                    "line-opacity": 0.8,
-                    "line-dasharray": [2, 4],
+              {layersVisibility["zonages-zqfs-source"] && (
+                <Source
+                  id="zonages-zqfs-source"
+                  type="geojson"
+                  data={ZQFS_DATA}
+                >
+                  <Layer {...(ZQFSZonesLayer as LayerProps)} />
+                  <Layer {...(ZQFSZonesBorderLayer as LayerProps)} />
+                </Source>
+              )}
+              {layersVisibility["protected-areas-source"] && (
+                <Source
+                  id="protected-areas-source"
+                  type="geojson"
+                  data={{
+                    type: "FeatureCollection",
+                    features: filteredFeatures,
                   }}
-                />
+                >
+                  <Layer {...(protectedAreasLayer as LayerProps)} />
+                  <Layer {...(protectedAreasBorderLayer as LayerProps)} />
+                  <Layer
+                    id="protected-areas-labels"
+                    type="symbol"
+                    paint={{
+                      "text-color": "#000000",
+                      "text-halo-color": "#ffffff",
+                      "text-halo-width": 1,
+                    }}
+                    layout={{
+                      "text-field": [
+                        "concat",
+                        ["get", "type_code"],
+                        "\n",
+                        ["get", "nom_site"],
+                      ],
+                      "text-font": ["Open Sans Regular"],
+                      "text-size": 12,
+                      "text-anchor": "center",
+                      "text-allow-overlap": false,
+                      "text-max-width": 8,
+                    }}
+                  />
+                </Source>
+              )}
+              {layersVisibility["swiss-protected-areas-source"] && (
+                <Source
+                  id="swiss-protected-areas-source"
+                  type="geojson"
+                  data={SWISS_PROTECTED_AREAS_DATA}
+                >
+                  <Layer {...(swissProtectedAreasLayer as LayerProps)} />
+                  <Layer {...(swissProtectedAreasBorderLayer as LayerProps)} />
+                  <Layer
+                    id="swiss-protected-areas-labels"
+                    type="symbol"
+                    paint={{
+                      "text-color": "#000000",
+                      "text-halo-color": "#ffffff",
+                      "text-halo-width": 1,
+                    }}
+                    layout={{
+                      "text-field": "District franc fédéral Le Noirmont",
+                      "text-font": ["Open Sans Regular"],
+                      "text-size": 12,
+                      "text-anchor": "center",
+                      "text-allow-overlap": false,
+                      "text-max-width": 8,
+                    }}
+                  />
+                </Source>
+              )}
+              <Source id="appb-zones-source" type="geojson" data={APPB_DATA}>
+                <Layer {...(appbZonesLayer as LayerProps)} />
+                <Layer {...(appbZonesBorderLayer as LayerProps)} />
               </Source>
-            )}
-          {parkingsData.features.length > 0 &&
-            parkingsData.features.map((feature, index) => (
-              <Marker
-                key={`parkings-marker-${index}`}
-                longitude={feature.geometry.coordinates[0]}
-                latitude={feature.geometry.coordinates[1]}
-              >
-                <Image
-                  src="/icons/parking_marker.png"
-                  alt="Parking Marker"
-                  width={24}
-                  height={24}
-                />
-              </Marker>
-            ))}
-          {APPB_LOGO_DATA.features.length > 0 &&
-            APPB_LOGO_DATA.features.map((feature, index) => (
-              <Marker
-                key={`marker-${index}`}
-                longitude={feature.geometry.coordinates[0]}
-                latitude={feature.geometry.coordinates[1]}
-                style={{ cursor: "pointer" }}
-              >
-                <Image src="/logo.png" alt="Marker" width={24} height={24} />
-              </Marker>
-            ))}
+              {layersVisibility["other-appb-source"] && (
+                <Source
+                  id="other-appb-source"
+                  type="geojson"
+                  data={OTHER_APPB_DATA}
+                >
+                  <Layer {...(otherAppbZonesLayer as LayerProps)} />
+                  <Layer {...(otherAppbZonesBorderLayer as LayerProps)} />
+                </Source>
+              )}
+              {authorizedFilteredData &&
+                layersVisibility["authorized-paths-source"] && (
+                  <Source
+                    id="authorized-paths-source"
+                    type="geojson"
+                    data={authorizedFilteredData}
+                  >
+                    <Layer {...(solidPathsLayer as LayerProps)} />
+                    <Layer {...(dashedPathsLayer as LayerProps)} />
+                  </Source>
+                )}
+              {recommendedFilteredData &&
+                layersVisibility["recommended-paths-source"] && (
+                  <Source
+                    id="recommended-paths-source"
+                    type="geojson"
+                    data={recommendedFilteredData}
+                  >
+                    <Layer
+                      id="recommended-paths-layer"
+                      source="recommended-paths-source"
+                      type="line"
+                      paint={{
+                        "line-color": "#000",
+                        "line-width": 3,
+                        "line-opacity": 0.8,
+                        "line-dasharray": [2, 4],
+                      }}
+                    />
+                  </Source>
+                )}
+              {parkingsData.features.length > 0 &&
+                parkingsData.features.map((feature, index) => (
+                  <Marker
+                    key={`parkings-marker-${index}`}
+                    longitude={feature.geometry.coordinates[0]}
+                    latitude={feature.geometry.coordinates[1]}
+                  >
+                    <Image
+                      src="/icons/parking_marker.png"
+                      alt="Parking Marker"
+                      width={24}
+                      height={24}
+                    />
+                  </Marker>
+                ))}
+              {APPB_LOGO_DATA.features.length > 0 &&
+                APPB_LOGO_DATA.features.map((feature, index) => (
+                  <Marker
+                    key={`marker-${index}`}
+                    longitude={feature.geometry.coordinates[0]}
+                    latitude={feature.geometry.coordinates[1]}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <Image
+                      src="/logo.png"
+                      alt="Marker"
+                      width={24}
+                      height={24}
+                    />
+                  </Marker>
+                ))}
 
-          <AttributionControl
-            position="top-right"
-            customAttribution={`<a href="https://groupe-tetras-jura.org/">© Groupe Tétras Jura</a>, IGN`}
-            compact={true}
-          />
-          <MapFiltersButtons
-            openMultiStepForm={openMultiStepForm}
-            mapRef={mapRef}
-          />
-          <Legend />
-          <ZoneCardPopup
-            open={showZoneCardPopup}
-            onClose={() => {
-              setShowZoneCardPopup(false);
-            }}
-            title={zoneCardTitle}
-            onDownload={() => console.log("downloading....")}
-          />
+              <AttributionControl
+                position="top-right"
+                customAttribution={`<a href="https://groupe-tetras-jura.org/">© Groupe Tétras Jura</a>, IGN`}
+                compact={true}
+              />
+              <MapFiltersButtons
+                openMultiStepForm={openMultiStepForm}
+                mapRef={mapRef}
+              />
+              <Legend />
+              <ZoneCardPopup
+                open={showZoneCardPopup}
+                onClose={() => {
+                  setShowZoneCardPopup(false);
+                }}
+                title={zoneCardTitle}
+                onDownload={() => console.log("downloading....")}
+              />
 
-          {showInfoPopup && <InfoPopup onClose={handleInfoPopupClose} />}
+              {showInfoPopup && <InfoPopup onClose={handleInfoPopupClose} />}
 
-          {showMultiStepFormPopup && (
-            <MultiStepFormPopup onClose={handleMultiStepFormPopupClose} />
-          )}
-          <DownloadFormPopup />
-        </Map>
-      )}
-    </Box>
+              {showMultiStepFormPopup && (
+                <MultiStepFormPopup onClose={handleMultiStepFormPopupClose} />
+              )}
+              <DownloadFormPopup />
+            </Map>
+          </Box>
+        )}
+        <MaptilerIcon />
+      </Box>
+      <Footer />
+    </>
   );
 }
