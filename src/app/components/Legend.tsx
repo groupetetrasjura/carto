@@ -30,6 +30,7 @@ import {
 } from "../lib/stores/mapStore";
 import { isInRecommendedPeriod } from "../lib/utils";
 import { Dayjs } from "dayjs";
+import { FOOTER_HEIGHT } from "./Footer";
 
 const PATH_TYPES = {
   recommended: {
@@ -697,6 +698,7 @@ export const Legend = () => {
         autoHideDuration={4000}
         onClose={() => setOpenSnackbar(false)}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        sx={{ bottom: `${FOOTER_HEIGHT + 8}px` }}
       >
         <Alert
           onClose={() => setOpenSnackbar(false)}
