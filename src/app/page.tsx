@@ -79,6 +79,7 @@ import { MapBackground } from "@/app/lib/types/mapFilters";
 import { FeatureCollection, Geometry } from "geojson";
 import { GeoJSONFeatureProperties } from "./lib/types/generics";
 import Footer, { FOOTER_HEIGHT } from "./components/Footer";
+import { MaptilerIcon } from "./components/icons/MaptilerIcon";
 
 export default function MapPage() {
   const [cursor, setCursor] = useState<string>("auto");
@@ -499,6 +500,7 @@ export default function MapPage() {
             </Map>
           </Box>
         )}
+        <MaptilerIcon />
       </Box>
       <Footer />
     </>

@@ -98,7 +98,7 @@ export const Legend = () => {
 
   const styleLegend: CSSProperties = {
     position: "fixed",
-    top: 20,
+    top: 28,
     left: "50%",
     transform: "translateX(-50%)",
     backgroundColor: "white",
