@@ -292,15 +292,15 @@ export default function MapPage() {
       <Box
         style={{
           position: "fixed",
-          top: 0,
-          bottom: 0,
+          top: `${FOOTER_HEIGHT}px`, // Place l'espace blanc (footer) en haut
+          bottom: 0,  // La carte occupe tout l'espace en dessous
           left: 0,
           right: 0,
           zIndex: 1,
         }}
       >
         {maptilerCredentials?.maptilerApiKey && (
-          <Box sx={{ height: "100%", pb: `${FOOTER_HEIGHT}px` }}>
+          <Box sx={{ height: "100%" }}>
             <Map
               ref={mapRef}
               {...viewState}
