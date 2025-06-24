@@ -86,6 +86,7 @@ export default function MapPage() {
   const [showInfoPopup, setShowInfoPopup] = useState(true);
   const [showZoneCardPopup, setShowZoneCardPopup] = useState(false);
   const [zoneCardTitle, setZoneCardTitle] = useState("");
+  const [isFooterVisible, setIsFooterVisible] = useState(true);
   const hasInteractedRef = useRef(false);
   const { setCurrentStep, setShowMultiStepForm, setMaptilerMapIds } =
     useMapFiltersActions();
@@ -292,8 +293,8 @@ export default function MapPage() {
       <Box
         style={{
           position: "fixed",
-          top: `${FOOTER_HEIGHT}px`, // Place l'espace blanc (footer) en haut
-          bottom: 0,  // La carte occupe tout l'espace en dessous
+          top: isFooterVisible ? `${FOOTER_HEIGHT}px` : 0, // Ajuste la position en fonction du footer
+          bottom: 0,
           left: 0,
           right: 0,
           zIndex: 1,
@@ -502,7 +503,7 @@ export default function MapPage() {
         )}
         <MaptilerIcon />
       </Box>
-      <Footer />
+      <Footer onHide={() => setIsFooterVisible(false)} />
     </>
   );
 }
