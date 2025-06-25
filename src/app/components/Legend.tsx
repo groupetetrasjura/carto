@@ -4,8 +4,6 @@ import {
   useMediaQuery,
   useTheme,
   IconButton,
-  Snackbar,
-  Alert,
 } from "@mui/material";
 import { CSSProperties, useState, useEffect, useRef } from "react";
 import MapIcon from "@mui/icons-material/Map";
@@ -15,22 +13,16 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 import Typography from "@mui/material/Typography";
-import LayersIcon from "@mui/icons-material/Layers";
-import CheckIcon from "@mui/icons-material/Check";
 import {
-  useActiveMapBackground,
   useMapFiltersActions,
   useMapFiltersSelectedDate,
-  useMaptilerMapId,
 } from "@/app/lib/stores/mapFilters";
-import { MapBackground } from "../lib/types/mapFilters";
 import {
   useLayersVisibility,
   useMapStoreActions,
 } from "../lib/stores/mapStore";
 import { isInRecommendedPeriod } from "../lib/utils";
 import { Dayjs } from "dayjs";
-import { FOOTER_HEIGHT } from "./Footer";
 
 const PATH_TYPES = {
   recommended: {
@@ -43,35 +35,24 @@ const PATH_TYPES = {
     source: "authorized-paths-source",
     shouldClear: (date: Dayjs | null) =>
       date !== null && isInRecommendedPeriod(date),
-    message: "",
+    message: "les itinéraires autorisés sont uniquement valables du 15/12 au 30/06.",
   },
 };
 
-export const Legend = () => {
-  const [isOpenMapBackgrounds, setIsOpenMapBackgrounds] = useState(false);
+interface LegendProps {
+  setSnackbarMessage: (message: string) => void;
+}
+
+export const Legend = ({ setSnackbarMessage }: LegendProps) => {
   const [isCollapsedLegend, setIsCollapsedLegend] = useState(true);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
-  const { setActiveMapBackground } = useMapFiltersActions();
-  const activeMapBackground = useActiveMapBackground();
-  const maptilerMapId = useMaptilerMapId();
   const layersVisibility = useLayersVisibility();
   const selectedDate = useMapFiltersSelectedDate();
   const { setSelectedDate } = useMapFiltersActions();
   const { setLayerVisibility, toggleLayer } = useMapStoreActions();
 
   const legendRef = useRef<HTMLDivElement>(null);
-  const mapBackgroundRef = useRef<HTMLDivElement>(null);
-
-  const toggleMapBackgrounds = () => {
-    setIsOpenMapBackgrounds(!isOpenMapBackgrounds);
-  };
-
-  const handleBackgroundChange = (background: MapBackground) => {
-    setActiveMapBackground(background);
-  };
 
   const handleTogglePaths = (type: "recommended" | "authorized") => {
     const config = PATH_TYPES[type];
@@ -79,22 +60,12 @@ export const Legend = () => {
 
     if (shouldClearDate) {
       setSelectedDate(null);
-      setSnackbarMessage(config.message);
-      setOpenSnackbar(true);
+      setSnackbarMessage(config.message); // Use setSnackbarMessage from props
     }
 
     setTimeout(() => {
       setLayerVisibility(config.source);
     }, 0);
-  };
-
-  const modalStyleMapBackgrounds: CSSProperties = {
-    position: "absolute",
-    bottom: isTablet ? 180 : 140,
-    right: isTablet ? 24 : 12,
-    borderRadius: "5px",
-    width: "200px",
-    display: isOpenMapBackgrounds ? "block" : "none",
   };
 
   const styleLegend: CSSProperties = {
@@ -110,57 +81,6 @@ export const Legend = () => {
     maxWidth: "320px",
     overflow: isCollapsedLegend ? "hidden" : "auto",
   };
-
-  const buttonStyle: CSSProperties = {
-    position: "absolute",
-    bottom: isTablet ? 125 : 80,
-    right: 12,
-    backgroundColor: "white",
-    borderRadius: "50%",
-    boxShadow: "0px 2px 4px rgba(0,0,0,0.2)",
-  };
-
-  const mapBackgrounds = (
-    <Box ref={mapBackgroundRef}>
-      {[
-        {
-          id: "dynamic",
-          label: "Dynamique (Maptiler Landscape + IGN SCAN 25®)",
-        },
-        { id: "ign-layer", label: "IGN SCAN 25®" },
-        { id: "outdoor-v2", label: "Maptiler Outdoor" },
-        { id: "streets-v2", label: "Maptiler Streets" },
-        { id: "landscape", label: "Maptiler Landscape" },
-      ].map((background) => (
-        <Box
-          key={background.id}
-          onClick={() => handleBackgroundChange(background.id as MapBackground)}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "5px",
-            cursor: "pointer",
-            backgroundColor:
-              (activeMapBackground || maptilerMapId) === background.id
-                ? "#f5f5f5"
-                : "transparent",
-            padding: isTablet ? "3px" : "5px",
-            borderRadius: "4px",
-            color: "#000",
-          }}
-        >
-          <Box style={{ width: 24, display: "flex", justifyContent: "center" }}>
-            {(activeMapBackground || maptilerMapId) === background.id && (
-              <CheckIcon
-                style={{ color: theme.palette.brown.main, fontSize: 20 }}
-              />
-            )}
-          </Box>
-          <span style={{ marginLeft: 5 }}>{background.label}</span>
-        </Box>
-      ))}
-    </Box>
-  );
 
   const legendContent = (
     <>
@@ -637,15 +557,12 @@ export const Legend = () => {
   const handleClickOutside = (event: MouseEvent) => {
     if (
       legendRef.current &&
-      !legendRef.current.contains(event.target as Node) &&
-      mapBackgroundRef.current &&
-      !mapBackgroundRef.current.contains(event.target as Node)
+      !legendRef.current.contains(event.target as Node)
     ) {
       setIsCollapsedLegend(true);
-      setIsOpenMapBackgrounds(false);
     }
   };
-  // close element Legend and mapBackgrounds if click outside
+  // close element Legend if click outside
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -654,61 +571,8 @@ export const Legend = () => {
   }, []);
 
   return (
-    <>
-      <Box ref={legendRef} style={styleLegend}>
-        {legendContent}
-      </Box>
-      <IconButton
-        onClick={toggleMapBackgrounds}
-        style={buttonStyle}
-        sx={{
-          color: "#725E51",
-          backgroundColor: "white",
-          padding: 2,
-          "&:hover": {
-            backgroundColor: "white", // No effect on hover
-          },
-        }}
-      >
-        <LayersIcon />
-      </IconButton>
-      <Box
-        ref={mapBackgroundRef}
-        style={{
-          ...modalStyleMapBackgrounds,
-          backgroundColor: "white",
-          padding: 5,
-        }}
-      >
-        <Box sx={{ mb: 1, display: "flex", alignItems: "center" }}>
-          <LayersIcon style={{ marginRight: "5px", color: "#725E51" }} />
-          <Typography
-            component="span"
-            variant="button"
-            fontSize={"14px"}
-            color="#434A4A"
-          >
-            Fonds de carte
-          </Typography>
-        </Box>
-        {mapBackgrounds}
-      </Box>
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={4000}
-        onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        sx={{ bottom: `${FOOTER_HEIGHT + 8}px` }}
-      >
-        <Alert
-          onClose={() => setOpenSnackbar(false)}
-          severity="info"
-          sx={{ width: "100%" }}
-        >
-          Le filtre de date a été désactivé
-          {snackbarMessage ? `: ${snackbarMessage}` : ""}
-        </Alert>
-      </Snackbar>
-    </>
+    <Box ref={legendRef} style={styleLegend}>
+      {legendContent}
+    </Box>
   );
 };

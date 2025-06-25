@@ -79,6 +79,8 @@ import { FeatureCollection, Geometry } from "geojson";
 import { GeoJSONFeatureProperties } from "./lib/types/generics";
 import Footer, { FOOTER_HEIGHT } from "./components/Footer";
 import { MaptilerIcon } from "./components/icons/MaptilerIcon";
+import MapBackgroundButton from "./components/MapBackgroundButton";
+import Snackbar from "./components/Snackbar";
 
 function CustomAttribution() {
   const [showAttribution, setShowAttribution] = useState(false);
@@ -176,6 +178,7 @@ export default function MapPage() {
     useState<AuthorizedPathsCollection | null>(null);
   const [recommendedFilteredData, setRecommendedFilteredData] =
     useState<RecommendedPathsCollection | null>(null);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const mapRef = useRef<MapRef | null>(null);
   const viewState = useViewState();
@@ -366,12 +369,16 @@ export default function MapPage() {
     );
   }, [selectedZones]);
 
+  const handleMapBackgroundClick = () => {
+    console.log("Fonds de carte button clicked");
+  };
+
   return (
     <>
       <Box
         style={{
           position: "fixed",
-          top: isFooterVisible ? `${FOOTER_HEIGHT}px` : 0, // Ajuste la position en fonction du footer
+          top: isFooterVisible ? `${FOOTER_HEIGHT}px` : 0, // Adjust position based on footer
           bottom: 0,
           left: 0,
           right: 0,
@@ -555,7 +562,19 @@ export default function MapPage() {
                 openMultiStepForm={openMultiStepForm}
                 mapRef={mapRef}
               />
-              <Legend />
+              
+              <Box
+                style={{
+                  position: "absolute",
+                  bottom: isFooterVisible
+                    ? `${FOOTER_HEIGHT + 20}px`
+                    : "20px", // Adjust position based on footer visibility
+                  right: "20px", // Keep it aligned to the right
+                }}
+              >
+                <Legend setSnackbarMessage={setSnackbarMessage} />
+              </Box>
+
               <ZoneCardPopup
                 open={showZoneCardPopup}
                 onClose={() => {
@@ -571,6 +590,9 @@ export default function MapPage() {
                 <MultiStepFormPopup onClose={handleMultiStepFormPopupClose} />
               )}
               <DownloadFormPopup />
+
+              <MapBackgroundButton onClick={handleMapBackgroundClick} />
+
             </Map>
             <CustomAttribution />
           </Box>
@@ -578,6 +600,10 @@ export default function MapPage() {
         <MaptilerIcon />
       </Box>
       <Footer onHide={() => setIsFooterVisible(false)} />
+      <Snackbar
+        message={snackbarMessage}
+        onClose={() => setSnackbarMessage("")}
+      />
     </>
   );
 }
