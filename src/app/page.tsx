@@ -10,7 +10,6 @@ import Map, {
   ViewStateChangeEvent,
   LayerProps,
   Marker,
-  AttributionControl,
 } from "react-map-gl/maplibre";
 
 import {
@@ -80,6 +79,85 @@ import { FeatureCollection, Geometry } from "geojson";
 import { GeoJSONFeatureProperties } from "./lib/types/generics";
 import Footer, { FOOTER_HEIGHT } from "./components/Footer";
 import { MaptilerIcon } from "./components/icons/MaptilerIcon";
+
+function CustomAttribution() {
+  const [showAttribution, setShowAttribution] = useState(false);
+
+  return (
+    <div style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}>
+      {showAttribution ? (
+        <div
+          style={{
+            backgroundColor: "rgb(255, 255, 255)",
+            color: "black",
+            padding: "5px 5px",
+            borderRadius: "20px",
+            display: "flex",
+            alignItems: "center",
+            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+          }}
+        >
+          <span style={{ fontSize: "12px", whiteSpace: "nowrap" }}>
+            © Groupe Tétras Jura, IGN, MapTiler, OpenStreetMap contributors
+          </span>
+          <button
+            style={{
+              backgroundColor: "black",
+              color: "white",
+              border: "none",
+              borderRadius: "50%",
+              width: "16px",
+              height: "16px",
+              cursor: "pointer",
+              fontSize: "10px",
+              fontWeight: "bold",
+              marginLeft: "10px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onClick={() => setShowAttribution(false)}
+          >
+            ✕
+          </button>
+        </div>
+      ) : (
+        <button
+          style={{
+            backgroundColor: "rgb(255, 255, 255)",
+            border: "none",
+            borderRadius: "50%",
+            width: "26px",
+            height: "26px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+          }}
+          onClick={() => setShowAttribution(true)}
+        >
+          <div
+            style={{
+              backgroundColor: "black",
+              color: "white",
+              borderRadius: "50%",
+              width: "16px",
+              height: "16px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "12px",
+              fontWeight: "bold",
+            }}
+          >
+            i
+          </div>
+        </button>
+      )}
+    </div>
+  );
+}
 
 export default function MapPage() {
   const [cursor, setCursor] = useState<string>("auto");
@@ -473,11 +551,6 @@ export default function MapPage() {
                   </Marker>
                 ))}
 
-              <AttributionControl
-                position="top-right"
-                customAttribution={`<a href="https://groupe-tetras-jura.org/">© Groupe Tétras Jura</a>, IGN`}
-                compact={true}
-              />
               <MapFiltersButtons
                 openMultiStepForm={openMultiStepForm}
                 mapRef={mapRef}
@@ -499,6 +572,7 @@ export default function MapPage() {
               )}
               <DownloadFormPopup />
             </Map>
+            <CustomAttribution />
           </Box>
         )}
         <MaptilerIcon />
