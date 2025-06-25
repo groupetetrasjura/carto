@@ -102,8 +102,7 @@ const DownloadFormPopup = () => {
               onChange={(e) => setSelectedPeriod(e.target.value)}
               label="Période"
             >
-              <MenuItem value="15_12-14_05">du 15/12 au 14/05</MenuItem>
-              <MenuItem value="15_05-30_06">du 15/05 au 30/06</MenuItem>
+              <MenuItem value="15_12-30_06">du 15/12 au 30/06</MenuItem>
               <MenuItem value="01_07-14_12">du 01/07 au 14/12</MenuItem>
             </Select>
           </FormControl>
