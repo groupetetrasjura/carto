@@ -86,7 +86,7 @@ function CustomAttribution() {
   const [showAttribution, setShowAttribution] = useState(false);
 
   return (
-    <div style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}>
+    <div style={{ position: "absolute", top: 5, right: 5, zIndex: 2 }}>
       {showAttribution ? (
         <div
           style={{
@@ -99,8 +99,8 @@ function CustomAttribution() {
             boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
           }}
         >
-          <span style={{ fontSize: "12px", whiteSpace: "nowrap" }}>
-            © Groupe Tétras Jura, IGN, MapTiler, OpenStreetMap contributors
+          <span style={{ fontSize: "10px", whiteSpace: "nowrap" }}>
+          {" "}© Groupe Tétras Jura, IGN, MapTiler, OpenStreetMap contributors
           </span>
           <button
             style={{
@@ -108,8 +108,8 @@ function CustomAttribution() {
               color: "white",
               border: "none",
               borderRadius: "50%",
-              width: "16px",
-              height: "16px",
+              width: "14px",
+              height: "14px",
               cursor: "pointer",
               fontSize: "10px",
               fontWeight: "bold",
@@ -129,8 +129,8 @@ function CustomAttribution() {
             backgroundColor: "rgb(255, 255, 255)",
             border: "none",
             borderRadius: "50%",
-            width: "26px",
-            height: "26px",
+            width: "20px",
+            height: "20px",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
@@ -144,12 +144,12 @@ function CustomAttribution() {
               backgroundColor: "black",
               color: "white",
               borderRadius: "50%",
-              width: "16px",
-              height: "16px",
+              width: "14px",
+              height: "14px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "12px",
+              fontSize: "10px",
               fontWeight: "bold",
             }}
           >
@@ -369,10 +369,6 @@ export default function MapPage() {
     );
   }, [selectedZones]);
 
-  const handleMapBackgroundClick = () => {
-    console.log("Fonds de carte button clicked");
-  };
-
   return (
     <>
       <Box
@@ -562,17 +558,17 @@ export default function MapPage() {
                 openMultiStepForm={openMultiStepForm}
                 mapRef={mapRef}
               />
-              
+
               <Box
                 style={{
                   position: "absolute",
-                  bottom: isFooterVisible
-                    ? `${FOOTER_HEIGHT + 20}px`
-                    : "20px", // Adjust position based on footer visibility
-                  right: "20px", // Keep it aligned to the right
+                  top: "15px",
+                  left: "50%", // Center horizontally
+                  transform: "translateX(-50%)", // Ensure proper centering
+                  zIndex: 1000, // Ensure it is above other elements
                 }}
               >
-                <Legend setSnackbarMessage={setSnackbarMessage} />
+                <Legend setSnackbarMessage={setSnackbarMessage} top={15} />
               </Box>
 
               <ZoneCardPopup
@@ -591,8 +587,7 @@ export default function MapPage() {
               )}
               <DownloadFormPopup />
 
-              <MapBackgroundButton onClick={handleMapBackgroundClick} />
-
+              <MapBackgroundButton />
             </Map>
             <CustomAttribution />
           </Box>

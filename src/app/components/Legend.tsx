@@ -1,10 +1,8 @@
 import Image from "next/image";
 import {
   Box,
-  useMediaQuery,
-  useTheme,
   IconButton,
-} from "@mui/material";
+} from "@mui/material"; // Removed `useMediaQuery` and `useTheme`
 import { CSSProperties, useState, useEffect, useRef } from "react";
 import MapIcon from "@mui/icons-material/Map";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -41,12 +39,11 @@ const PATH_TYPES = {
 
 interface LegendProps {
   setSnackbarMessage: (message: string) => void;
+  top: number; // Add a `top` prop to dynamically position the legend
 }
 
-export const Legend = ({ setSnackbarMessage }: LegendProps) => {
+export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
   const [isCollapsedLegend, setIsCollapsedLegend] = useState(true);
-  const theme = useTheme();
-  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
   const layersVisibility = useLayersVisibility();
   const selectedDate = useMapFiltersSelectedDate();
   const { setSelectedDate } = useMapFiltersActions();
@@ -69,17 +66,20 @@ export const Legend = ({ setSnackbarMessage }: LegendProps) => {
   };
 
   const styleLegend: CSSProperties = {
-    position: "fixed",
-    top: 28,
-    left: "50%",
-    transform: "translateX(-50%)",
+    position: "absolute", // Ensure it is positioned relative to the parent
+    top: `${top || 15}px`, // Fallback to 15px if `top` is undefined
+    left: "50%", // Center horizontally
+    transform: "translateX(-50%)", // Ensure proper centering
     backgroundColor: "white",
     padding: "10px",
     borderRadius: "5px",
     boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
-    maxHeight: isCollapsedLegend ? "60px" : isTablet ? "75%" : "85%",
-    maxWidth: "320px",
+    maxHeight: isCollapsedLegend
+      ? "60px"
+      : `calc(100vh - ${top + 100}px)`, // Dynamically calculate height to avoid overlapping
+    maxWidth: "320px", // Ensure the legend has a proper width
     overflow: isCollapsedLegend ? "hidden" : "auto",
+    zIndex: 1000, // Ensure it is above other elements
   };
 
   const legendContent = (

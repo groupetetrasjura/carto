@@ -18,7 +18,7 @@ export const MaptilerIcon = () => {
       <img
         src="https://api.maptiler.com/resources/logo.svg"
         alt="MapTiler logo"
-        style={{ height: 30, width: "auto" }}
+        style={{ height: 25, width: "auto" }}
       />
     </Box>
   );
