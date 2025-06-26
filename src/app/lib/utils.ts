@@ -60,8 +60,6 @@ export function filterAuthorizedPathsData(
             return false;
           }
         }
-        // if (isZoneActive && !zoneSet.has(feature.properties.zone_names as Zone))
-        // return false;
 
         if (isDateActive) {
           const { Période_autorisation } = feature.properties;
@@ -267,8 +265,11 @@ export function filterRecommendedPathsData(
     type: "FeatureCollection",
     features: geojsonData.features.filter((feature: GeoJSONFeature<RecommendedPathProperties>) => {
       // Filter by transport
-      if (isTransportActive && feature.properties.mode_transport !== modeTransport) {
-        console.log("transport active not outdoor");
+      if (
+        isTransportActive &&
+        feature.properties.mode_transport !== modeTransport &&
+        feature.properties.mode_transport !== "all" // Allow only the selected mode or "all"
+      ) {
         return false;
       }
       // Filter by date
