@@ -42,6 +42,17 @@ export interface AuthorizedPathProperties {
   mode_transport: "outdoor" | "car" | "all";
 }
 
+// Properties type for authorized paths features
+export interface RecommendedPathProperties {
+  fid: number;
+  layer: string;
+  start_day: number | null;
+  start_month: number | null;
+  end_day: number | null;
+  end_month: number | null;
+  mode_transport: "outdoor" | "car" | "all"; // Ajout de cette propriété
+}
+
 //Properties type for APPB zones
 export interface IAPPBZone {
   fid: number;
@@ -64,6 +75,15 @@ export type AuthorizedPathsCollection = GeoJSONFeatureCollection<
   AuthorizedPathProperties,
   {
     type: "LineString";
+    coordinates: [number, number][];
+  }
+>;
+
+// Type for the full recommended paths collection
+export type RecommendedPathsCollection = GeoJSONFeatureCollection<
+  RecommendedPathProperties,
+  {
+    type: "MultiLineString";
     coordinates: [number, number][];
   }
 >;

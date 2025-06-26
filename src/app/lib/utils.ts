@@ -2,6 +2,8 @@ import {
   AuthorizedPathProperties,
   AuthorizedPathsCollection,
   GeoJSONFeature,
+  RecommendedPathsCollection,
+  RecommendedPathProperties,
 } from "@/app/lib/types/GeoJSON";
 import { Zone } from "./types/mapFilters";
 import dayjs, { Dayjs } from "dayjs";
@@ -58,8 +60,6 @@ export function filterAuthorizedPathsData(
             return false;
           }
         }
-        // if (isZoneActive && !zoneSet.has(feature.properties.zone_names as Zone))
-          // return false;
 
         if (isDateActive) {
           const { Période_autorisation } = feature.properties;
@@ -243,11 +243,77 @@ export function getZonesBoundingBox<
   return getFeaturesBoundingBox(filteredFeatures);
 }
 
+/**
+/*  * Filters recommended paths based on transport mode, zones, and date
+ * @param geojsonData Input GeoJSON data
+ * @param modeTransport The transport mode (must be "outdoor" to pass the filter)
+ * @param selectedDate Selected date (must be between 01/07 and 14/12)
+ * @returns Filtered recommended paths */
+
+export function filterRecommendedPathsData(
+  geojsonData: RecommendedPathsCollection,
+  modeTransport: string | null,
+  selectedDate: Dayjs | null
+): RecommendedPathsCollection {
+  if (!geojsonData || !geojsonData.features) {
+    return { type: "FeatureCollection", features: [] };
+  }
+  const isTransportActive = modeTransport !== null;
+  const isDateActive = selectedDate !== null;
+
+  return {
+    type: "FeatureCollection",
+    features: geojsonData.features.filter((feature: GeoJSONFeature<RecommendedPathProperties>) => {
+      // Filter by transport
+      if (
+        isTransportActive &&
+        feature.properties.mode_transport !== modeTransport &&
+        feature.properties.mode_transport !== "all" // Allow only the selected mode or "all"
+      ) {
+        return false;
+      }
+      // Filter by date
+      if (isDateActive && selectedDate) {
+        if (!isDateBetweenJulyAndDecember(selectedDate)) {
+          return false;
+        }
+      }
+      return true;
+    }),
+  };
+}
+
+/**
+ * Checks if a date is between July 1st and December 14th
+ * @param date The date to check
+ * @returns true if within the interval, otherwise false
+ */
+export function isDateBetweenJulyAndDecember(date: Dayjs): boolean {
+  const month = date.month(); // month (0 = january, 1 = february...)
+  const day = date.date();
+
+  return (
+    (month === 6 && day >= 1) || // From July 1st
+    (month > 6 && month < 11) || // August to November
+    (month === 11 && day <= 14) // Up to December 14th
+  );
+}
+
 // function to know is user is on ios device
 export const isIOS = () => {
   return (
     /iPad|iPhone|iPod/.test(navigator.userAgent) ||
     // iPad on iOS 13+ detection
     (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+  );
+};
+
+export const isInRecommendedPeriod = (date: dayjs.Dayjs | null) => {
+  if (!date) return false;
+  const year = date.year();
+  const start = dayjs(`${year}-07-01`);
+  const end = dayjs(`${year}-12-14`);
+  return (
+    date.isAfter(start.subtract(1, "day")) && date.isBefore(end.add(1, "day"))
   );
 };

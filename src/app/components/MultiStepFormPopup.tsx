@@ -85,43 +85,77 @@ const DateWarningAlert = () => {
     <Alert severity="warning">
       <Box>
         <Typography fontWeight={600}>
-          Du 15/12 au 30/06 : ATTENTION, cette période est très sensible pour les espèces. 
+          Du 15/12 au 30/06 : ATTENTION, cette période est très sensible pour
+          les espèces.
         </Typography>
         <Box component="span" display="inline">
-          <Typography fontWeight={600} component="span">L&apos;accès au sein des massifs est interdit, sauf itinéraires autorisés. </Typography>
-          Merci de suivre ces itinéraires et de respecter la réglementation. 
-          <Typography fontWeight={600} component="span">Le bivouac et les chiens même en laisse y sont interdits</Typography>. 
-          Suivant la durée de votre séjour, il se peut que plusieurs périodes réglementaires soient concernées. Merci de vérifier les itinéraires autorisés pour chaque période.
-          </Box>
+          <Typography fontWeight={600} component="span">
+            L&apos;accès au sein des massifs est interdit, sauf itinéraires
+            autorisés.{" "}
+          </Typography>
+          Merci de suivre ces itinéraires et de respecter la réglementation.
+          <Typography fontWeight={600} component="span">
+            Le bivouac et les chiens même en laisse y sont interdits
+          </Typography>
+          . Suivant la durée de votre séjour, il se peut que plusieurs périodes
+          réglementaires soient concernées. Merci de vérifier les itinéraires
+          autorisés pour chaque période.
+        </Box>
       </Box>
     </Alert>
   );
 };
 
-const DateInfoAlert = () => {
-  return (
-    <Alert severity="success">
-      <Box component="span" display="inline">
-        Du 01/07 au 14/12 :{" "}
-        <Typography
-          component="span"
-          display="inline"
-          sx={{ fontWeight: 600 }} // Force bold using sx
-        >L&apos;accès est autorisé sur l&apos;ensemble des itinéraires balisés. 
-        </Typography>
-        Merci de respecter la réglementation, et de{" "}
-        <Typography
-          component="span"
-          display="inline"
-          sx={{ fontWeight: 600 }} // Force bold using sx
-        >
-          garder votre chien en laisse
-        </Typography>. 
-        Suivant la durée de votre séjour, il se peut que plusieurs périodes réglementaires soient concernées. 
-        Merci de vérifier les itinéraires autorisés pour chaque période.
-      </Box>
-    </Alert>
-  );
+const DateInfoAlert = ({ selectedTransport }: { selectedTransport: string | null }) => {
+  const transportMessages: Record<string, JSX.Element> = {
+    outdoor: (
+      <Alert severity="success">
+        <Box component="span" display="inline">
+          Du 01/07 au 14/12 :{" "}
+          <Typography
+            component="span"
+            display="inline"
+            sx={{ fontWeight: 600 }}
+          >
+            L&apos;accès est autorisé sur l&apos;ensemble des itinéraires balisés. 
+            Merci de suivre les itinéraires recommandés, de respecter la réglementation, et de garder votre chien en laisse. 
+          </Typography>{" "}
+          Suivant la durée de votre séjour, il se peut que plusieurs périodes
+          réglementaires soient concernées. Merci de vérifier les itinéraires
+          autorisés pour chaque période.
+        </Box>
+      </Alert>
+    ),
+    car: (
+      <Alert severity="success">
+        <Box component="span" display="inline">
+          Du 01/07 au 14/12 :{" "}
+          <Typography
+            component="span"
+            display="inline"
+            sx={{ fontWeight: 600 }}
+          >
+            L&apos;APPB ne réglemente pas la circulation à moteur, veuillez-vous référer à la réglementation locale. 
+            Merci de respecter la réglementation propre à l&apos;APPB lors de vos activités n&apos;incluant pas de véhicule à moteur. 
+          </Typography>{" "}
+          Suivant la durée de votre séjour, il se peut que plusieurs périodes
+          réglementaires soient concernées. Merci de vérifier les itinéraires
+          autorisés pour chaque période.
+        </Box>
+      </Alert>
+    ),
+    default: (
+      <Alert severity="info">
+        <Box component="span" display="inline">
+          Veuillez sélectionner un mode de déplacement pour afficher les informations correspondantes.
+        </Box>
+      </Alert>
+    ),
+  };
+
+  return selectedTransport
+    ? transportMessages[selectedTransport] || transportMessages.default
+    : transportMessages.default;
 };
 
 const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
@@ -157,11 +191,11 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     handleClose();
   };
 
-  const renderDateAlert = (selectedDate: Dayjs | null) => {
+  const renderDateAlert = (selectedDate: Dayjs | null, selectedTransport: string | null) => {
     if (!selectedDate) return null;
-
+  
     return checkAuthorizedDate(selectedDate) ? (
-      <DateInfoAlert />
+      <DateInfoAlert selectedTransport={selectedTransport} />
     ) : (
       <DateWarningAlert />
     );
@@ -304,7 +338,7 @@ const MultiStepFormPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 />
               </LocalizationProvider>
             </Stack>
-            {renderDateAlert(selectedDate)}
+            {renderDateAlert(selectedDate, selectedTransport)}
           </>
         );
       default:

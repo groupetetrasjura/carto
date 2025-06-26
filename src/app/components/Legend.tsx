@@ -1,5 +1,8 @@
 import Image from "next/image";
-import { Box, useMediaQuery, useTheme, IconButton } from "@mui/material";
+import {
+  Box,
+  IconButton,
+} from "@mui/material"; // Removed `useMediaQuery` and `useTheme`
 import { CSSProperties, useState, useEffect, useRef } from "react";
 import MapIcon from "@mui/icons-material/Map";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -8,114 +11,76 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 import Typography from "@mui/material/Typography";
-import LayersIcon from "@mui/icons-material/Layers";
-import CheckIcon from "@mui/icons-material/Check";
 import {
-  useActiveMapBackground,
   useMapFiltersActions,
-  useMaptilerMapId,
+  useMapFiltersSelectedDate,
 } from "@/app/lib/stores/mapFilters";
-import { MapBackground } from "../lib/types/mapFilters";
 import {
   useLayersVisibility,
   useMapStoreActions,
 } from "../lib/stores/mapStore";
+import { isInRecommendedPeriod } from "../lib/utils";
+import { Dayjs } from "dayjs";
 
-export const Legend = () => {
-  const [isOpenMapBackgrounds, setIsOpenMapBackgrounds] = useState(false);
+const PATH_TYPES = {
+  recommended: {
+    source: "recommended-paths-source",
+    shouldClear: (date: Dayjs | null) =>
+      date !== null && !isInRecommendedPeriod(date),
+    message: "les itinéraires recommandés sont accessibles du 01/07 au 14/12.",
+  },
+  authorized: {
+    source: "authorized-paths-source",
+    shouldClear: (date: Dayjs | null) =>
+      date !== null && isInRecommendedPeriod(date),
+    message: "les itinéraires autorisés sont uniquement valables du 15/12 au 30/06.",
+  },
+};
+
+interface LegendProps {
+  setSnackbarMessage: (message: string) => void;
+  top: number; // Add a `top` prop to dynamically position the legend
+}
+
+export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
   const [isCollapsedLegend, setIsCollapsedLegend] = useState(true);
-  const theme = useTheme();
-  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
-  const { setActiveMapBackground } = useMapFiltersActions();
-  const activeMapBackground = useActiveMapBackground();
-  const maptilerMapId = useMaptilerMapId();
   const layersVisibility = useLayersVisibility();
-  const { toggleLayer } = useMapStoreActions();
+  const selectedDate = useMapFiltersSelectedDate();
+  const { setSelectedDate } = useMapFiltersActions();
+  const { setLayerVisibility, toggleLayer } = useMapStoreActions();
 
   const legendRef = useRef<HTMLDivElement>(null);
-  const mapBackgroundRef = useRef<HTMLDivElement>(null);
 
-  const toggleMapBackgrounds = () => {
-    setIsOpenMapBackgrounds(!isOpenMapBackgrounds);
-  };
+  const handleTogglePaths = (type: "recommended" | "authorized") => {
+    const config = PATH_TYPES[type];
+    const shouldClearDate = config.shouldClear(selectedDate);
 
-  const handleBackgroundChange = (background: MapBackground) => {
-    setActiveMapBackground(background);
-  };
+    if (shouldClearDate) {
+      setSelectedDate(null);
+      setSnackbarMessage(config.message); // Use setSnackbarMessage from props
+    }
 
-  const modalStyleMapBackgrounds: CSSProperties = {
-    position: "absolute",
-    bottom: isTablet ? 180 : 140,
-    right: isTablet ? 24 : 12,
-    borderRadius: "5px",
-    width: "200px",
-    display: isOpenMapBackgrounds ? "block" : "none",
+    setTimeout(() => {
+      setLayerVisibility(config.source);
+    }, 0);
   };
 
   const styleLegend: CSSProperties = {
-    position: "fixed",
-    top: 20,
-    left: "50%",
-    transform: "translateX(-50%)",
+    position: "absolute", // Ensure it is positioned relative to the parent
+    top: `${top || 15}px`, // Fallback to 15px if `top` is undefined
+    left: "50%", // Center horizontally
+    transform: "translateX(-50%)", // Ensure proper centering
     backgroundColor: "white",
     padding: "10px",
     borderRadius: "5px",
     boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
-    maxHeight: isCollapsedLegend ? "60px" : isTablet ? "75%" : "85%",
-    maxWidth: "300px",
+    maxHeight: isCollapsedLegend
+      ? "60px"
+      : `calc(100vh - ${top + 100}px)`, // Dynamically calculate height to avoid overlapping
+    maxWidth: "320px", // Ensure the legend has a proper width
     overflow: isCollapsedLegend ? "hidden" : "auto",
+    zIndex: 1000, // Ensure it is above other elements
   };
-
-  const buttonStyle: CSSProperties = {
-    position: "absolute",
-    bottom: isTablet ? 125 : 80,
-    right: 12,
-    backgroundColor: "white",
-    borderRadius: "50%",
-    boxShadow: "0px 2px 4px rgba(0,0,0,0.2)",
-  };
-
-  const mapBackgrounds = (
-    <Box ref={mapBackgroundRef}>
-      {[
-        {
-          id: "dynamic",
-          label: "Dynamique (Maptiler Landscape + IGN SCAN 25®)",
-        },
-        { id: "ign-layer", label: "IGN SCAN 25®" },
-        { id: "outdoor-v2", label: "Maptiler Outdoor" },
-        { id: "streets-v2", label: "Maptiler Streets" },
-        { id: "landscape", label: "Maptiler Landscape" },
-      ].map((background) => (
-        <Box
-          key={background.id}
-          onClick={() => handleBackgroundChange(background.id as MapBackground)}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "5px",
-            cursor: "pointer",
-            backgroundColor:
-              (activeMapBackground || maptilerMapId) === background.id
-                ? "#f5f5f5"
-                : "transparent",
-            padding: isTablet ? "3px" : "5px",
-            borderRadius: "4px",
-            color: "#000",
-          }}
-        >
-          <Box style={{ width: 24, display: "flex", justifyContent: "center" }}>
-            {(activeMapBackground || maptilerMapId) === background.id && (
-              <CheckIcon
-                style={{ color: theme.palette.brown.main, fontSize: 20 }}
-              />
-            )}
-          </Box>
-          <span style={{ marginLeft: 5 }}>{background.label}</span>
-        </Box>
-      ))}
-    </Box>
-  );
 
   const legendContent = (
     <>
@@ -149,115 +114,196 @@ export const Legend = () => {
       {!isCollapsedLegend && (
         <>
           <Box sx={{ color: "#000" }}>
-            <span>
-              <strong>Itinéraires autorisés :</strong>
-            </span>
             <Box
-              style={{
+              sx={{
                 display: "flex",
+                justifyContent: "space-between",
                 alignItems: "center",
-                marginBottom: "5px",
               }}
             >
-              <Box
-                style={{
-                  width: 20,
-                  height: 3,
-                  borderStyle: "dashed",
-                  borderWidth: 2,
-                  borderColor: "#084aff",
-                  backgroundColor: "transparent",
-                  marginRight: 10,
-                }}
-              ></Box>
-              <span>{`Du 01/07 au 14/05`}</span>
-            </Box>
-            <Box
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "5px",
-              }}
-            >
-              <Box
-                style={{
-                  width: 20,
-                  height: 3,
-                  backgroundColor: "#084aff",
-                  marginRight: 10,
-                }}
-              ></Box>
-              <span>{`Toute l'année`}</span>
-            </Box>
-            <Box
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "5px",
-              }}
-            >
-              <Box
-                style={{
-                  width: 20,
-                  height: 3,
-                  backgroundColor: "#ed9e00",
-                  marginRight: 10,
-                }}
-              ></Box>
-              <span>{`Du 15/05 au 14/12`}</span>
-            </Box>
-            <Box
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "5px",
-              }}
-            >
-              <Box
-                style={{
-                  width: 20,
-                  height: 3,
-                  backgroundColor: "#ff0000",
-                  marginRight: 10,
-                }}
-              ></Box>
-              <span>{`Du 01/07 au 1er dimanche de mars`}</span>
-            </Box>
-            <Box
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "5px",
-              }}
-            >
-              <Box
-                style={{
-                  width: 20,
-                  height: 3,
-                  borderStyle: "dashed",
-                  borderWidth: 2,
-                  borderColor: "#ff0000",
-                  backgroundColor: "transparent",
-                  marginRight: 10,
-                }}
-              ></Box>
-              <span>{`Non réglementé par l'APPB`}</span>
-            </Box>
-              
-            <Box style={{ display: "flex", alignItems: "center", marginBottom: "15px"}}>
-              <Box
-                style={{
-                  width: 20,
-                  height: 3,
-                  backgroundColor: "#9E9E9E",
-                  marginRight: 10,
-                }}
-              ></Box>
-              <span>{`Si déneigé`}</span>
-            </Box>
-            
-            <Box>
               <span>
+                <strong>Itinéraires autorisés selon les périodes de l&apos;année :</strong>
+              </span>
+
+              <IconButton onClick={() => handleTogglePaths("authorized")}>
+                {layersVisibility["authorized-paths-source"] ? (
+                  <VisibilityIcon className="w-5 h-5 text-green-500" />
+                ) : (
+                  <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                )}
+              </IconButton>
+            </Box>
+            {layersVisibility["authorized-paths-source"] && (
+              <>
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "2px",
+                  }}
+                >
+                  <Box
+                    style={{
+                      width: 20,
+                      height: 3,
+                      borderStyle: "dashed",
+                      borderWidth: 2,
+                      borderColor: "#084aff",
+                      backgroundColor: "transparent",
+                      marginRight: 10,
+                    }}
+                  ></Box>
+                  <span>{`Du 01/07 au 14/05`}</span>
+                </Box>
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "2px",
+                  }}
+                >
+                  <Box
+                    style={{
+                      width: 20,
+                      height: 3,
+                      backgroundColor: "#084aff",
+                      marginRight: 10,
+                    }}
+                  ></Box>
+                  <span>{`Toute l'année`}</span>
+                </Box>
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "2px",
+                  }}
+                >
+                  <Box
+                    style={{
+                      width: 20,
+                      height: 3,
+                      backgroundColor: "#ed9e00",
+                      marginRight: 10,
+                    }}
+                  ></Box>
+                  <span>{`Du 15/05 au 14/12`}</span>
+                </Box>
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "2px",
+                  }}
+                >
+                  <Box
+                    style={{
+                      width: 20,
+                      height: 3,
+                      backgroundColor: "#ff0000",
+                      marginRight: 10,
+                    }}
+                  ></Box>
+                  <span>{`Du 01/07 au 1er dimanche de mars`}</span>
+                </Box>
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "2px",
+                  }}
+                >
+                  <Box
+                    style={{
+                      width: 20,
+                      height: 3,
+                      borderStyle: "dashed",
+                      borderWidth: 2,
+                      borderColor: "#ff0000",
+                      backgroundColor: "transparent",
+                      marginRight: 10,
+                    }}
+                  ></Box>
+                  <span>{`Non réglementé par l'APPB`}</span>
+                </Box>
+
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <Box
+                    style={{
+                      width: 20,
+                      height: 3,
+                      backgroundColor: "#9E9E9E",
+                      marginRight: 10,
+                    }}
+                  ></Box>
+                  <span>{`Si déneigé`}</span>
+                </Box>
+              </>
+            )}
+
+
+            <Box>
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "2px",
+                }}
+              >
+                <span
+                  style={{
+                    marginTop: "10px", // Add marginTop to create spacing above
+                    display: "block", // Ensure the margin applies properly
+                  }}
+                >
+                  <strong>Itinéraires recommandés du 01/07 au 14/12 :</strong>
+                </span>
+                <IconButton onClick={() => handleTogglePaths("recommended")}>
+                  {layersVisibility["recommended-paths-source"] ? (
+                    <VisibilityIcon className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                  )}
+                </IconButton>
+              </Box>
+
+              {layersVisibility["recommended-paths-source"] && (
+                <Box
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <Box
+                    style={{
+                      width: 20,
+                      height: 3,
+                      borderStyle: "dashed",
+                      borderWidth: 2,
+                      borderColor: "#000",
+                      backgroundColor: "transparent",
+                      marginRight: 10,
+                    }}
+                  ></Box>
+                  <span>{`Du 01/07 au 14/12`}</span>
+                </Box>
+              )}
+            </Box>
+
+
+            <Box>
+              <span
+                style={{
+                  marginTop: "20px", // Add marginTop to create spacing above
+                  display: "block", // Ensure the margin applies properly
+                }}
+              >
                 <strong>Aires protégées :</strong>
               </span>
               <Box
@@ -265,7 +311,7 @@ export const Legend = () => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  marginBottom: "5px",
+                  marginBottom: "3px",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
@@ -284,13 +330,14 @@ export const Legend = () => {
                   </span>
                 </div>
               </Box>
+
               <Box>
                 <Box
                   style={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    marginBottom: "5px",
+                    marginBottom: "3px",
                   }}
                 >
                   <div style={{ display: "flex", alignItems: "center" }}>
@@ -317,12 +364,13 @@ export const Legend = () => {
                   </IconButton>
                 </Box>
               </Box>
+
               <Box
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  marginBottom: "5px",
+                  marginBottom: "3px",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
@@ -350,12 +398,13 @@ export const Legend = () => {
                   )}
                 </IconButton>
               </Box>
+
               <Box
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  marginBottom: "5px",
+                  marginBottom: "3px",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
@@ -383,11 +432,12 @@ export const Legend = () => {
                   )}
                 </IconButton>
               </Box>
+
               <Box
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  marginBottom: "5px",
+                  marginBottom: "3px",
                   justifyContent: "space-between",
                 }}
               >
@@ -417,34 +467,67 @@ export const Legend = () => {
                   )}
                 </IconButton>
               </Box>
+
               <Box
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "5px",
-                justifyContent: "space-between",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center" }}>
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "3px",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <svg width="24" height="24" style={{ flexShrink: 0 }}>
+                    <rect
+                      width="24"
+                      height="24"
+                      fill="#4b0092"
+                      stroke="#4b0092"
+                      strokeWidth={3}
+                      fillOpacity={0.15}
+                    />
+                  </svg>
+                  <span style={{ marginLeft: 10 }}>
+                    Réserve Naturelle Nationale de la Haute-Chaîne du Jura
+                  </span>
+                </div>
+                <Box style={{ alignSelf: "flex-end" }}>
+                  <IconButton
+                    onClick={() => toggleLayer("protected-areas-source", "RNN")}
+                  >
+                    {layersVisibility["protected-areas-source"].RNN ? (
+                      <VisibilityIcon className="w-5 h-5 text-green-500" />
+                    ) : (
+                      <VisibilityOffIcon className="w-5 h-5 text-red-500" />
+                    )}
+                  </IconButton>
+                </Box>
+              </Box>
+
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "3px",
+                }}
+              >
                 <svg width="24" height="24" style={{ flexShrink: 0 }}>
                   <rect
                     width="24"
                     height="24"
                     fill="#4b0092"
                     stroke="#4b0092"
+                    fillOpacity={0.4}
                     strokeWidth={3}
-                    fillOpacity={0.15}
                   />
                 </svg>
                 <span style={{ marginLeft: 10 }}>
-                  Réserve Naturelle Nationale de la Haute-Chaîne du Jura
+                  Zones de Quiétude de la Faune Sauvage
                 </span>
-              </div>
-              <Box style={{ alignSelf: "flex-end" }}>
-                <IconButton
-                  onClick={() => toggleLayer("protected-areas-source", "RNN")}
-                >
-                  {layersVisibility["protected-areas-source"].RNN ? (
+
+                <IconButton onClick={() => toggleLayer("zonages-zqfs-source")}>
+                  {layersVisibility["zonages-zqfs-source"] ? (
                     <VisibilityIcon className="w-5 h-5 text-green-500" />
                   ) : (
                     <VisibilityOffIcon className="w-5 h-5 text-red-500" />
@@ -452,42 +535,16 @@ export const Legend = () => {
                 </IconButton>
               </Box>
             </Box>
-            <Box
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginBottom: "5px",
-              }}
-            >
-              <svg width="24" height="24" style={{ flexShrink: 0 }}>
-                <rect
-                  width="24"
-                  height="24"
-                  fill="#4b0092"
-                  stroke="#4b0092"
-                  fillOpacity={0.4}
-                  strokeWidth={3}
-                />
-              </svg>
-              <span style={{ marginLeft: 10 }}>
-                Zones de Quiétude de la Faune Sauvage
-              </span>
-
-              <IconButton onClick={() => toggleLayer("zonages-zqfs-source")}>
-                {layersVisibility["zonages-zqfs-source"] ? (
-                  <VisibilityIcon className="w-5 h-5 text-green-500" />
-                ) : (
-                  <VisibilityOffIcon className="w-5 h-5 text-red-500" />
-                )}
-              </IconButton>
-            </Box>
-            </Box>
           </Box>
 
           <Box sx={{ color: "#000" }}>
             <Box>
-              <span>
+            <span
+                style={{
+                  marginTop: "10px", // Add marginTop to create spacing above
+                  display: "block", // Ensure the margin applies properly
+                }}
+              >
                 <strong>Autres informations :</strong>
               </span>
             </Box>
@@ -506,10 +563,11 @@ export const Legend = () => {
                   height={20}
                   style={{ marginRight: 10 }}
                 />
-                <span>Parking à proximité</span>
+                <span>Parkings à proximité</span>
               </Box>
             </Box>
-            <Box sx={{ maxWidth: 380, mt: 1, fontSize: "13px" }}>
+
+            <Box sx={{ maxWidth: 380, mt: 1, fontSize: "13px", marginTop: "20px" }}>
               {`D'autres zones réglementées sont également présentes sur le massif
           jurassien. Pour plus d'informations, consulter la réglementation
           locale.`}
@@ -523,15 +581,12 @@ export const Legend = () => {
   const handleClickOutside = (event: MouseEvent) => {
     if (
       legendRef.current &&
-      !legendRef.current.contains(event.target as Node) &&
-      mapBackgroundRef.current &&
-      !mapBackgroundRef.current.contains(event.target as Node)
+      !legendRef.current.contains(event.target as Node)
     ) {
       setIsCollapsedLegend(true);
-      setIsOpenMapBackgrounds(false);
     }
   };
-  // close element Legend and mapBackgrounds if click outside
+  // close element Legend if click outside
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -540,45 +595,8 @@ export const Legend = () => {
   }, []);
 
   return (
-    <>
-      <Box ref={legendRef} style={styleLegend}>
-        {legendContent}
-      </Box>
-      <IconButton
-        onClick={toggleMapBackgrounds}
-        style={buttonStyle}
-        sx={{
-          color: "#725E51",
-          backgroundColor: "white",
-          padding: 2,
-          "&:hover": {
-            backgroundColor: "white", // No effect on hover
-          },
-        }}
-      >
-        <LayersIcon />
-      </IconButton>
-      <Box
-        ref={mapBackgroundRef}
-        style={{
-          ...modalStyleMapBackgrounds,
-          backgroundColor: "white",
-          padding: 5,
-        }}
-      >
-        <Box sx={{ mb: 1, display: "flex", alignItems: "center" }}>
-          <LayersIcon style={{ marginRight: "5px", color: "#725E51" }} />
-          <Typography
-            component="span"
-            variant="button"
-            fontSize={"14px"}
-            color="#434A4A"
-          >
-            Fonds de carte
-          </Typography>
-        </Box>
-        {mapBackgrounds}
-      </Box>
-    </>
+    <Box ref={legendRef} style={styleLegend}>
+      {legendContent}
+    </Box>
   );
 };
