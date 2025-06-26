@@ -50,6 +50,7 @@ export interface RecommendedPathProperties {
   start_month: number | null;
   end_day: number | null;
   end_month: number | null;
+  mode_transport: "outdoor" | "car" | "all"; // Ajout de cette propriété
 }
 
 //Properties type for APPB zones

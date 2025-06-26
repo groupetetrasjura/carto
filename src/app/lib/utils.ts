@@ -3,6 +3,7 @@ import {
   AuthorizedPathsCollection,
   GeoJSONFeature,
   RecommendedPathsCollection,
+  RecommendedPathProperties,
 } from "@/app/lib/types/GeoJSON";
 import { Zone } from "./types/mapFilters";
 import dayjs, { Dayjs } from "dayjs";
@@ -264,9 +265,9 @@ export function filterRecommendedPathsData(
 
   return {
     type: "FeatureCollection",
-    features: geojsonData.features.filter(() => {
+    features: geojsonData.features.filter((feature: GeoJSONFeature<RecommendedPathProperties>) => {
       // Filter by transport
-      if (isTransportActive && modeTransport !== "outdoor") {
+      if (isTransportActive && feature.properties.mode_transport !== modeTransport) {
         console.log("transport active not outdoor");
         return false;
       }
