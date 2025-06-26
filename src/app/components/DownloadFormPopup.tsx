@@ -18,6 +18,7 @@ import {
   useSelectedZoneName,
   useSelectedPeriod,
   useDateRange,
+  useSelectedTransport,
   useMapDownloadActions,
 } from "@/app/lib/stores/mapDownload";
 
@@ -26,11 +27,13 @@ const DownloadFormPopup = () => {
   const isOpen = useIsDownloadPopupOpen();
   const selectedZoneName = useSelectedZoneName();
   const selectedPeriod = useSelectedPeriod();
+  const selectedTransport = useSelectedTransport();
   const dateRange = useDateRange();
   const {
     setIsDownloadPopupOpen,
     setSelectedPeriod,
     setSelectedZoneName,
+    setSelectedTransport,
     clearDownloadState,
   } = useMapDownloadActions();
 
@@ -40,8 +43,8 @@ const DownloadFormPopup = () => {
   };
 
   const handleDownload = () => {
-    if (selectedZoneName && selectedPeriod) {
-      const fileName = `${selectedZoneName}_${selectedPeriod}.jpeg`;
+    if (selectedZoneName && selectedPeriod && selectedTransport) {
+      const fileName = `${selectedZoneName}_${selectedPeriod}_${selectedTransport}.jpg`;
       window.open(`/cartes/${fileName}`, "_blank");
     }
     handleClose();
@@ -89,7 +92,7 @@ const DownloadFormPopup = () => {
               label="Zone"
             >
               <MenuItem value="MASSACRE">Massacre</MenuItem>
-              <MenuItem value="BOIS-DE-BANS">Bois de Bans-Arobiers</MenuItem>
+              <MenuItem value="BOIS-DE-BAN">Bois de Bans-Arobiers</MenuItem>
               <MenuItem value="RISOUX">Risoux</MenuItem>
               <MenuItem value="HAUTE-JOUX">Haute Joux</MenuItem>
               <MenuItem value="COMBE-NOIRE">Combe Noire</MenuItem>
@@ -102,8 +105,19 @@ const DownloadFormPopup = () => {
               onChange={(e) => setSelectedPeriod(e.target.value)}
               label="Période"
             >
-              <MenuItem value="15_12-30_06">du 15/12 au 30/06</MenuItem>
-              <MenuItem value="01_07-14_12">du 01/07 au 14/12</MenuItem>
+              <MenuItem value="15-12_30-06">du 15/12 au 30/06</MenuItem>
+              <MenuItem value="01-07-14-12">du 01/07 au 14/12</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl fullWidth sx={{ mt: 2 }}>
+            <InputLabel>Mode de déplacement</InputLabel>
+            <Select
+              value={selectedTransport || ""}
+              onChange={(e) => setSelectedTransport(e.target.value)}
+              label="Mode de déplacement"
+            >
+              <MenuItem value="sans_vehicule">Sans véhicule motorisé</MenuItem>
+              <MenuItem value="avec_vehicule">Avec véhicule motorisé</MenuItem>
             </Select>
           </FormControl>
         </CardContent>
