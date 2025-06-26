@@ -92,7 +92,7 @@ const DownloadFormPopup = () => {
               label="Zone"
             >
               <MenuItem value="MASSACRE">Massacre</MenuItem>
-              <MenuItem value="BOIS-DE-BAN">Bois de Bans-Arobiers</MenuItem>
+              <MenuItem value="BOIS-DE-BAN">Bois de Ban-Arobiers</MenuItem>
               <MenuItem value="RISOUX">Risoux</MenuItem>
               <MenuItem value="HAUTE-JOUX">Haute Joux</MenuItem>
               <MenuItem value="COMBE-NOIRE">Combe Noire</MenuItem>
