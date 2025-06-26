@@ -106,7 +106,7 @@ const DownloadFormPopup = () => {
               label="Période"
             >
               <MenuItem value="15-12_30-06">du 15/12 au 30/06</MenuItem>
-              <MenuItem value="01-07-14-12">du 01/07 au 14/12</MenuItem>
+              <MenuItem value="01-07_14-12">du 01/07 au 14/12</MenuItem>
             </Select>
           </FormControl>
           <FormControl fullWidth sx={{ mt: 2 }}>
@@ -119,7 +119,7 @@ const DownloadFormPopup = () => {
               <MenuItem value="sans_vehicule">Sans véhicule motorisé</MenuItem>
               <MenuItem
                 value="avec_vehicule"
-                disabled={selectedPeriod === "01-07-14-12"} // Désactiver si la période est "du 01/07 au 14/12"
+                disabled={selectedPeriod === "01-07_14-12"} // Désactiver si la période est "du 01/07 au 14/12"
               >
                 Avec véhicule motorisé
               </MenuItem>
