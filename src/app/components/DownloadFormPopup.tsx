@@ -117,7 +117,12 @@ const DownloadFormPopup = () => {
               label="Mode de déplacement"
             >
               <MenuItem value="sans_vehicule">Sans véhicule motorisé</MenuItem>
-              <MenuItem value="avec_vehicule">Avec véhicule motorisé</MenuItem>
+              <MenuItem
+                value="avec_vehicule"
+                disabled={selectedPeriod === "01-07-14-12"} // Désactiver si la période est "du 01/07 au 14/12"
+              >
+                Avec véhicule motorisé
+              </MenuItem>
             </Select>
           </FormControl>
         </CardContent>
