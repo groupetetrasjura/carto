@@ -122,7 +122,7 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
               }}
             >
               <span>
-                <strong>Itinéraires autorisés :</strong>
+                <strong>Itinéraires autorisés selon les périodes de l&apos;année :</strong>
               </span>
 
               <IconButton onClick={() => handleTogglePaths("authorized")}>
@@ -139,7 +139,7 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    marginBottom: "5px",
+                    marginBottom: "2px",
                   }}
                 >
                   <Box
@@ -159,7 +159,7 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    marginBottom: "5px",
+                    marginBottom: "2px",
                   }}
                 >
                   <Box
@@ -176,7 +176,7 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    marginBottom: "5px",
+                    marginBottom: "2px",
                   }}
                 >
                   <Box
@@ -193,7 +193,7 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    marginBottom: "5px",
+                    marginBottom: "2px",
                   }}
                 >
                   <Box
@@ -210,7 +210,7 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    marginBottom: "5px",
+                    marginBottom: "2px",
                   }}
                 >
                   <Box
@@ -231,7 +231,6 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    marginBottom: "15px",
                   }}
                 >
                   <Box
@@ -247,16 +246,22 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
               </>
             )}
 
+
             <Box>
               <Box
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  marginBottom: "5px",
+                  marginBottom: "2px",
                 }}
               >
-                <span>
+                <span
+                  style={{
+                    marginTop: "10px", // Add marginTop to create spacing above
+                    display: "block", // Ensure the margin applies properly
+                  }}
+                >
                   <strong>Itinéraires recommandés du 01/07 au 14/12 :</strong>
                 </span>
                 <IconButton onClick={() => handleTogglePaths("recommended")}>
@@ -267,12 +272,12 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
                   )}
                 </IconButton>
               </Box>
+
               {layersVisibility["recommended-paths-source"] && (
                 <Box
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    marginBottom: "5px",
                   }}
                 >
                   <Box
@@ -286,12 +291,19 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
                       marginRight: 10,
                     }}
                   ></Box>
-                  <span>{`Sans moteur`}</span>
+                  <span>{`Du 01/07 au 14/12`}</span>
                 </Box>
               )}
             </Box>
+
+
             <Box>
-              <span>
+              <span
+                style={{
+                  marginTop: "20px", // Add marginTop to create spacing above
+                  display: "block", // Ensure the margin applies properly
+                }}
+              >
                 <strong>Aires protégées :</strong>
               </span>
               <Box
@@ -299,7 +311,7 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  marginBottom: "5px",
+                  marginBottom: "3px",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
@@ -318,13 +330,14 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
                   </span>
                 </div>
               </Box>
+
               <Box>
                 <Box
                   style={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    marginBottom: "5px",
+                    marginBottom: "3px",
                   }}
                 >
                   <div style={{ display: "flex", alignItems: "center" }}>
@@ -351,12 +364,13 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
                   </IconButton>
                 </Box>
               </Box>
+
               <Box
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  marginBottom: "5px",
+                  marginBottom: "3px",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
@@ -384,12 +398,13 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
                   )}
                 </IconButton>
               </Box>
+
               <Box
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  marginBottom: "5px",
+                  marginBottom: "3px",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center" }}>
@@ -417,11 +432,12 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
                   )}
                 </IconButton>
               </Box>
+
               <Box
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  marginBottom: "5px",
+                  marginBottom: "3px",
                   justifyContent: "space-between",
                 }}
               >
@@ -451,11 +467,12 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
                   )}
                 </IconButton>
               </Box>
+
               <Box
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  marginBottom: "5px",
+                  marginBottom: "3px",
                   justifyContent: "space-between",
                 }}
               >
@@ -486,12 +503,13 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
                   </IconButton>
                 </Box>
               </Box>
+
               <Box
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  marginBottom: "5px",
+                  marginBottom: "3px",
                 }}
               >
                 <svg width="24" height="24" style={{ flexShrink: 0 }}>
@@ -521,7 +539,12 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
 
           <Box sx={{ color: "#000" }}>
             <Box>
-              <span>
+            <span
+                style={{
+                  marginTop: "10px", // Add marginTop to create spacing above
+                  display: "block", // Ensure the margin applies properly
+                }}
+              >
                 <strong>Autres informations :</strong>
               </span>
             </Box>
@@ -540,10 +563,11 @@ export const Legend = ({ setSnackbarMessage, top }: LegendProps) => {
                   height={20}
                   style={{ marginRight: 10 }}
                 />
-                <span>Parking à proximité</span>
+                <span>Parkings à proximité</span>
               </Box>
             </Box>
-            <Box sx={{ maxWidth: 380, mt: 1, fontSize: "13px" }}>
+
+            <Box sx={{ maxWidth: 380, mt: 1, fontSize: "13px", marginTop: "20px" }}>
               {`D'autres zones réglementées sont également présentes sur le massif
           jurassien. Pour plus d'informations, consulter la réglementation
           locale.`}
