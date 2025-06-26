@@ -10,6 +10,7 @@ COPY package*.json ./
 
 # Install only dependencies
 RUN npm install --production=false
+RUN npm install @vercel/analytics
 
 # 2. Rebuild the source code only when needed
 FROM node:lts-alpine AS builder
