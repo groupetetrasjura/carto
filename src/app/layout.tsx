@@ -5,6 +5,9 @@ import "./globals.css";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./theme";
 
+import './globals.css';
+import { Analytics } from '@vercel/analytics/react';
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -30,7 +33,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+        <ThemeProvider theme={theme}>
+          {children}
+        </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
